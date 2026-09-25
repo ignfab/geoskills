@@ -1,9 +1,9 @@
 ---
-name: wfs-geopf-download
+name: geopf-wfs-download
 description: Downloads WFS data from the French Géoplateforme (data.geopf.fr) to various formats using ogr2ogr. Use when the user wants to export or télécharger GPF/IGN WFS layers (couches) to GeoJSON, GeoPackage, Shapefile, GeoParquet, GML or another vector format from https://data.geopf.fr/wfs.
 ---
 
-# WFS Géoplateforme download (ogr2ogr)
+# Géoplateforme WFS download (ogr2ogr)
 
 Download WFS layers from the French Géoplateforme (data.geopf.fr) and convert them to
 vector formats using **ogr2ogr**.
