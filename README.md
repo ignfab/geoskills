@@ -1,16 +1,63 @@
 # geoskills
 
-Some experimental [skills](https://cursor.com/fr/docs/context/skills).
+Some experimental [skills](https://cursor.com/fr/docs/context/skills) for working with
+spatial data.
 
 ## Motivation
 
 - Experiment VibeCoding with spatial data within Cursor
-- [LangGraph also supports skills](https://docs.langchain.com/oss/python/langchain/multi-agent/skills) (and skills could provide detailled documentation for MCP in [ignfab/demo-geocontext](https://github.com/ignfab/demo-geocontext))
+- [LangGraph also supports skills](https://docs.langchain.com/oss/python/langchain/multi-agent/skills)
+  (and skills could provide detailled documentation for MCP in
+  [ignfab/demo-geocontext](https://github.com/ignfab/demo-geocontext))
 
 ## Skills
 
-* [openlayers-vite-typescript](openlayers-vite-typescript/SKILL.md) : How to create a clean OpenLayers project with vite & TypeScript?
-* [wfs-geopf-download](wfs-geopf-download/SKILL.md) : How to use ogr2ogr to download data from WFS?
+| Skill | Description |
+|-------|-------------|
+| [wfs-geopf-download](skills/wfs-geopf-download/README.md) | How to use `ogr2ogr` to download data from WFS? |
+| [openlayers-vite-typescript](skills/openlayers-vite-typescript/README.md) | How to create a clean OpenLayers project with Vite & TypeScript? |
+
+## Installation
+
+Skills are installed with the [Vercel Skills CLI](https://github.com/vercel-labs/skills),
+which reads them directly from this repository.
+
+Install all skills:
+
+```bash
+npx skills add ignfab/geoskills
+```
+
+Install a single skill:
+
+```bash
+npx skills add ignfab/geoskills --skill wfs-geopf-download
+```
+
+Target a specific agent (`claude-code`, `cursor`, `opencode`, ...):
+
+```bash
+npx skills add ignfab/geoskills -a claude-code
+```
+
+Skills are installed in the current project by default; add `-g` to install them for the
+whole user account.
+
+## Contributing
+
+New skills go in `skills/<skill-name>/`. See [CLAUDE.md](CLAUDE.md) for the conventions.
+
+## Résumé (FR)
+
+`geoskills` est un ensemble de *skills* expérimentales pour travailler la donnée
+géographique avec un agent de code : téléchargement de couches WFS de la Géoplateforme
+(IGN) avec `ogr2ogr`, et création d'un projet cartographique OpenLayers avec Vite et
+TypeScript.
+
+Installation : `npx skills add ignfab/geoskills`
+
+Le contenu des skills est rédigé en anglais — les outils couverts (GDAL, OpenLayers, WFS)
+sont internationaux, même si les données le sont moins.
 
 ## License
 
