@@ -15,7 +15,6 @@ spatial data.
 | Skill | Description |
 |-------|-------------|
 | [wfs-geopf-download](skills/wfs-geopf-download/README.md) | How to use `ogr2ogr` to download data from WFS? |
-| [openlayers-vite-typescript](skills/openlayers-vite-typescript/README.md) | How to create a clean OpenLayers project with Vite & TypeScript? |
 
 ## Installation
 
@@ -50,13 +49,12 @@ New skills go in `skills/<skill-name>/`. See [CLAUDE.md](CLAUDE.md) for the conv
 ## Résumé (FR)
 
 `geoskills` est un ensemble de *skills* expérimentales pour travailler la donnée
-géographique avec un agent de code : téléchargement de couches WFS de la Géoplateforme
-(IGN) avec `ogr2ogr`, et création d'un projet cartographique OpenLayers avec Vite et
-TypeScript.
+géographique avec un agent de code, à commencer par le téléchargement de couches WFS de la
+Géoplateforme (IGN) avec `ogr2ogr`.
 
 Installation : `npx skills add ignfab/geoskills`
 
-Le contenu des skills est rédigé en anglais — les outils couverts (GDAL, OpenLayers, WFS)
+Le contenu des skills est rédigé en anglais — les outils couverts (GDAL, WFS, OpenLayers)
 sont internationaux, même si les données le sont moins.
 
 ## License
