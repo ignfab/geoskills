@@ -1,4 +1,4 @@
-# wfs-geopf-download
+# geopf-wfs-download
 
 Download WFS layers from the French [Géoplateforme](https://geoservices.ign.fr/services-geoplateforme-diffusion)
 (`data.geopf.fr`) and convert them to GeoPackage, GeoJSON, GeoParquet, Shapefile or GML
@@ -11,7 +11,7 @@ GDAL with WFS support (`sudo apt install gdal-bin`, or `conda install -c conda-f
 ## Installation
 
 ```bash
-npx skills add ignfab/geoskills --skill wfs-geopf-download
+npx skills add ignfab/geoskills --skill geopf-wfs-download
 ```
 
 ## Contents

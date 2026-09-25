@@ -27,7 +27,7 @@ Required YAML frontmatter:
 
 ```yaml
 ---
-name: wfs-geopf-download
+name: geopf-wfs-download
 description: Downloads WFS data from the French Géoplateforme ... Use when the user wants to ...
 ---
 ```

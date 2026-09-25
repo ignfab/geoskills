@@ -14,7 +14,7 @@ spatial data.
 
 | Skill | Description |
 |-------|-------------|
-| [wfs-geopf-download](skills/wfs-geopf-download/README.md) | How to use `ogr2ogr` to download data from WFS? |
+| [geopf-wfs-download](skills/geopf-wfs-download/README.md) | How to use `ogr2ogr` to download data from WFS? |
 
 ## Installation
 
@@ -30,7 +30,7 @@ npx skills add ignfab/geoskills
 Install a single skill:
 
 ```bash
-npx skills add ignfab/geoskills --skill wfs-geopf-download
+npx skills add ignfab/geoskills --skill geopf-wfs-download
 ```
 
 Target a specific agent (`claude-code`, `cursor`, `opencode`, ...):
