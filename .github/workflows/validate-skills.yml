@@ -9,5 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - name: Validate SKILL.md frontmatter
-        run: python3 .github/validate-skills.py
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install validation dependencies
+        run: python -m pip install -r tests/requirements.txt -r tests/requirements-geospatial.txt
+      - name: Install GDAL for local fixture tests
+        run: sudo apt-get update && sudo apt-get install -y gdal-bin
+      - name: Validate metadata and local references
+        run: python .github/validate-skills.py
+      - name: Test helpers and local GDAL workflows
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
+        env:
+          GEOSKILLS_REQUIRE_GDAL: '1'

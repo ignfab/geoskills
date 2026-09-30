@@ -51,6 +51,23 @@ French discoverability is handled in two places, and nowhere else:
   (`télécharger`, `couche`, `carte`, `Géoplateforme`);
 - the `Résumé (FR)` section of the root `README.md`.
 
+## Agent conduct
+
+A skill instructs an agent that runs commands on the user's machine. Every skill follows
+these rules, and states them where they apply:
+
+- **Never install software.** When a tool is missing, `## Prerequisites` gives the install
+  command for the user to run; the agent does not run `sudo apt`, `conda` or `pip` itself.
+- **No interactive commands.** Do not run a command that waits for input (a login, a setup
+  wizard); ask the user to run it.
+- **Discover before querying.** Take layer names, field names and CRSs from the service or
+  file metadata, not from memory.
+- **Validate before reporting.** Each `SKILL.md` has a `## Validate the output` section
+  saying how to check that a result is non-empty, in the expected CRS and of a plausible
+  magnitude.
+- **Keep long commands visible.** Run downloads in the foreground (with `-progress` where
+  available); do not pipe them through `head` or `tail`.
+
 ## Checklist for a new skill
 
 - [ ] `skills/<skill-name>/SKILL.md` with `name` + `description` in the frontmatter
@@ -59,8 +76,14 @@ French discoverability is handled in two places, and nowhere else:
 - [ ] `skills/<skill-name>/README.md` with requirements, install command and contents
 - [ ] entry added to the `Skills` table of the root `README.md`
 - [ ] `npx skills add <path-to-this-repo>` lists the skill without a warning
+- [ ] `SKILL.md` has a `## Validate the output` section, and its prerequisites follow the
+  agent conduct rules above
 
-The first, third and last of these are enforced in CI: the *Validate skills* workflow runs
-[.github/validate-skills.py](.github/validate-skills.py), which checks that every
-`skills/**/SKILL.md` has a non-empty `name` and `description` and that `name` matches its
-directory.
+CI runs [.github/validate-skills.py](.github/validate-skills.py) to parse YAML, validate
+names and descriptions, require skill READMEs, and check local links and discoverable
+references. It also runs the automated helper and local GDAL tests in `tests/`.
+Install the Python validation dependency with `python3 -m pip install -r tests/requirements.txt`.
+
+Discovery by the Skills CLI and agent skill selection remain separate checks; see
+[tests/README.md](tests/README.md). Live IGN service tests are opt-in and do not run on
+ordinary pushes or pull requests.

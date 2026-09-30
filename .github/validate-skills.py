@@ -1,65 +1,118 @@
 #!/usr/bin/env python3
-"""Validate that every skill under skills/ has a well-formed SKILL.md.
+"""Validate skill metadata, required files and local Markdown reference targets."""
 
-Checks, for each skills/**/SKILL.md:
-  - a YAML frontmatter block delimited by '---';
-  - a non-empty 'name' field that matches the skill directory name;
-  - a non-empty 'description' field.
-
-Exits non-zero (listing every problem) if any check fails.
-"""
-
-import glob
-import os
+import argparse
+from pathlib import Path
 import re
 import sys
+from urllib.parse import unquote, urlsplit
+
+import yaml
+
+
+class UniqueKeyLoader(yaml.SafeLoader):
+    """Reject duplicate YAML keys instead of silently accepting the last value."""
+
+
+def unique_mapping(loader, node):
+    loader.flatten_mapping(node)
+    result = {}
+    for key_node, value_node in node.value:
+        key = loader.construct_object(key_node)
+        if not isinstance(key, str):
+            raise ValueError("frontmatter keys must be strings")
+        if key in result:
+            raise ValueError(f"duplicate YAML key: {key}")
+        result[key] = loader.construct_object(value_node)
+    return result
+
+
+UniqueKeyLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, unique_mapping)
 
 
 def frontmatter_fields(text):
-    """Return the top-level 'key: value' pairs of the leading YAML frontmatter."""
-    match = re.match(r"^---\s*\n(.*?)\n---\s*(?:\n|$)", text, re.S)
+    match = re.match(r"\A---[ \t]*\r?\n(.*?)\r?\n---[ \t]*(?:\r?\n|$)", text, re.S)
     if not match:
-        return None
-    fields = {}
-    for line in match.group(1).splitlines():
-        pair = re.match(r"^([A-Za-z][\w-]*):\s*(.*)$", line)
-        if pair:
-            fields[pair.group(1)] = pair.group(2).strip().strip("\"'")
+        raise ValueError("missing or unterminated YAML frontmatter")
+    fields = yaml.load(match.group(1), Loader=UniqueKeyLoader)
+    if not isinstance(fields, dict):
+        raise ValueError("frontmatter must be a YAML mapping")
     return fields
 
 
-def main():
-    skill_files = sorted(glob.glob("skills/**/SKILL.md", recursive=True))
-    errors = []
-
-    if not skill_files:
-        errors.append("no skills/**/SKILL.md files found.")
-
-    for path in skill_files:
-        skill_dir = os.path.basename(os.path.dirname(path))
-        with open(path, encoding="utf-8") as handle:
-            fields = frontmatter_fields(handle.read())
-
-        if fields is None:
-            errors.append(f"{path}: missing or unterminated YAML frontmatter ('---').")
+def local_targets(path):
+    """Read inline Markdown links outside fenced code; ignore external URLs and anchors."""
+    text = re.sub(r"^(`{3,}|~{3,}).*?^\1[^\n]*$", "", path.read_text(encoding="utf-8"),
+                  flags=re.M | re.S)
+    for target in re.findall(r"\[[^\]]*\]\(([^\s)]+)\)", text):
+        target = target.strip("<>")
+        parsed = urlsplit(target)
+        if parsed.scheme or parsed.netloc or not parsed.path:
             continue
+        yield (path.parent / unquote(parsed.path)).resolve()
 
-        name = fields.get("name", "")
-        if not name:
-            errors.append(f"{path}: frontmatter is missing a non-empty 'name'.")
-        elif name != skill_dir:
-            errors.append(f"{path}: name '{name}' does not match directory '{skill_dir}'.")
 
-        if not fields.get("description", ""):
-            errors.append(f"{path}: frontmatter is missing a non-empty 'description'.")
+def validate(root):
+    root = Path(root).resolve()
+    errors = []
+    skill_root = root / "skills"
+    skill_files = sorted(skill_root.glob("**/SKILL.md"))
+    if not skill_files:
+        errors.append("no skills/**/SKILL.md files found")
+    if skill_root.exists():
+        for directory in sorted(skill_root.iterdir()):
+            if directory.is_dir() and not (directory / "SKILL.md").is_file():
+                errors.append(f"skills/{directory.name}: missing SKILL.md")
+    for path in skill_files:
+        relative = path.relative_to(root)
+        try:
+            fields = frontmatter_fields(path.read_text(encoding="utf-8"))
+        except (ValueError, yaml.YAMLError) as exc:
+            errors.append(f"{relative}: {exc}")
+            continue
+        for field in ("name", "description"):
+            value = fields.get(field)
+            if not isinstance(value, str) or not value.strip():
+                errors.append(f"{relative}: '{field}' must be a non-empty string")
+        name = fields.get("name")
+        if isinstance(name, str):
+            if name != path.parent.name:
+                errors.append(f"{relative}: name '{name}' does not match directory")
+            if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", name) or len(name) > 64:
+                errors.append(f"{relative}: invalid skill name '{name}'")
+        if not (path.parent / "README.md").is_file():
+            errors.append(f"{relative}: missing skill README.md")
+        # Walk links from the entrypoint: long references must be discoverable by an agent.
+        reachable = set()
+        pending = [path.resolve()]
+        while pending:
+            current = pending.pop()
+            if current in reachable:
+                continue
+            reachable.add(current)
+            for target in local_targets(current):
+                if target.is_file() and target.suffix == ".md" and target.is_relative_to(path.parent.resolve()):
+                    pending.append(target)
+        for reference in (path.parent / "references").rglob("*.md"):
+            if reference.resolve() not in reachable:
+                errors.append(f"{relative}: unlinked reference {reference.name}")
+    documents = [*root.glob("*.md"), *skill_root.rglob("*.md"), *(root / "tests").glob("*.md")]
+    for path in sorted(set(documents)):
+        for target in local_targets(path):
+            if not target.exists():
+                errors.append(f"{path.relative_to(root)}: broken local link to {target}")
+    return errors, len(skill_files)
 
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
+    args = parser.parse_args()
+    errors, count = validate(args.root)
     if errors:
-        print("Skill validation failed:")
-        for error in errors:
-            print(f"  - {error}")
+        print("Skill validation failed:\n" + "\n".join(f"  - {error}" for error in errors))
         return 1
-
-    print(f"OK: {len(skill_files)} skill(s) validated.")
+    print(f"OK: {count} skill(s); YAML, required files and local links validated.")
     return 0
 
 
