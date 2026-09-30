@@ -43,7 +43,7 @@ description: Downloads WFS data from the French Géoplateforme ... Use when the 
 ## Language
 
 Skills are written **in English**, including `name`, `description` and the body. The tools
-covered (GDAL, OpenLayers, WFS) are international even when the data is French.
+covered (GDAL, PROJ, WFS) are international even when the data is French.
 
 French discoverability is handled in two places, and nowhere else:
 

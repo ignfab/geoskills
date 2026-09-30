@@ -55,7 +55,7 @@ Géoplateforme (IGN) avec `ogr2ogr`.
 
 Installation : `npx skills add ignfab/geoskills`
 
-Le contenu des skills est rédigé en anglais — les outils couverts (GDAL, WFS, OpenLayers)
+Le contenu des skills est rédigé en anglais — les outils couverts (GDAL, PROJ, WFS)
 sont internationaux, même si les données le sont moins.
 
 ## License
