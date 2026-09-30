@@ -34,7 +34,7 @@ Vector, with ogr2ogr (use `-s_srs` only if the source has no CRS or a wrong one)
 ogr2ogr -f GPKG -t_srs EPSG:2154 out_l93.gpkg in.shp
 ```
 
-Raster, with gdalwarp:
+Raster, with gdalwarp (see the `gdal-raster-basics` skill for resampling and nodata):
 
 ```bash
 gdalwarp -t_srs EPSG:2154 -r bilinear -co COMPRESS=DEFLATE in.tif out_l93.tif
