@@ -1,6 +1,7 @@
 # geopf-wfs-download
 
-Download WFS layers from the French [Géoplateforme](https://geoservices.ign.fr/services-geoplateforme-diffusion)
+Download WFS layers from the French
+[Géoplateforme](https://cartes.gouv.fr/aide/fr/guides-utilisateur/utiliser-les-services-de-la-geoplateforme/diffusion/)
 (`data.geopf.fr`) and convert them to GeoPackage, GeoJSON, GeoParquet, Shapefile or GML
 using `ogr2ogr`.
 

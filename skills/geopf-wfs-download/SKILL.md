@@ -60,4 +60,4 @@ ogr2ogr -f GeoJSON -limit 5000 \
 
 - GDAL WFS driver: <https://gdal.org/drivers/vector/wfs.html>
 - ogr2ogr: <https://gdal.org/programs/ogr2ogr.html>
-- Géoplateforme diffusion: <https://geoservices.ign.fr/services-geoplateforme-diffusion>
+- Géoplateforme diffusion: <https://cartes.gouv.fr/aide/fr/guides-utilisateur/utiliser-les-services-de-la-geoplateforme/diffusion/>
