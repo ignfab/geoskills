@@ -1,6 +1,6 @@
 ---
 name: crs-reprojection-france
-description: Chooses French coordinate reference systems and transforms vectors, rasters, points and heights with GDAL and PROJ. Use to reprojeter or changer de système de coordonnées, choose an EPSG code for Lambert-93, coniques conformes, Lambert II étendu or overseas territories, convert GPS heights to NGF altitudes, or diagnose a missing or incorrect projection.
+description: Chooses French coordinate reference systems and transforms vectors, rasters, points and heights with GDAL and PROJ. Use when the user wants to reproject data or change its coordinate system, choose an EPSG code for Lambert-93, the CC42–CC50 conic zones, the legacy NTF Lambert zones (extended Lambert II) or the overseas territories, convert GPS coordinates to Lambert-93 or GPS heights to NGF altitudes, or diagnose a missing or incorrect projection.
 ---
 
 # French coordinate reference systems
@@ -22,7 +22,7 @@ install software yourself.
 | GPS, web APIs, GeoJSON | WGS 84 (lon/lat) | 4326 |
 | Web map tiles (OpenLayers, Leaflet, MapLibre) | WGS 84 / Pseudo-Mercator | 3857 |
 | Mainland geographic coordinates | RGF93 v1 (lon/lat) | 4171 |
-| Legacy data (before about 2010) | NTF (Paris) / Lambert zone II, "Lambert II étendu" | 27572 |
+| Legacy data (before about 2010) | NTF (Paris) / Lambert zone II, "extended Lambert II" | 27572 |
 | Guadeloupe, Martinique | RGAF09 / UTM zone 20N | 5490 |
 | French Guiana | RGFG95 / UTM zone 22N | 2972 |
 | Réunion | RGR92 / UTM zone 40S | 2975 |
@@ -67,8 +67,8 @@ x, y = to_l93.transform(2.3522, 48.8566)   # (652469.02, 6862035.26)
 ## Quick sanity checks
 
 - Coordinate ranges are clues, not proof: Lambert-93 commonly has X about 100,000 to
-  1,250,000 and Y about 6,000,000 to 7,150,000. A Y near 2,000,000 may suggest Lambert II
-  étendu; small values may be degrees or local projected coordinates.
+  1,250,000 and Y about 6,000,000 to 7,150,000. A Y near 2,000,000 may suggest extended
+  Lambert II; small values may be degrees or local projected coordinates.
 - Confirm a suspected CRS from the producer's metadata or a known control point before
   assigning it. A misplaced dataset can also have swapped axes or incorrect georeferencing.
 - Use `-a_srs` only to correct CRS metadata when the coordinates already belong to that

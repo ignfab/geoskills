@@ -1,6 +1,6 @@
 ---
 name: geopf-wms-wmts
-description: Downloads raster data (orthophotos, Plan IGN, elevation) from the French Géoplateforme (data.geopf.fr) WMTS and WMS-R services to GeoTIFF or another raster format using GDAL. Use when the user wants to export or télécharger GPF/IGN raster layers, orthophotos (ortho, dalles), tuiles/tiles, Plan IGN, cartes or altitude/MNT from https://data.geopf.fr/wmts or https://data.geopf.fr/wms-r/wms.
+description: Downloads raster data (orthophotos, Plan IGN, elevation) from the French Géoplateforme (data.geopf.fr) WMTS and WMS-R services to GeoTIFF or another raster format using GDAL. Use when the user wants to download or export GPF/IGN raster layers, orthophotos, tiles, Plan IGN maps or elevation data (DEM) from https://data.geopf.fr/wmts or https://data.geopf.fr/wms-r/wms.
 ---
 
 # Géoplateforme WMS / WMTS download (GDAL)

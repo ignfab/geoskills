@@ -1,6 +1,6 @@
 ---
 name: geopf-geocoding
-description: Geocodes addresses, points of interest and cadastral parcels with the French Géoplateforme geocoding API (data.geopf.fr/geocodage), one query at a time or in bulk from a CSV file, and reverse-geocodes coordinates. Use when the user wants to géocoder une adresse, faire du géocodage inverse, géocoder un fichier CSV en masse, find the coordinates of a French address (BAN), a lieu-dit or a parcelle cadastrale, or find the address at a given point.
+description: Geocodes addresses, points of interest and cadastral parcels with the French Géoplateforme geocoding API (data.geopf.fr/geocodage), one query at a time or in bulk from a CSV file, and reverse-geocodes coordinates. Use when the user wants to geocode an address or a CSV file of addresses, run reverse geocoding, find the coordinates of a French address (BAN), a locality or a cadastral parcel, or find the address at a given point.
 ---
 
 # Géoplateforme geocoding

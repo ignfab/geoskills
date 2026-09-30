@@ -16,7 +16,7 @@ fields: `curl -fsS --max-time 30 https://data.geopf.fr/geocodage/getCapabilities
 | `type` | address | `housenumber`, `street`, `locality` or `municipality` |
 | `postcode` | address, poi | Postcode filter. Takes several comma-separated values |
 | `citycode` | address, poi | INSEE code filter. Takes several comma-separated values |
-| `depcode` | address, poi | Département code filter |
+| `depcode` | address, poi | Department code filter |
 | `city` | address, poi | Town name filter |
 | `category` | poi | POI category, such as `administratif` or `cimetière` |
 | `returntruegeometry` | poi, parcel | Add the real geometry (such as a parcel polygon) in a `truegeometry` property. The feature geometry stays a point |
@@ -38,10 +38,10 @@ Address (`_type: "address"`):
 | `score` | Relevance from 0 to 1 |
 | `type` | `housenumber`, `street`, `locality` or `municipality` |
 | `housenumber`, `street`, `name` | Number with any suffix (bis, ter), street name, number and street |
-| `postcode`, `citycode`, `city`, `depcode` | Postcode, INSEE code, town, département |
+| `postcode`, `citycode`, `city`, `depcode` | Postcode, INSEE code, town, department |
 | `oldcitycode`, `oldcity` | Former municipality, after a merger |
 | `district` | Arrondissement (Paris, Lyon, Marseille) |
-| `context` | Département number and name, region |
+| `context` | Department number and name, region |
 | `id`, `banId` | BAN interoperability key and BAN UUID |
 | `x`, `y` | Coordinates in the legal projection (Lambert-93 in mainland France) |
 | `distance` | Distance in metres to the query point (`/reverse` only) |
@@ -50,7 +50,7 @@ POI (`_type: "poi"`): `toponym`, `category`, `postcode`, `citycode`, `city` and 
 of these are **arrays**, because one POI can span several towns. `extrafields.cleabs` is the
 BD TOPO identifier.
 
-Parcel (`_type: "parcel"`): `id` (14 characters: département + commune + cadastral prefix +
+Parcel (`_type: "parcel"`): `id` (14 characters: department + commune + cadastral prefix +
 section + number, for example `940670000D0050`), `departmentcode`, `municipalitycode`,
 `section`, `sheet`, `number` and `city`.
 

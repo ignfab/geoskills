@@ -1,6 +1,6 @@
 ---
 name: gdal-raster-basics
-description: Inspects, clips, reprojects, resamples, mosaics and converts raster data (GeoTIFF, DEM/MNT, orthophotos, satellite images) with the GDAL command-line tools gdalinfo, gdalwarp, gdal_translate and gdalbuildvrt, including Cloud Optimized GeoTIFF (COG) and zonal statistics per polygon. Use when the user wants to découper, reprojeter, rééchantillonner, mosaïquer or convertir a raster, build a COG, read a remote raster, compute statistiques zonales (mean elevation per commune, zonal statistics), or get information about a GeoTIFF, MNT, RGE ALTI or BD ORTHO file.
+description: Inspects, clips, reprojects, resamples, mosaics and converts raster data (GeoTIFF, DEM, orthophotos, satellite images) with the GDAL command-line tools gdalinfo, gdalwarp, gdal_translate and gdalbuildvrt, including Cloud Optimized GeoTIFF (COG) and zonal statistics per polygon. Use when the user wants to clip, reproject, resample, mosaic or convert a raster, build a COG, read a remote raster, compute zonal statistics (for example the mean elevation per municipality), or get information about a GeoTIFF, DEM, RGE ALTI or BD ORTHO file.
 ---
 
 # GDAL raster basics

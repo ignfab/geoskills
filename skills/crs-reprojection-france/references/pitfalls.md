@@ -45,12 +45,12 @@ a known point; the ranges alone cannot identify a datum or its realisation:
 | −5 to 10 | 41 to 51.5 | Degrees, mainland France (EPSG:4326 or 4171) |
 | 100,000 to 1,250,000 | 6,000,000 to 7,150,000 | Lambert-93 (EPSG:2154) |
 | 1,100,000 to 2,300,000 | 1,100,000 to 9,400,000. The millions digit gives the zone: Y ≈ (NN − 41) × 10⁶ + 200,000 at the zone centre | CC zone EPSG:39NN |
-| 0 to 1,200,000 | 1,600,000 to 2,700,000 | NTF Lambert II étendu (EPSG:27572) |
+| 0 to 1,200,000 | 1,600,000 to 2,700,000 | NTF extended Lambert II (EPSG:27572) |
 | −600,000 to 1,100,000 | 5,000,000 to 6,700,000 | Web Mercator (EPSG:3857) |
 
 ## 3. NTF → RGF93 (legacy Lambert I, II, III, IV)
 
-Old IGN data, cadastre and PLU data before about 2010 often use NTF (Paris) / Lambert II étendu
+Old IGN data, cadastre and PLU data before about 2010 often use NTF (Paris) / extended Lambert II
 (EPSG:27572). The accurate NTF → RGF93 transformation needs an IGN grid:
 `fr_ign_gr3df97a.tif`, which PROJ picks first, or `fr_ign_ntf_r93.tif`. EPSG gives about 1 m
 accuracy with the grid. Without it, PROJ uses a Helmert transformation that is off by a

@@ -73,7 +73,7 @@ Use clipping separately if the output geometry must stay inside the requested bo
 ## Selecting features inside a named area
 
 A bounding box is only a coarse filter: it also returns features outside the area. For a
-commune or a département, take the real boundary from ADMIN EXPRESS, use its bounding box
+commune or a department, take the real boundary from ADMIN EXPRESS, use its bounding box
 as a server-side filter, then select exactly. Example for Saint-Mandé (INSEE 94067):
 
 ```bash

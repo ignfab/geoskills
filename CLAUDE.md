@@ -6,7 +6,7 @@ Conventions for adding or editing a skill in this repository.
 
 One directory per skill, under `skills/`:
 
-```
+```text
 skills/<skill-name>/
 ├── SKILL.md      # agent-facing instructions (required)
 ├── README.md     # human-facing documentation
@@ -42,14 +42,17 @@ description: Downloads WFS data from the French Géoplateforme ... Use when the 
 
 ## Language
 
-Skills are written **in English**, including `name`, `description` and the body. The tools
-covered (GDAL, PROJ, WFS) are international even when the data is French.
+Skills are written **in English**, including `name`, `description`, the body and the
+references. The tools covered (GDAL, PROJ, WFS) are international even when the data is
+French.
 
-French discoverability is handled in two places, and nowhere else:
-
-- the `description` frontmatter, which seeds the French terms a user is likely to type
-  (`télécharger`, `couche`, `carte`, `Géoplateforme`);
-- the `Résumé (FR)` section of the root `README.md`.
+- Never mix French and English in the same sentence. French proper names (Géoplateforme,
+  BD TOPO, Saint-Mandé) are names, not French text; translate common words (*department*,
+  *extended Lambert II*, *tiles*).
+- `description` contains no French trigger words: agents match a French request to an
+  English description. The French prompts in `tests/` check that this matching works.
+- French text is limited to the `Résumé (FR)` section of the root `README.md` and to the
+  test prompts, each written entirely in French.
 
 ## Agent conduct
 
@@ -71,7 +74,7 @@ these rules, and states them where they apply:
 ## Checklist for a new skill
 
 - [ ] `skills/<skill-name>/SKILL.md` with `name` + `description` in the frontmatter
-- [ ] `description` mentions when to use the skill, with French trigger terms
+- [ ] `description` says what the skill does and when to use it, in English only
 - [ ] long-form content moved to `references/` and linked from `SKILL.md`
 - [ ] `skills/<skill-name>/README.md` with requirements, install command and contents
 - [ ] entry added to the `Skills` table of the root `README.md`

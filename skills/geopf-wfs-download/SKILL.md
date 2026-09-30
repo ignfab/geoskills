@@ -1,6 +1,6 @@
 ---
 name: geopf-wfs-download
-description: Downloads WFS data from the French Géoplateforme (data.geopf.fr) to various formats using ogr2ogr. Use when the user wants to export or télécharger GPF/IGN WFS layers (couches) to GeoJSON, GeoPackage, Shapefile, GeoParquet, GML or another vector format from https://data.geopf.fr/wfs/ows.
+description: Downloads WFS data from the French Géoplateforme (data.geopf.fr) to various formats using ogr2ogr. Use when the user wants to download or export GPF/IGN WFS layers (BD TOPO, ADMIN EXPRESS, cadastre) to GeoJSON, GeoPackage, Shapefile, GeoParquet, GML or another vector format from https://data.geopf.fr/wfs/ows.
 ---
 
 # Géoplateforme WFS download (ogr2ogr)
@@ -43,7 +43,7 @@ curl -fsS "https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetCa
 ogrinfo -so -nocount -noextent "WFS:https://data.geopf.fr/wfs/ows" "ADMINEXPRESS-COG.LATEST:commune"
 ```
 
-For a named area (commune, département), take its boundary from ADMIN EXPRESS instead of
+For a named area (commune, department), take its boundary from ADMIN EXPRESS instead of
 typing a bounding box from memory: see *Selecting features inside a named area* in
 [references/ogr2ogr-options.md](references/ogr2ogr-options.md).
 

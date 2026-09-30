@@ -22,7 +22,7 @@
   be about 10179785, 546780) and proposes EPSG:2975 with clearly labelled coordinates
 - [ ] mainland reference coordinates agree within 0.1 m; overseas datum assumptions are stated
 
-## CRS-02 — Legacy Lambert II étendu
+## CRS-02 — Legacy extended Lambert II
 
 > J'ai des coordonnées en Lambert II étendu dans data/points_lambert2e.csv. Convertis-les en
 > Lambert 93 le plus précisément possible.
