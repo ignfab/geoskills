@@ -59,3 +59,8 @@ French discoverability is handled in two places, and nowhere else:
 - [ ] `skills/<skill-name>/README.md` with requirements, install command and contents
 - [ ] entry added to the `Skills` table of the root `README.md`
 - [ ] `npx skills add <path-to-this-repo>` lists the skill without a warning
+
+The first, third and last of these are enforced in CI: the *Validate skills* workflow runs
+[.github/validate-skills.py](.github/validate-skills.py), which checks that every
+`skills/**/SKILL.md` has a non-empty `name` and `description` and that `name` matches its
+directory.
