@@ -54,8 +54,13 @@ New skills go in `skills/<skill-name>/`. See [CLAUDE.md](CLAUDE.md) (also expose
 ## Résumé (FR)
 
 `geoskills` est un ensemble de *skills* expérimentales pour travailler la donnée
-géographique avec un agent de code, à commencer par le téléchargement de couches WFS de la
-Géoplateforme (IGN) avec `ogr2ogr`.
+géographique avec un agent de code :
+
+- téléchargement de couches vecteur (WFS) et raster (WMTS / WMS — orthophotos, Plan IGN,
+  altitude) de la Géoplateforme (IGN) ;
+- géocodage d'adresses, de lieux et de parcelles, unitaire ou en masse à partir d'un CSV ;
+- traitement de rasters (découpe, reprojection, mosaïque, COG) ;
+- systèmes de coordonnées français (Lambert-93, coniques conformes, DOM).
 
 Installation : `npx skills add ignfab/geoskills`
 
