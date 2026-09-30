@@ -70,8 +70,9 @@ gdal_translate -of COG -co COMPRESS=DEFLATE mosaic.vrt mosaic_cog.tif
   VRT mosaics, reading remote files with `/vsicurl/`, extracting and converting with
   `gdal_translate`.
 
-For the choice of CRS (Lambert-93, CC zones, overseas territories), see the
-`crs-reprojection-france` skill.
+To download rasters (orthophotos, elevation) from the Géoplateforme, see the
+`geopf-wms-wmts` skill. For the choice of CRS (Lambert-93, CC zones, overseas territories),
+see the `crs-reprojection-france` skill.
 
 ## Additional resources
 
