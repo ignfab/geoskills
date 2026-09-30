@@ -44,7 +44,8 @@ whole user account.
 
 ## Contributing
 
-New skills go in `skills/<skill-name>/`. See [CLAUDE.md](CLAUDE.md) for the conventions.
+New skills go in `skills/<skill-name>/`. See [CLAUDE.md](CLAUDE.md) (also exposed as
+`AGENTS.md` for cross-agent tooling) for the conventions.
 
 ## Résumé (FR)
 
