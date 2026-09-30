@@ -23,7 +23,7 @@ Several layers can be appended to the same file with `-update -append`:
 ```bash
 ogr2ogr -f GPKG -update -append territoire.gpkg \
   "WFS:https://data.geopf.fr/wfs/ows" \
-  "ADMINEXPRESS-COG.2020:region"
+  "ADMINEXPRESS-COG.2025:region"
 ```
 
 ## GeoJSON

@@ -1,6 +1,6 @@
 ---
 name: geopf-wfs-download
-description: Downloads WFS data from the French Géoplateforme (data.geopf.fr) to various formats using ogr2ogr. Use when the user wants to export or télécharger GPF/IGN WFS layers (couches) to GeoJSON, GeoPackage, Shapefile, GeoParquet, GML or another vector format from https://data.geopf.fr/wfs.
+description: Downloads WFS data from the French Géoplateforme (data.geopf.fr) to various formats using ogr2ogr. Use when the user wants to export or télécharger GPF/IGN WFS layers (couches) to GeoJSON, GeoPackage, Shapefile, GeoParquet, GML or another vector format from https://data.geopf.fr/wfs/ows.
 ---
 
 # Géoplateforme WFS download (ogr2ogr)
@@ -19,7 +19,7 @@ Install: `sudo apt install gdal-bin` (Ubuntu/Debian) or `conda install -c conda-
 
 - **Géoplateforme WFS**: `https://data.geopf.fr/wfs/ows` (WFS 2.0).
 - GetCapabilities: `https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetCapabilities`
-- Layer names include a namespace prefix, e.g. `BDTOPO_V3:batiment`, `ADMINEXPRESS-COG.2020:region`.
+- Layer names include a namespace prefix, e.g. `BDTOPO_V3:batiment`, `ADMINEXPRESS-COG.2025:region`.
 - Discover layers with the MCP tool `gpf_wfs_search_types` from
   [@ignfab/geocontext](https://github.com/ignfab/demo-geocontext), or by opening
   GetCapabilities in a browser.

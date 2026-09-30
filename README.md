@@ -14,7 +14,7 @@ spatial data.
 
 | Skill | Description |
 |-------|-------------|
-| [geopf-wfs-download](skills/geopf-wfs-download/README.md) | How to use `ogr2ogr` to download data from WFS? |
+| [geopf-wfs-download](skills/geopf-wfs-download/README.md) | Download vector layers (BD TOPO, ADMIN EXPRESS, cadastre) from the Géoplateforme WFS with `ogr2ogr`. |
 
 ## Installation
 

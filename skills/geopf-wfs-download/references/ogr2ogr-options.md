@@ -19,8 +19,10 @@ guessing:
 ogrinfo -al -so "WFS:https://data.geopf.fr/wfs/ows" "BDTOPO_V3:batiment"
 ```
 
-Most Géoplateforme layers are served in EPSG:4326, so the bounding box is given in degrees
-(longitude first):
+Géoplateforme layers use a mix of SRS — mostly EPSG:4326, but also EPSG:2154 (Lambert-93)
+and EPSG:3857 (Web Mercator) — so always confirm with `ogrinfo` before filtering. For a
+layer served in EPSG:4326, the bounding box is given in degrees, **longitude first** (GDAL
+normalises the WFS 2.0 lat/lon axis order to lon/lat):
 
 ```bash
 ogr2ogr -f GPKG -spat 1.4 43.5 1.6 43.7 \
