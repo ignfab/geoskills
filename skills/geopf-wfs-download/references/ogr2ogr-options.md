@@ -59,6 +59,9 @@ ogr2ogr -f GPKG -t_srs EPSG:2154 \
   "BDTOPO_V3:batiment"
 ```
 
+To choose the target CRS (CC zones, overseas territories), see the `crs-reprojection-france`
+skill.
+
 ## Performance
 
 - The WFS driver pages through the service; `--config OGR_WFS_PAGING_ALLOWED ON` and
