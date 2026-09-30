@@ -86,7 +86,7 @@ gdal_translate -of GTiff -co COMPRESS=DEFLATE ortho_wms.xml ortho_l93.tif
 ```
 
 ```bash
-gdal_translate -of GTiff -co COMPRESS=DEFLATE mnt_wms.xml mnt_l93.tif
+gdal_translate -of GTiff -co COMPRESS=DEFLATE -a_nodata -99999 mnt_wms.xml mnt_l93.tif
 ```
 
 - `ELEVATION.ELEVATIONGRIDCOVERAGE.HIGHRES` is the high-resolution RGE ALTI coverage.

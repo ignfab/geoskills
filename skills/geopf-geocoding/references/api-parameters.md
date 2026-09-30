@@ -1,7 +1,9 @@
-# Géocodage API parameters
+# Geocoding API parameters
+
+Parameters checked against the live OpenAPI specification on 2026-09-30.
 
 Full specification: <https://data.geopf.fr/geocodage/openapi.yaml>. Live list of indexes and
-fields: `curl -s https://data.geopf.fr/geocodage/getCapabilities`.
+fields: `curl -fsS --max-time 30 https://data.geopf.fr/geocodage/getCapabilities`.
 
 ## `/search` parameters
 
@@ -18,11 +20,13 @@ fields: `curl -s https://data.geopf.fr/geocodage/getCapabilities`.
 | `city` | address, poi | Town name filter |
 | `category` | poi | POI category, such as `administratif` or `cimetière` |
 | `returntruegeometry` | poi, parcel | Add the real geometry (such as a parcel polygon) in a `truegeometry` property. The feature geometry stays a point |
-| `autocomplete` | all | Default `true`. Set to `false` for exact queries on complete strings |
+| `autocomplete` | all | Default `1`. Set to `0` to disable completion for a complete query; this does not enforce an exact match |
 | `departmentcode`, `municipalitycode`, `oldmunicipalitycode`, `districtcode`, `section`, `sheet`, `number` | parcel | Cadastral parcel filters |
 
-`/reverse` takes the same filters. `lon`/`lat` give the query point, or `searchgeom` gives a
-GeoJSON geometry (Point, LineString or Polygon) to search by intersection.
+`/reverse` supports index-specific filters, but not the text query or autocomplete mode.
+`lon`/`lat` give the query point, or `searchgeom` gives a geometry (Point, LineString,
+Polygon, or the API's Circle extension) to search by intersection. Check the OpenAPI
+specification for the parameters accepted by each operation.
 
 ## Response fields
 
@@ -46,7 +50,7 @@ POI (`_type: "poi"`): `toponym`, `category`, `postcode`, `citycode`, `city` and 
 of these are **arrays**, because one POI can span several towns. `extrafields.cleabs` is the
 BD TOPO identifier.
 
-Parcel (`_type: "parcel"`): `id` (14 characters: département + commune + ancienne commune +
+Parcel (`_type: "parcel"`): `id` (14 characters: département + commune + cadastral prefix +
 section + number, for example `940670000D0050`), `departmentcode`, `municipalitycode`,
 `section`, `sheet`, `number` and `city`.
 
@@ -55,7 +59,7 @@ section + number, for example `940670000D0050`), `departmentcode`, `municipality
 Find a parcel from its cadastral reference:
 
 ```bash
-curl -s "https://data.geopf.fr/geocodage/search?index=parcel&departmentcode=94&municipalitycode=067&section=0D&number=0050&returntruegeometry=true"
+curl -fsS --max-time 30 "https://data.geopf.fr/geocodage/search?index=parcel&departmentcode=94&municipalitycode=067&section=0D&number=0050&returntruegeometry=true"
 ```
 
 The filters accept both short and zero-padded values (`section=D` or `0D`, `number=50` or
@@ -65,28 +69,29 @@ four-digit number.
 Find a POI and get its real geometry as well:
 
 ```bash
-curl -s "https://data.geopf.fr/geocodage/search?q=gare+de+lyon&index=poi&city=paris&limit=1&returntruegeometry=true"
+curl -fsS --max-time 30 "https://data.geopf.fr/geocodage/search?q=gare+de+lyon&index=poi&city=paris&limit=1&returntruegeometry=true"
 ```
 
 Find a municipality and its INSEE code:
 
 ```bash
-curl -s "https://data.geopf.fr/geocodage/search?q=saint-mande&type=municipality&limit=1"
+curl -fsS --max-time 30 "https://data.geopf.fr/geocodage/search?q=saint-mande&type=municipality&limit=1"
 ```
 
 Autocompletion, as used by search boxes (note the different parameter names):
 
 ```bash
-curl -s "https://data.geopf.fr/geocodage/completion?text=73+av+de+paris&maximumResponses=5"
+curl -fsS --max-time 30 "https://data.geopf.fr/geocodage/completion?text=73+av+de+paris&maximumResponses=5"
 ```
 
 ## Using the results
 
+In Bash pipelines, use `set -o pipefail` so an HTTP failure also fails the pipeline.
 Extract the fields you need with `jq`:
 
 ```bash
-curl -s "https://data.geopf.fr/geocodage/search?q=8+bd+du+port+cergy&limit=1" \
-  | jq -r '.features[0] | [.properties.label, .properties.score, .geometry.coordinates[0], .geometry.coordinates[1]] | @csv'
+curl -fsS --max-time 30 "https://data.geopf.fr/geocodage/search?q=8+bd+du+port+cergy&limit=1" \
+  | jq -er 'if (.features | length) == 0 then error("No match") else .features[0] end | [.properties.label, .properties.score, .geometry.coordinates[0], .geometry.coordinates[1]] | @csv'
 ```
 
 The response is valid GeoJSON, so GDAL can read it directly. The geometry is the point;
@@ -101,12 +106,17 @@ To keep the real geometry returned by `returntruegeometry=true`, promote the
 `truegeometry` property to the feature geometry before writing the file:
 
 ```bash
-curl -s "https://data.geopf.fr/geocodage/search?index=parcel&departmentcode=94&municipalitycode=067&section=0D&number=0050&returntruegeometry=true" \
+curl -fsS --max-time 30 "https://data.geopf.fr/geocodage/search?index=parcel&departmentcode=94&municipalitycode=067&section=0D&number=0050&returntruegeometry=true" \
   | python3 -c '
 import json, sys
 fc = json.load(sys.stdin)
+if not fc.get("features"):
+    raise SystemExit("No parcel found")
 for f in fc["features"]:
-    f["geometry"] = f["properties"].pop("truegeometry")
+    geometry = f["properties"].pop("truegeometry", None)
+    if not geometry or geometry.get("type") not in ("Polygon", "MultiPolygon"):
+        raise SystemExit("Parcel boundary missing from response")
+    f["geometry"] = geometry
 json.dump(fc, sys.stdout)
 ' > parcelle.geojson
 ```
@@ -121,7 +131,11 @@ r = requests.get(
     params={"q": "73 avenue de Paris", "postcode": "94160", "limit": 1},
     timeout=30,
 )
-feature = r.json()["features"][0]
+r.raise_for_status()
+features = r.json()["features"]
+if not features:
+    raise SystemExit("No address matched the query")
+feature = features[0]
 lon, lat = feature["geometry"]["coordinates"]
 score = feature["properties"]["score"]
 ```

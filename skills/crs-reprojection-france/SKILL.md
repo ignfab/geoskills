@@ -1,11 +1,17 @@
 ---
 name: crs-reprojection-france
-description: Chooses and converts between French coordinate reference systems (Lambert-93 / EPSG:2154, the CC42–CC50 conic zones, RGF93, WGS84, Web Mercator, the old NTF Lambert zones and the overseas UTM systems) with ogr2ogr, gdalwarp, cs2cs, gdaltransform and pyproj, and avoids the usual pitfalls (lat/lon axis order, missing .prj, NTF grids, NGF altitudes). Use when the user wants to reprojeter, changer de projection or de système de coordonnées, convert coordinates to or from Lambert 93, Lambert II étendu, coniques conformes, GPS or WGS84, find the right EPSG code for France or a DOM-TOM, or fix data that lands in the wrong place.
+description: Chooses French coordinate reference systems and transforms vectors, rasters, points and heights with GDAL and PROJ. Use to reprojeter or changer de système de coordonnées, choose an EPSG code for Lambert-93, coniques conformes, Lambert II étendu or overseas territories, convert GPS heights to NGF altitudes, or diagnose a missing or incorrect projection.
 ---
 
 # French coordinate reference systems
 
 Pick the right CRS for French data and reproject vectors, rasters or single points.
+
+## Prerequisites
+
+GDAL and PROJ command-line tools (`ogr2ogr`, `gdalwarp`, `gdaltransform`, `cs2cs`,
+`projinfo`), or pyproj in Python. If a tool is missing, give the user the install command and let them run it; do not
+install software yourself.
 
 ## Which EPSG code?
 
@@ -60,14 +66,23 @@ x, y = to_l93.transform(2.3522, 48.8566)   # (652469.02, 6862035.26)
 
 ## Quick sanity checks
 
-- Lambert-93 coordinates in mainland France: X from about 100,000 to 1,250,000, Y from about
-  6,000,000 to 7,150,000. A Y value around 2,000,000 means Lambert II étendu (EPSG:27572).
-- Coordinates between −180 and 180 are degrees. If the points end up off the coast of
-  Somalia, latitude and longitude are swapped. If they all land near 0°N 0°E (Gulf of
-  Guinea), degree values were read as metres.
-- Data "in the wrong place" but with plausible values usually has a **missing or wrong
-  CRS**. Assign it with `-a_srs` (vector: `ogr2ogr -a_srs`; raster: `gdal_translate -a_srs`)
-  instead of reprojecting it.
+- Coordinate ranges are clues, not proof: Lambert-93 commonly has X about 100,000 to
+  1,250,000 and Y about 6,000,000 to 7,150,000. A Y near 2,000,000 may suggest Lambert II
+  étendu; small values may be degrees or local projected coordinates.
+- Confirm a suspected CRS from the producer's metadata or a known control point before
+  assigning it. A misplaced dataset can also have swapped axes or incorrect georeferencing.
+- Use `-a_srs` only to correct CRS metadata when the coordinates already belong to that
+  confirmed CRS. Use `-s_srs <confirmed_source> -t_srs <target>` to correct the source
+  metadata and transform coordinates in one operation.
+
+## Validate the output
+
+- Transform a control point whose coordinates you know and compare. For example, Notre-Dame
+  de Paris: 2.3499, 48.8530 (EPSG:4326) gives 652296.97, 6861636.36 (EPSG:2154).
+- Check the output extent (`ogrinfo -so`, `gdalinfo`) against the usual ranges of the
+  target CRS (see *Quick sanity checks*).
+- State the units: metres for a projected CRS, degrees for EPSG:4326 or 4171. Never report
+  an area or a distance computed in degrees or in EPSG:3857.
 
 ## References
 

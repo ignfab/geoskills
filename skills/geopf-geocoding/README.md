@@ -21,13 +21,15 @@ npx skills add ignfab/geoskills --skill geopf-geocoding
 | File | Purpose |
 |------|---------|
 | [SKILL.md](SKILL.md) | Endpoints, minimal syntax, search, reverse and bulk CSV examples. |
-| [references/api-parameters.md](references/api-parameters.md) | Every parameter, the response fields, parcel and POI searches, using the results. |
+| [references/api-parameters.md](references/api-parameters.md) | Common parameters, response fields, parcel and POI searches, using the results. |
 | [references/batch-csv.md](references/batch-csv.md) | Bulk geocoding: form fields, output columns, quality checks, large files. |
+
+| [scripts/split_csv.py](scripts/split_csv.py) | Split UTF-8 CSV records by row count and byte size, preserving quoted fields. |
 
 ## Example
 
 ```bash
-curl -s -X POST https://data.geopf.fr/geocodage/search/csv \
+curl -fsS --max-time 300 -X POST https://data.geopf.fr/geocodage/search/csv \
   -F data=@adresses.csv -F columns=adresse -F postcode=cp \
   -o adresses_geocodees.csv
 ```

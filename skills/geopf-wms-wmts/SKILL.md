@@ -18,6 +18,8 @@ skill instead. To process a downloaded raster (clip, mosaic, resample, COG) see
 - Check driver support: `gdalinfo --formats | grep -iE "WMTS|WMS"`.
 
 Install: `sudo apt install gdal-bin` (Ubuntu/Debian) or `conda install -c conda-forge gdal`.
+If a tool is missing, give the user the install command and let them run it; do not
+install software yourself.
 
 ## Endpoints
 
@@ -49,7 +51,7 @@ orthophoto extract via WMTS, reprojected to Lambert-93 (EPSG:2154) at 0.5 m, as 
 gdalwarp \
   -te 1.43 43.59 1.45 43.61 -te_srs EPSG:4326 \
   -t_srs EPSG:2154 -tr 0.5 0.5 \
-  -of GTiff \
+  -of GTiff -co COMPRESS=DEFLATE \
   "WMTS:https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetCapabilities,layer=ORTHOIMAGERY.ORTHOPHOTOS" \
   ortho_toulouse.tif
 ```
@@ -68,7 +70,21 @@ For a specific source CRS, an exact size, or elevation values as a GeoTIFF, use 
 | `CADASTRALPARCELS.PARCELLAIRE_EXPRESS` | Cadastral parcels overlay | PNG |
 
 Discover more layer identifiers with the `gdalinfo` listing above, or in the WMTS / WMS
-capabilities (`REQUEST=GetCapabilities`).
+capabilities (`REQUEST=GetCapabilities`). Check that a layer is listed there before using
+it, and never invent an identifier: for example, no SCAN 25 layer is exposed by these
+public services.
+
+## Validate the output
+
+- A non-zero exit code means the download failed.
+- Run `gdalinfo -stats <output>`: check the CRS, pixel size and size you asked for, and
+  statistics that are not all 0 or nodata. After a transient HTTP error (502, 400) from
+  the tile server, GDAL can still write a file with empty blocks. Rerun the command: the
+  tiles already fetched come from GDAL's local cache. Do not add those codes to
+  `<ZeroBlockHttpCodes>`, which would hide the error.
+- For elevation, check that the values are plausible: about −10 to 4,810 m in mainland
+  France, with `-99999` as nodata.
+- Do not pipe `gdalwarp` or `gdal_translate` through `head` or `tail`.
 
 ## References
 

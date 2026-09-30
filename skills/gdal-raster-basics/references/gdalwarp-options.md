@@ -59,7 +59,11 @@ gdalwarp -cutline communes.gpkg -cl communes -cwhere "code_insee = '94067'" \
   mnt.tif mnt_saint_mande.tif
 ```
 
-The cutline can be in any CRS: GDAL reprojects it on the fly.
+The cutline can be in any declared CRS: GDAL reprojects it on the fly. If the cropped
+extent rounds inward and loses boundary pixels, specify the output grid explicitly. For
+a source already aligned on multiples of 10 m, `-tr 10 10 -tap` preserves that alignment
+and expands the extent to cover the cutline. Use the actual source resolution and origin
+when grid preservation matters.
 
 ## Changing resolution
 

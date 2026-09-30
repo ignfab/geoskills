@@ -32,7 +32,7 @@ npx skills add ignfab/geoskills --skill geopf-wms-wmts
 
 ```bash
 gdalwarp -te 1.43 43.59 1.45 43.61 -te_srs EPSG:4326 \
-  -t_srs EPSG:2154 -tr 0.5 0.5 -of GTiff \
+  -t_srs EPSG:2154 -tr 0.5 0.5 -of GTiff -co COMPRESS=DEFLATE \
   "WMTS:https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetCapabilities,layer=ORTHOIMAGERY.ORTHOPHOTOS" \
   ortho_toulouse.tif
 ```

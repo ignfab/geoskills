@@ -37,7 +37,8 @@ src.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
 
 A Shapefile without a `.prj` has no CRS. Some tools then silently assume WGS84.
 
-Identify a CRS from the coordinate ranges:
+Use coordinate ranges to shortlist candidate CRSs, then confirm with source metadata or
+a known point; the ranges alone cannot identify a datum or its realisation:
 
 | X range | Y range | Probably |
 |---------|---------|----------|
@@ -88,7 +89,8 @@ survey-grade work.
 | Lambert-93 + NGF-IGN69, as a compound CRS | | 5698 |
 | Lambert-93 + NGF-IGN78, as a compound CRS | | 5699 |
 
-GPS heights are ellipsoidal. They differ from NGF altitudes by about 40–55 m in mainland
+For GPS heights, first check whether the device reports ellipsoidal or geoid-corrected
+heights. Ellipsoidal heights differ from NGF altitudes by about 40–55 m in mainland
 France (the geoid undulation). The conversion uses an IGN geoid grid. For EPSG:5698, PROJ
 picks `fr_ign_RAF18.tif`. Check which grid a transformation needs with
 `projinfo -s EPSG:4965 -t EPSG:5698 -o PROJ --hide-ballpark`:
@@ -99,7 +101,10 @@ echo "48.8566 2.3522 100" | cs2cs EPSG:4965 EPSG:5698
 # 652469.02  6862035.26  56.20
 ```
 
-If the output height equals the input height, the geoid grid is missing (see section 3).
+At this mainland test point, an unchanged height suggests that the vertical transformation
+was not applied. Inspect the selected operation and grid availability (see section 3).
+The example assumes RGF93 v1 ellipsoidal coordinates (EPSG:4965); generic GPS/WGS84
+coordinates require a stated datum/epoch assumption and do not justify centimetric accuracy.
 
 ## 6. Web Mercator distortion
 

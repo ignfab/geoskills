@@ -12,6 +12,10 @@ gdal_translate -of COG \
   input.tif output_cog.tif
 ```
 
+The example uses bilinear resampling for continuous data. For categorical rasters, use
+`-co RESAMPLING=NEAREST` or `MODE` to preserve class values in overviews. If source
+overviews exist, check their resampling too; `-co OVERVIEWS=IGNORE_EXISTING` rebuilds them.
+
 Useful COG creation options:
 
 | Option | Values | Notes |
@@ -23,7 +27,7 @@ Useful COG creation options:
 | `BLOCKSIZE` | 512 (default) | Tile size |
 | `OVERVIEWS` | `AUTO`, `NONE`, `FORCE_USE_EXISTING` | |
 | `TILING_SCHEME` | `GoogleMapsCompatible` | Aligns the file with Web Mercator tiles |
-| `BIGTIFF` | `IF_SAFER` | For files larger than 4 GB |
+| `BIGTIFF` | `YES`, `IF_SAFER` | `YES` for expected outputs over 4 GiB; `IF_SAFER` is a heuristic |
 
 `gdalwarp -of COG` reprojects and writes a COG in one step:
 
@@ -31,7 +35,7 @@ Useful COG creation options:
 gdalwarp -t_srs EPSG:3857 -of COG -co COMPRESS=WEBP -co QUALITY=85 ortho.tif ortho_cog.tif
 ```
 
-Check that a file is a valid COG:
+Inspect the COG layout marker (a quick check, not a full structural validation):
 
 ```bash
 gdalinfo output_cog.tif | grep -i "LAYOUT=COG"
@@ -61,7 +65,8 @@ gdalbuildvrt -separate stack.vrt b04.tif b03.tif b02.tif   # stack bands
   do not.
 - Mosaic plus clip plus convert in one step: `gdalwarp -te ... mosaic.vrt out.tif`.
 - IGN RGE ALTI and BD ALTI tiles come as ESRI ASCII Grid (`.asc`) files. A VRT reads them
-  directly. Add `-a_srs EPSG:2154` if they have no `.prj` file:
+  directly. If the `.prj` is missing, confirm the source CRS from the delivery metadata
+  first. For tiles confirmed to be Lambert-93:
   `gdalbuildvrt -a_srs EPSG:2154 mnt.vrt dalles/*.asc`.
 
 ## Reading remote rasters
