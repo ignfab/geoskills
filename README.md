@@ -13,13 +13,14 @@ spatial data.
 ## Skills
 
 | Skill | Description |
-|-------|-------------|
+| --- | --- |
 | [geopf-wfs-download](skills/geopf-wfs-download/README.md) | Download vector layers (BD TOPO, ADMIN EXPRESS, cadastre) from the Géoplateforme WFS with `ogr2ogr`. |
 | [geopf-wms-wmts](skills/geopf-wms-wmts/README.md) | Download raster layers (orthophotos, Plan IGN, elevation) from the Géoplateforme WMTS / WMS-R with GDAL. |
 | [geopf-geocoding](skills/geopf-geocoding/README.md) | Geocode addresses, POIs and parcels (one by one or from a CSV file) with the Géoplateforme API. |
 | [gdal-raster-basics](skills/gdal-raster-basics/README.md) | Clip, reproject, mosaic and convert rasters (DEM, orthophotos) with GDAL, build COGs and compute zonal statistics. |
 | [crs-reprojection-france](skills/crs-reprojection-france/README.md) | French CRS (Lambert-93, CC zones, NTF, overseas territories): EPSG codes, reprojection and pitfalls. |
 | [geopandas-basics](skills/geopandas-basics/README.md) | Process vector data in Python with GeoPandas: I/O, reprojection, spatial joins, overlay, buffers, zonal statistics. |
+| [vector-data-quality](skills/vector-data-quality/README.md) | Audit and repair invalid, empty or duplicate vector features before analysis or publication. |
 
 ## Installation
 
@@ -59,8 +60,8 @@ manual skill-selection scenarios.
 
 ## Résumé (FR)
 
-`geoskills` est un ensemble de *skills* expérimentales pour travailler la donnée
-géographique avec un agent de code :
+`geoskills` est un ensemble expérimental de compétences pour agents de code, destinées à
+travailler la donnée géographique :
 
 - téléchargement de couches vecteur (WFS) et raster (WMTS / WMS — orthophotos, Plan IGN,
   altitude) de la Géoplateforme (IGN) ;
@@ -68,11 +69,12 @@ géographique avec un agent de code :
 - traitement de rasters (découpe, reprojection, mosaïque, COG, statistiques zonales) ;
 - systèmes de coordonnées français (Lambert-93, coniques conformes, DOM) ;
 - traitement vecteur en Python avec GeoPandas (jointures spatiales, croisements, tampons,
-  statistiques zonales).
+  statistiques zonales) ;
+- contrôle qualité vectoriel (géométries invalides ou vides, doublons, schéma et réparation).
 
 Installation : `npx skills add ignfab/geoskills`
 
-Le contenu des skills est rédigé en anglais — les outils couverts (GDAL, PROJ, WFS)
+Le contenu des compétences est rédigé en anglais — les outils couverts (GDAL, PROJ, WFS)
 sont internationaux, même si les données le sont moins.
 
 ## License

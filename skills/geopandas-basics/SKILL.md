@@ -1,6 +1,6 @@
 ---
 name: geopandas-basics
-description: Processes vector data in Python with GeoPandas — read/write GeoPackage, GeoParquet and Shapefile, reproject with to_crs, spatial joins (sjoin), overlay, clip, buffer, dissolve, and zonal statistics with rasterstats. Use when the user wants to croiser des couches, faire une jointure spatiale, une zone tampon, dissoudre, découper des entités, compute statistiques zonales in Python, work with a GeoDataFrame, convert vector formats in a script, or read Géoplateforme WFS data directly into Python.
+description: "Processes vector data in Python with GeoPandas: read and write GeoPackage, GeoParquet and Shapefile, reproject with to_crs, spatial joins (sjoin), overlay, clip, buffer, dissolve, and zonal statistics with rasterstats. Use when the user wants to join or intersect layers spatially, build buffers, dissolve or clip features, compute zonal statistics in Python, work with a GeoDataFrame, convert vector formats in a script, or read Géoplateforme WFS data directly into Python."
 ---
 
 # GeoPandas basics
@@ -10,7 +10,8 @@ reproject, join and overlay layers, and compute zonal statistics with **rasterst
 
 For one-shot conversions and downloads, the CLI is often enough: see `geopf-wfs-download`
 (WFS download), `gdal-raster-basics` (rasters) and `crs-reprojection-france` (choosing a
-CRS). Use GeoPandas when the workflow is scripted, iterative or mixes analysis steps.
+CRS). For invalid geometries, duplicates and schema audits, use `vector-data-quality`.
+Use GeoPandas when the workflow is scripted, iterative or mixes analysis steps.
 
 ## Prerequisites
 

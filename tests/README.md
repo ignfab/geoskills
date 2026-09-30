@@ -4,8 +4,8 @@ This directory contains automated regression tests and manual agent scenarios. A
 tests check commands, data and helpers; manual scenarios check skill selection and agent
 decisions. Passing command tests does not prove that an agent will select the right skill.
 
-The prompts are in French on purpose: French trigger words are part of what is being
-tested (see the `description` of each skill).
+The prompts are in French on purpose: they check that a French request triggers a skill
+whose `description` is written in English.
 
 ## Contents
 
@@ -17,6 +17,7 @@ tested (see the `description` of each skill).
 | [geopf-wms-wmts.md](geopf-wms-wmts.md) | `geopf-wms-wmts` |
 | [geopf-wfs-download.md](geopf-wfs-download.md) | `geopf-wfs-download` |
 | [geopandas-basics.md](geopandas-basics.md) | `geopandas-basics` |
+| [vector-data-quality.md](vector-data-quality.md) | `vector-data-quality` |
 | [data/README.md](data/README.md) | Fixture provenance, CRS and missing-metadata traps |
 
 Test data in `data/`:
@@ -26,7 +27,7 @@ Test data in `data/`:
 | `adresses.csv` | 8 addresses split across columns: valid, without postcode, overseas, unknown, empty |
 | `points.csv` | 3 points (lon, lat) to reverse-geocode |
 | `points_gps.csv` | 3 GPS points, **latitude before longitude**, one of them in Réunion |
-| `points_lambert2e.csv` | 2 points in NTF Lambert II étendu (EPSG:27572) |
+| `points_lambert2e.csv` | 2 points in NTF extended Lambert II (EPSG:27572) |
 | `monuments_sans_prj/` | Shapefile of 3 Paris monuments in Lambert-93, **without a `.prj`** |
 | `saint_mande.geojson` | Boundary of Saint-Mandé (INSEE 94067), EPSG:4326, from ADMIN EXPRESS |
 | `mnt_dalles/` | 10 m DEM of Saint-Mandé (RGE ALTI) split into 2 ESRI ASCII tiles, **without a `.prj`** |
@@ -57,6 +58,8 @@ python3 -m unittest discover -s tests -p 'test_*.py' -v
   area, mosaic, clip, COG marker, weighted averaging, hillshade and vertical transforms).
 - `test_geopandas.py`: spatial join, CRS and format round trips, and zonal-statistics
   attachment after filtering an index.
+- `test_vector_quality.py`: invalid-geometry diagnosis and repair, normalized geometry
+   duplicates, null/empty handling and GeoPackage round trip.
 - `test_live.py`: bounded geocoding, WFS, WMS and WMTS smoke tests; skipped by default.
 
 GDAL ≥ 3.1 and PROJ CLI tools are required for local geospatial checks. Install the optional
