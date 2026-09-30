@@ -6,6 +6,3 @@ skills-lock.json
 
 # Files written by the agent during a test run
 output/
-
-# Logs and grades written by run_evals.py
-eval-results/

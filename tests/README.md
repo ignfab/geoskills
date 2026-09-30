@@ -128,39 +128,6 @@ A scenario passes when the right skill is loaded, the result matches, and none o
 pitfalls listed in its checklist is hit. The `-N` scenarios are negative: the skill should
 **not** be loaded, or should hand over to another skill.
 
-## Automated agent runs
-
-[run_evals.py](run_evals.py) runs the same scenarios headlessly through the Claude CLI. It
-needs only Python 3 and `claude`; GDAL must be on the `PATH` for the GDAL and CRS
-scenarios.
-
-```bash
-python3 run_evals.py --list                 # parsed scenarios, free
-python3 run_evals.py GEO-01                 # one scenario
-python3 run_evals.py 'CRS-*' --no-grade     # only check which skills load
-python3 run_evals.py                        # every scenario
-```
-
-For each scenario, the runner:
-
-1. creates a temporary workspace **outside the repository**, with a copy of the skills in
-   `.claude/skills/`, a copy of `data/` and an empty `output/`, so that the repository's
-   `CLAUDE.md` does not influence the agent and every run starts clean;
-2. sends the prompt with `claude -p`, allowing only file tools, `curl`, `python3` and the
-   GDAL/PROJ commands (see `AGENT_TOOLS` in the script);
-3. checks the **trigger** from the transcript: the skill named on the `Expected skill` line
-   must be loaded (unless marked `optional`), and a skill written as ``not `name` `` must not;
-4. unless `--no-grade`, asks a **separate** Claude session to grade each checklist item and
-   the expected result from the transcript and the files in `output/`.
-
-Results go to `eval-results/<timestamp>/` (ignored by git): `summary.json`, and for each
-scenario `events.ndjson`, `answer.md` and `grading.json`. The exit code is non-zero when a
-scenario fails.
-
-Each run costs API credit: `--budget-usd` (default 2) caps an agent run and
-`--grader-budget-usd` (default 0.5) a grading. GEO-01 cost about USD 0.15. Scenarios run
-in isolated workspaces, so a scenario cannot rely on a file written by another one.
-
 ## Cleanup
 
 Automated tests clean their temporary directories automatically. For manual runs, remove
