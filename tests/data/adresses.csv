@@ -1,0 +1,9 @@
+id,numero,voie,code_postal,commune
+1,73,avenue de Paris,94160,Saint-Mandé
+2,8,boulevard du Port,95000,Cergy
+3,20,rue de la Paix,,Paris
+4,1,place du Capitole,31000,Toulouse
+5,36,quai des Orfèvres,75001,Paris
+6,1,rue de Paris,97400,Saint-Denis
+7,12,rue imaginaire des Tests,99999,Nulle-Part
+8,,,,
