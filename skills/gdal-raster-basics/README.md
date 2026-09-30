@@ -1,13 +1,16 @@
 # gdal-raster-basics
 
 Inspect, clip, reproject, resample, mosaic and convert rasters (DEMs, orthophotos, satellite
-images) with the GDAL command-line tools, and produce Cloud Optimized GeoTIFFs. This skill
+images) with the GDAL command-line tools, produce Cloud Optimized GeoTIFFs and compute
+zonal statistics. This skill
 processes rasters you already have. To download them from the Géoplateforme, see
 [geopf-wms-wmts](../geopf-wms-wmts/README.md).
 
 ## Requirements
 
-GDAL 3.1 or later (`sudo apt install gdal-bin`, or `conda install -c conda-forge gdal`).
+GDAL 3.1 or later for the basic recipes (`sudo apt install gdal-bin`, or
+`conda install -c conda-forge gdal`). The optional `gdal raster zonal-stats` command
+requires GDAL ≥ 3.12; some options require 3.13 as noted in its reference.
 
 ## Installation
 
@@ -19,9 +22,10 @@ npx skills add ignfab/geoskills --skill gdal-raster-basics
 
 | File | Purpose |
 |------|---------|
-| [SKILL.md](SKILL.md) | The four core tools and the three commands covering most needs. |
+| [SKILL.md](SKILL.md) | The core tools and the commands covering most needs. |
 | [references/gdalwarp-options.md](references/gdalwarp-options.md) | Reprojection, clipping, resolution, resampling, nodata, performance, troubleshooting. |
 | [references/cog-and-vrt.md](references/cog-and-vrt.md) | COG, overviews, VRT mosaics, remote reads, `gdal_translate` recipes. |
+| [references/zonal-stats.md](references/zonal-stats.md) | Statistics per polygon with `gdal raster zonal-stats` (GDAL ≥ 3.12) and its pitfalls. |
 
 ## Example
 
