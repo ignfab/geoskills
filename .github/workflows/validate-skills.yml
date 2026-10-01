@@ -13,7 +13,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install validation dependencies
-        run: python -m pip install -r tests/requirements.txt
+        run: python -m pip install -r tests/requirements.txt -r tests/requirements-geospatial.txt
       - name: Install GDAL for local fixture tests
         run: sudo apt-get update && sudo apt-get install -y gdal-bin
       - name: Validate metadata and local references
