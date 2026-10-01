@@ -3,7 +3,8 @@
 Inspect, clip, reproject, resample, mosaic and convert rasters (DEMs, orthophotos, satellite
 images) with the GDAL command-line tools, produce Cloud Optimized GeoTIFFs and compute
 zonal statistics. This skill
-processes rasters you already have.
+processes rasters you already have. To download them from the Géoplateforme, see
+[geopf-wms-wmts](../geopf-wms-wmts/README.md).
 
 ## Requirements
 
