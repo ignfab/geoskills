@@ -10,7 +10,7 @@ reproject, join and overlay layers, and compute zonal statistics with **rasterst
 
 For one-shot conversions and downloads, the CLI is often enough: see `geopf-wfs-download`
 (WFS download), `gdal-raster-basics` (rasters) and `crs-reprojection-france` (choosing a
-CRS).
+CRS). For invalid geometries, duplicates and schema audits, use `vector-data-quality`.
 Use GeoPandas when the workflow is scripted, iterative or mixes analysis steps.
 
 ## Prerequisites
