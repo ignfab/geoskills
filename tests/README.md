@@ -15,6 +15,7 @@ python3 -m unittest discover -s tests -p 'test_*.py' -v
 
 Agents must not install missing software; give the installation command to the user.
 
+- `test_split_csv.py`
 - `test_validation.py`
 
 ## Manual scenarios
@@ -23,4 +24,5 @@ Check CLI discovery with `npx skills add . --list` from the repository root. Ins
 skills for your agent, start a fresh session in `tests/`, then run the following prompts.
 Use `output/` for generated files and keep source fixtures unchanged.
 
+- [geopf-geocoding.md](geopf-geocoding.md)
 - [geopf-wfs-download.md](geopf-wfs-download.md)
