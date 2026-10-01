@@ -1,0 +1,8 @@
+# Skills installed here by `npx skills add` for a test run
+.claude/
+.agents/
+.codex/
+skills-lock.json
+
+# Files written by the agent during a test run
+output/

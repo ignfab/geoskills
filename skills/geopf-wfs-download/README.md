@@ -1,6 +1,7 @@
 # geopf-wfs-download
 
-Download WFS layers from the French [Géoplateforme](https://geoservices.ign.fr/services-geoplateforme-diffusion)
+Download WFS layers from the French
+[Géoplateforme](https://cartes.gouv.fr/aide/fr/guides-utilisateur/utiliser-les-services-de-la-geoplateforme/diffusion/)
 (`data.geopf.fr`) and convert them to GeoPackage, GeoJSON, GeoParquet, Shapefile or GML
 using `ogr2ogr`.
 
@@ -25,7 +26,7 @@ npx skills add ignfab/geoskills --skill geopf-wfs-download
 ## Example
 
 ```bash
-ogr2ogr -f GPKG -spat 1.4 43.5 1.6 43.7 \
+ogr2ogr -f GPKG -spat 1.43 43.59 1.45 43.61 -spat_srs EPSG:4326 \
   batiments_toulouse.gpkg \
   "WFS:https://data.geopf.fr/wfs/ows" \
   "BDTOPO_V3:batiment"
