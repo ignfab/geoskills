@@ -16,6 +16,7 @@ spatial data.
 | --- | --- |
 | [geopf-wfs-download](skills/geopf-wfs-download/README.md) | Download vector layers (BD TOPO, ADMIN EXPRESS, cadastre) from the Géoplateforme WFS with `ogr2ogr`. |
 | [geopf-geocoding](skills/geopf-geocoding/README.md) | Geocode addresses, POIs and parcels (one by one or from a CSV file) with the Géoplateforme API. |
+| [gdal-raster-basics](skills/gdal-raster-basics/README.md) | Clip, reproject, mosaic and convert rasters (DEM, orthophotos) with GDAL, build COGs and compute zonal statistics. |
 | [crs-reprojection-france](skills/crs-reprojection-france/README.md) | French CRS (Lambert-93, CC zones, NTF, overseas territories): EPSG codes, reprojection and pitfalls. |
 
 ## Installation
@@ -61,6 +62,7 @@ travailler la donnée géographique :
 
 - téléchargement de couches vecteur (WFS) de la Géoplateforme (IGN) ;
 - géocodage d'adresses, de lieux et de parcelles, unitaire ou en masse à partir d'un CSV ;
+- traitement de rasters (découpe, reprojection, mosaïque, COG, statistiques zonales) ;
 - systèmes de coordonnées français (Lambert-93, coniques conformes, DOM) ;
 
 Installation : `npx skills add ignfab/geoskills`
