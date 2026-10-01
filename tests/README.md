@@ -1,11 +1,48 @@
 # Skill tests
 
-Automated tests check commands, data and helpers. Manual scenarios check agent selection
-and decisions; their French prompts exercise skills described in English.
+This directory contains automated regression tests and manual agent scenarios. Automated
+tests check commands, data and helpers; manual scenarios check skill selection and agent
+decisions. Passing command tests does not prove that an agent will select the right skill.
+
+The prompts are in French on purpose: they check that a French request triggers a skill
+whose `description` is written in English.
+
+## Contents
+
+| File | Skill |
+|------|-------|
+| [geopf-geocoding.md](geopf-geocoding.md) | `geopf-geocoding` |
+| [crs-reprojection-france.md](crs-reprojection-france.md) | `crs-reprojection-france` |
+| [gdal-raster-basics.md](gdal-raster-basics.md) | `gdal-raster-basics` |
+| [geopf-wms-wmts.md](geopf-wms-wmts.md) | `geopf-wms-wmts` |
+| [geopf-wfs-download.md](geopf-wfs-download.md) | `geopf-wfs-download` |
+| [geopandas-basics.md](geopandas-basics.md) | `geopandas-basics` |
+| [vector-data-quality.md](vector-data-quality.md) | `vector-data-quality` |
+| [data/README.md](data/README.md) | Fixture provenance, CRS and missing-metadata traps |
+
+Test data in `data/`:
+
+| File | Content |
+|------|---------|
+| `adresses.csv` | 8 addresses split across columns: valid, without postcode, overseas, unknown, empty |
+| `points.csv` | 3 points (lon, lat) to reverse-geocode |
+| `points_gps.csv` | 3 GPS points, **latitude before longitude**, one of them in Réunion |
+| `points_lambert2e.csv` | 2 points in NTF extended Lambert II (EPSG:27572) |
+| `monuments_sans_prj/` | Shapefile of 3 Paris monuments in Lambert-93, **without a `.prj`** |
+| `saint_mande.geojson` | Boundary of Saint-Mandé (INSEE 94067), EPSG:4326, from ADMIN EXPRESS |
+| `mnt_dalles/` | 10 m DEM of Saint-Mandé (RGE ALTI) split into 2 ESRI ASCII tiles, **without a `.prj`** |
+
+`saint_mande.geojson` and `mnt_dalles/` are extracts of IGN data (ADMIN EXPRESS, RGE ALTI),
+distributed under the [Licence Ouverte 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence/).
+
+The original manual references were supplied for GDAL 3.13. The stored fixture values
+were also checked with GDAL 3.10.3 / PROJ 9.6.2 on 2026-09-30. Local fixture checks use
+explicit tolerances; live scores, labels and layer availability are observations that may
+change. Do not require a service to reproduce a historical bug to pass a test.
 
 ## Automated checks
 
-From the repository root, with Python >= 3.9 and PyYAML installed:
+From the repository root, with Python ≥ 3.9:
 
 ```bash
 python3 -m pip install -r tests/requirements.txt
@@ -13,38 +50,89 @@ python3 .github/validate-skills.py
 python3 -m unittest discover -s tests -p 'test_*.py' -v
 ```
 
-Agents must not install missing software; give the installation command to the user.
+- `test_validation.py`: real YAML parsing, empty/invalid metadata, duplicate keys, missing
+  files and reference reachability.
+- `test_split_csv.py`: record and byte limits, BOM, multiline/quoted fields, leading zeros,
+  malformed input and preservation of existing files.
+- `test_workflows.py`: local GDAL/PROJ recipes (axis order, overseas CRS, missing `.prj`,
+  area, mosaic, clip, COG marker, weighted averaging, hillshade and vertical transforms).
+- `test_geopandas.py`: spatial join, CRS and format round trips, and zonal-statistics
+  attachment after filtering an index.
+- `test_vector_quality.py`: invalid-geometry diagnosis and repair, normalized geometry
+   duplicates, null/empty handling and GeoPackage round trip.
+- `test_live.py`: bounded geocoding, WFS, WMS and WMTS smoke tests; skipped by default.
 
-- `test_geopandas.py`
-- `test_live.py`
-- `test_split_csv.py`
-- `test_validation.py`
-- `test_workflows.py`
+GDAL ≥ 3.1 and PROJ CLI tools are required for local geospatial checks. Install the optional
+Python workflows with `python3 -m pip install -r tests/requirements-geospatial.txt`.
+Missing tools/packages produce explicit skips; a tool that is installed but cannot start
+is an error. CI sets `GEOSKILLS_REQUIRE_GDAL=1` so missing CLI tools fail the job.
+Tests use temporary directories, disable PROJ networking and do not modify source fixtures.
+If `gdalinfo --version` fails (for example, an undefined `sqlite3_total_changes64` symbol),
+repair the active GDAL/SQLite environment or use a clean environment before rerunning.
+The tests deliberately do not hide a broken installation.
 
-GDAL >= 3.1 and PROJ CLI tools are required for local workflow tests. Tests use temporary
-outputs and disable PROJ networking. CI sets `GEOSKILLS_REQUIRE_GDAL=1`; missing tools
-then fail. An installed but broken tool is always an error. NTF and vertical tests skip
-when their IGN grids are unavailable.
+The NTF and vertical tests skip if the required IGN grids are unavailable locally; install
+those grids separately to enable them. The `LAYOUT=COG` check is not a full COG validator.
 
-Live IGN tests are disabled by default. Run them deliberately with
-`GEOSKILLS_LIVE=1 python3 -m unittest discover -s tests -p 'test_live.py' -v`.
-This sends public test addresses and coordinates to IGN and downloads bounded extracts;
-do not substitute private data.
+To run the live tests deliberately:
 
-Optional Python checks require `python3 -m pip install -r tests/requirements-geospatial.txt`.
-Missing optional dependencies produce explicit skips.
+```bash
+GEOSKILLS_LIVE=1 python3 -m unittest discover -s tests -p 'test_live.py' -v
+```
 
-## Manual scenarios
+This sends the eight fixture addresses in `data/adresses.csv` to the public IGN geocoder,
+queries the three public test coordinates and a cadastral parcel, and downloads small
+WFS/raster extracts. Do not replace those fixtures with private data for a live run.
+Network/service failures are reported as failures, not silently treated as passed tests.
+Live calls are bounded by timeouts and small extents and do not run in routine CI.
 
-Check CLI discovery with `npx skills add . --list` from the repository root. Install the
-skills for your agent, start a fresh session in `tests/`, then run the following prompts.
-Use `output/` for generated files and keep source fixtures unchanged.
+To check CLI discovery without installing skills (Node.js required):
 
-- [crs-reprojection-france.md](crs-reprojection-france.md)
-- [gdal-raster-basics.md](gdal-raster-basics.md)
-- [geopandas-basics.md](geopandas-basics.md)
-- [geopf-geocoding.md](geopf-geocoding.md)
-- [geopf-wfs-download.md](geopf-wfs-download.md)
-- [geopf-wms-wmts.md](geopf-wms-wmts.md)
+```bash
+npx skills add . --list
+```
 
-See [fixture metadata](data/README.md) for provenance and CRS.
+## Manual agent setup
+
+Requirements depend on the scenario: GDAL/PROJ, `curl`, and optionally GeoPandas,
+`rasterstats` and `pyarrow`. The newer `gdal raster zonal-stats` command specifically
+requires GDAL ≥ 3.12; older GDAL can test a masked single-zone crop or rasterstats.
+
+Install the skills in this directory, from the local clone:
+
+```bash
+cd tests
+npx skills add .. -a claude-code -y
+```
+
+Or from a branch pushed to GitHub:
+
+```bash
+npx skills add "ignfab/geoskills#<branch>" -a claude-code -y
+```
+
+The CLI installs the skills for the selected agent and may use shared directories or
+symlinks. Inspect its reported paths; after editing, refresh the installation if it is a
+copy. Generated agent directories are ignored by git (see [.gitignore](.gitignore)).
+
+## Running a scenario
+
+1. Start a **new** agent session from `tests/` (`cd tests && claude`), because skills are
+   loaded when a session starts.
+2. Create `output/`, keep the fixtures unchanged, then send the scenario prompt as is.
+   To avoid statistics sidecars on source rasters, use `GDAL_PAM_ENABLED=NO` for read-only
+   inspection or inspect temporary copies.
+3. Check that the expected skill was loaded, then compare the result with the expected
+   values and go through the checklist.
+4. The prompts ask the agent to write its files to `output/`, which is ignored by git.
+   Use a fresh output directory for each run to avoid stale-file false positives.
+
+A scenario passes when the right skill is loaded, the result matches, and none of the
+pitfalls listed in its checklist is hit. The `-N` scenarios are negative: the skill should
+**not** be loaded, or should hand over to another skill.
+
+## Cleanup
+
+Automated tests clean their temporary directories automatically. For manual runs, remove
+only artifacts and skill installations created for that run, from the `tests/` directory;
+avoid a broad `skills remove --all` when unrelated skills are installed.
