@@ -15,6 +15,7 @@ spatial data.
 | Skill | Description |
 | --- | --- |
 | [geopf-wfs-download](skills/geopf-wfs-download/README.md) | Download vector layers (BD TOPO, ADMIN EXPRESS, cadastre) from the Géoplateforme WFS with `ogr2ogr`. |
+| [geopf-geocoding](skills/geopf-geocoding/README.md) | Geocode addresses, POIs and parcels (one by one or from a CSV file) with the Géoplateforme API. |
 
 ## Installation
 
@@ -58,6 +59,7 @@ manual skill-selection scenarios.
 travailler la donnée géographique :
 
 - téléchargement de couches vecteur (WFS) de la Géoplateforme (IGN) ;
+- géocodage d'adresses, de lieux et de parcelles, unitaire ou en masse à partir d'un CSV ;
 
 Installation : `npx skills add ignfab/geoskills`
 
