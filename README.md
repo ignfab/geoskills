@@ -3,6 +3,8 @@
 Some experimental [skills](https://cursor.com/fr/docs/context/skills) for working with
 spatial data.
 
+This project is in an exploratory phase. The stability of the skills is not yet guaranteed.
+
 ## Motivation
 
 - Experiment VibeCoding with spatial data within Cursor
@@ -59,6 +61,8 @@ See [tests/README.md](tests/README.md) for automated checks, optional live IGN t
 manual skill-selection scenarios.
 
 ## Résumé (FR)
+
+Ce projet est en phase exploratoire. La stabilité des compétences n’est pas encore garantie.
 
 `geoskills` est un ensemble expérimental de compétences pour agents de code, destinées à
 travailler la donnée géographique :
