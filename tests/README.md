@@ -24,5 +24,8 @@ Check CLI discovery with `npx skills add . --list` from the repository root. Ins
 skills for your agent, start a fresh session in `tests/`, then run the following prompts.
 Use `output/` for generated files and keep source fixtures unchanged.
 
+- [crs-reprojection-france.md](crs-reprojection-france.md)
 - [geopf-geocoding.md](geopf-geocoding.md)
 - [geopf-wfs-download.md](geopf-wfs-download.md)
+
+See [fixture metadata](data/README.md) for provenance and CRS.
