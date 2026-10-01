@@ -89,3 +89,10 @@ all-touched inclusion gives different valid statistics and must be labelled expl
 - [ ] assigns EPSG:2154 to the tiles, which have no `.prj`
 - [ ] does not compute statistics on the raster in EPSG:4326 (reprojecting the DEM instead
   of the zones changes the values)
+
+## RAS-N1 — Negative: download, not processing
+
+> Télécharge l'orthophoto du centre de Toulouse.
+
+**Expected skill:** `geopf-wms-wmts` (see [WMS-01](geopf-wms-wmts.md#wms-01--orthophoto-extract-in-lambert-93)).
+`gdal-raster-basics` may be loaded as well for the conversion, but not instead.

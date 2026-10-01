@@ -15,6 +15,7 @@ spatial data.
 | Skill | Description |
 | --- | --- |
 | [geopf-wfs-download](skills/geopf-wfs-download/README.md) | Download vector layers (BD TOPO, ADMIN EXPRESS, cadastre) from the Géoplateforme WFS with `ogr2ogr`. |
+| [geopf-wms-wmts](skills/geopf-wms-wmts/README.md) | Download raster layers (orthophotos, Plan IGN, elevation) from the Géoplateforme WMTS / WMS-R with GDAL. |
 | [geopf-geocoding](skills/geopf-geocoding/README.md) | Geocode addresses, POIs and parcels (one by one or from a CSV file) with the Géoplateforme API. |
 | [gdal-raster-basics](skills/gdal-raster-basics/README.md) | Clip, reproject, mosaic and convert rasters (DEM, orthophotos) with GDAL, build COGs and compute zonal statistics. |
 | [crs-reprojection-france](skills/crs-reprojection-france/README.md) | French CRS (Lambert-93, CC zones, NTF, overseas territories): EPSG codes, reprojection and pitfalls. |
@@ -60,7 +61,8 @@ manual skill-selection scenarios.
 `geoskills` est un ensemble expérimental de compétences pour agents de code, destinées à
 travailler la donnée géographique :
 
-- téléchargement de couches vecteur (WFS) de la Géoplateforme (IGN) ;
+- téléchargement de couches vecteur (WFS) et raster (WMTS / WMS — orthophotos, Plan IGN,
+  altitude) de la Géoplateforme (IGN) ;
 - géocodage d'adresses, de lieux et de parcelles, unitaire ou en masse à partir d'un CSV ;
 - traitement de rasters (découpe, reprojection, mosaïque, COG, statistiques zonales) ;
 - systèmes de coordonnées français (Lambert-93, coniques conformes, DOM) ;
