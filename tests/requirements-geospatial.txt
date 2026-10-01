@@ -1,0 +1,4 @@
+# Optional Python implementations; GDAL CLI tools are installed separately.
+geopandas>=1.0,<2
+pyarrow>=14
+rasterstats>=0.20,<1
