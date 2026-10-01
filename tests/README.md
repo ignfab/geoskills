@@ -17,6 +17,12 @@ Agents must not install missing software; give the installation command to the u
 
 - `test_split_csv.py`
 - `test_validation.py`
+- `test_workflows.py`
+
+GDAL >= 3.1 and PROJ CLI tools are required for local workflow tests. Tests use temporary
+outputs and disable PROJ networking. CI sets `GEOSKILLS_REQUIRE_GDAL=1`; missing tools
+then fail. An installed but broken tool is always an error. NTF and vertical tests skip
+when their IGN grids are unavailable.
 
 ## Manual scenarios
 
@@ -25,6 +31,7 @@ skills for your agent, start a fresh session in `tests/`, then run the following
 Use `output/` for generated files and keep source fixtures unchanged.
 
 - [crs-reprojection-france.md](crs-reprojection-france.md)
+- [gdal-raster-basics.md](gdal-raster-basics.md)
 - [geopf-geocoding.md](geopf-geocoding.md)
 - [geopf-wfs-download.md](geopf-wfs-download.md)
 
