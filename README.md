@@ -13,8 +13,8 @@ spatial data.
 ## Skills
 
 | Skill | Description |
-|-------|-------------|
-| [geopf-wfs-download](skills/geopf-wfs-download/README.md) | How to use `ogr2ogr` to download data from WFS? |
+| --- | --- |
+| [geopf-wfs-download](skills/geopf-wfs-download/README.md) | Download vector layers (BD TOPO, ADMIN EXPRESS, cadastre) from the Géoplateforme WFS with `ogr2ogr`. |
 
 ## Installation
 
@@ -44,17 +44,24 @@ whole user account.
 
 ## Contributing
 
-New skills go in `skills/<skill-name>/`. See [CLAUDE.md](CLAUDE.md) for the conventions.
+New skills go in `skills/<skill-name>/`. See [CLAUDE.md](CLAUDE.md) (also exposed as
+`AGENTS.md` for cross-agent tooling) for the conventions.
+
+## Validation
+
+See [tests/README.md](tests/README.md) for automated checks, optional live IGN tests and
+manual skill-selection scenarios.
 
 ## Résumé (FR)
 
-`geoskills` est un ensemble de *skills* expérimentales pour travailler la donnée
-géographique avec un agent de code, à commencer par le téléchargement de couches WFS de la
-Géoplateforme (IGN) avec `ogr2ogr`.
+`geoskills` est un ensemble expérimental de compétences pour agents de code, destinées à
+travailler la donnée géographique :
+
+- téléchargement de couches vecteur (WFS) de la Géoplateforme (IGN) ;
 
 Installation : `npx skills add ignfab/geoskills`
 
-Le contenu des skills est rédigé en anglais — les outils couverts (GDAL, WFS, OpenLayers)
+Le contenu des compétences est rédigé en anglais — les outils couverts (GDAL, PROJ, WFS)
 sont internationaux, même si les données le sont moins.
 
 ## License
