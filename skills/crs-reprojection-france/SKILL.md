@@ -10,8 +10,12 @@ Pick the right CRS for French data and reproject vectors, rasters or single poin
 ## Prerequisites
 
 GDAL and PROJ command-line tools (`ogr2ogr`, `gdalwarp`, `gdaltransform`, `cs2cs`,
-`projinfo`), or pyproj in Python. If a tool is missing, give the user the install command and let them run it; do not
-install software yourself.
+`projinfo`), or pyproj in Python.
+
+Install: `sudo apt install gdal-bin proj-bin` (Ubuntu/Debian), or
+`python3 -m pip install pyproj` for the Python workflow. If a tool is missing, give the
+user the command and let them run it; do not install software or run interactive setup
+yourself. Read the source CRS from metadata before selecting a transformation.
 
 ## Which EPSG code?
 
