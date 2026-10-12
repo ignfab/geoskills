@@ -43,15 +43,18 @@ Lambert-93. Notre-Dame de Paris ≈ (2.3499, 48.8530).
   with `-a_srs EPSG:2154`; GeoPandas `set_crs` applies to vectors, not raster files
 - [ ] uses `rasterstats.zonal_stats` (or hands over to the CLI `gdal raster zonal-stats`)
 
-## GPD-04 — Preserve row alignment after filtering
+## GPD-04 — Preserve row alignment with filtered or repeated indices
 
 > Calcule les statistiques du MNT pour une sélection de polygones conservant leurs index
-> d’origine (par exemple 42), puis rattache les résultats aux bons polygones.
+> d’origine, dont deux identiques (par exemple 42 et 42), puis rattache les résultats aux
+> bons polygones sans multiplier les lignes.
 
-- [ ] constructs the statistics DataFrame with the same index as the input GeoDataFrame
-- [ ] checks that the join preserves IDs and does not silently introduce missing statistics
+- [ ] attaches statistics by position in the unchanged zone order, or uses a unique row key
+- [ ] preserves the original index and IDs, including repeated index labels
+- [ ] checks that row counts and statistics remain correct and source attributes are not overwritten
 
-The automated test uses the Saint-Mandé fixture at index 42 and verifies its known statistics.
+Automated tests cover Saint-Mandé at index 42 and two distinct raster cells sharing index
+42, checking both known statistics and one result per source row.
 
 ## GPD-N1 — Negative: one-shot download
 

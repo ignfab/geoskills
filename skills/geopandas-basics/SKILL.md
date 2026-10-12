@@ -20,6 +20,16 @@ Use GeoPandas when the workflow is scripted, iterative or mixes analysis steps.
 
 Install: `pip install geopandas pyarrow rasterstats` or
 `conda install -c conda-forge geopandas pyarrow rasterstats`.
+If a package is missing, give the user the install command and let them run it; do not
+install software or run interactive setup yourself.
+
+## Inspect first
+
+List layers with `gpd.list_layers(path)`, then read the intended layer explicitly. Inspect
+`gdf.columns`, `gdf.crs`, `gdf.geom_type` and `gdf.total_bounds` before choosing fields or a
+target CRS. Confirm a missing CRS from source metadata before using `set_crs`.
+Discover WFS layer names, fields and CRSs from GetCapabilities and DescribeFeatureType
+before adapting the service example below.
 
 ## Minimal syntax
 
@@ -54,6 +64,18 @@ joined = gpd.sjoin(pts, communes[["code_insee", "geometry"]],
 **Always work in a single CRS**, and use a **projected** CRS (EPSG:2154 in mainland
 France) for buffers, areas and distances — in EPSG:4326 they come out in degrees and
 GeoPandas emits a `Geometry is in a geographic CRS` warning.
+
+## Validate the output
+
+- Write to a new file, reopen it and check the expected non-zero count, CRS, bounds,
+  geometry types and required fields. Investigate an empty result rather than treating a
+  successful write as a successful analysis.
+- For spatial joins, report unmatched features and multiple matches per source feature;
+  a left join can increase the row count. Preserve a source identifier before joining.
+- Check areas and distances in a projected CRS suitable for the study area and compare
+  their magnitude with the source. Use the local projection for overseas territories.
+- For zonal statistics, check valid pixel counts and plausible values, and attach results
+  by position as shown in the reference so repeated indices cannot multiply rows.
 
 ## References
 

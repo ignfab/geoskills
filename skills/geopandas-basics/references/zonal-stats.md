@@ -20,11 +20,18 @@ stats = zonal_stats(communes, "mnt_l93.tif",
 
 ```python
 import pandas as pd
-communes = communes.join(pd.DataFrame(stats, index=communes.index))
+stats_frame = pd.DataFrame(stats)
+assert len(stats_frame) == len(communes)
+assert not set(stats_frame.columns).intersection(communes.columns)
+communes = communes.copy()
+for column in stats_frame:
+    communes[column] = stats_frame[column].to_numpy()
 ```
 
-Use the same index when attaching results: a filtered GeoDataFrame may have a non-default
-index, while a new DataFrame otherwise starts at 0 and silently joins the wrong rows.
+Attach by position without reordering or filtering the zones after `zonal_stats`. A filtered
+GeoDataFrame may have a non-default index, and an exploded one may have repeated labels.
+An index join can silently misalign values or multiply rows. The assignment above preserves
+the original index and one result per zone; rename existing statistic columns explicitly.
 
 Available statistics: `count`, `min`, `max`, `mean`, `median`, `sum`, `std`, `majority`,
 `minority`, `unique`, `range`, `nodata`, `percentile_<q>` (e.g. `percentile_90`).

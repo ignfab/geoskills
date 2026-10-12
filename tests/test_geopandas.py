@@ -3,6 +3,7 @@ import importlib.util
 import unittest
 
 from test_workflows import DATA, GDALCase
+from skill_examples import run_example
 
 
 class GeoPandasTests(GDALCase):
@@ -48,12 +49,44 @@ class GeoPandasTests(GDALCase):
         commune = gpd.read_file(DATA / "saint_mande.geojson").to_crs(2154)
         commune.index = pd.Index([42], name="source_row")
         stats = zonal_stats(commune, self.mosaic(), stats=["mean", "min", "max", "count"])
-        result = commune.join(pd.DataFrame(stats, index=commune.index))
+        result = run_example("geopandas-basics/references/zonal-stats.md", "## Basic usage",
+                             {"communes": commune, "stats": stats}, example=1)["communes"]
         self.assertEqual(result.index.tolist(), [42])
         self.assertEqual(result.loc[42, "count"], 9046)
         self.assertAlmostEqual(result.loc[42, "mean"], 50.15, delta=0.05)
         self.assertAlmostEqual(result.loc[42, "min"], 39.30, delta=0.05)
         self.assertAlmostEqual(result.loc[42, "max"], 54.08, delta=0.05)
+
+    def test_zonal_stats_with_repeated_index(self):
+        import geopandas as gpd
+        import pandas as pd
+        from shapely.geometry import box
+        from rasterstats import zonal_stats
+
+        # Separate source cells have different values but the same dataframe index.
+        zones = gpd.GeoDataFrame({"id": ["west", "east"]},
+            geometry=[box(656700, 6861290, 656710, 6861300),
+                      box(657000, 6861290, 657010, 6861300)],
+            crs=2154, index=pd.Index([42, 42], name="source_row"))
+        stats = zonal_stats(zones, self.mosaic(), stats=["mean", "count"])
+        self.assertNotEqual(stats[0]["mean"], stats[1]["mean"])
+        result = run_example("geopandas-basics/references/zonal-stats.md", "## Basic usage",
+                             {"communes": zones, "stats": stats}, example=1)["communes"]
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result.index.tolist(), [42, 42])
+        self.assertEqual(result["id"].tolist(), ["west", "east"])
+        self.assertEqual(result["mean"].tolist(), [row["mean"] for row in stats])
+        self.assertEqual(result["count"].tolist(), [1, 1])
+
+    def test_zonal_stats_does_not_overwrite_source_attributes(self):
+        import geopandas as gpd
+
+        zones = gpd.read_file(DATA / "saint_mande.geojson")
+        zones["mean"] = "source attribute"
+        with self.assertRaises(AssertionError):
+            run_example("geopandas-basics/references/zonal-stats.md", "## Basic usage",
+                        {"communes": zones, "stats": [{"mean": 50}]}, example=1)
+        self.assertEqual(zones["mean"].tolist(), ["source attribute"])
 
 
 if __name__ == "__main__":
