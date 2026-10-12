@@ -20,6 +20,8 @@ whose `description` is written in English.
 | [vector-data-quality.md](vector-data-quality.md) | `vector-data-quality` |
 | [mapshaper-simplify.md](mapshaper-simplify.md) | `mapshaper-simplify` |
 | [data/README.md](data/README.md) | Fixture provenance, CRS and missing-metadata traps |
+| [ab-testing.md](ab-testing.md) | Running every scenario with and without the skills, and scoring the difference |
+| [review-2026-10-12.md](review-2026-10-12.md) | Recent-skill review, reproduced defects, fixes and validation limits |
 
 Test data in `data/`:
 
@@ -53,15 +55,17 @@ python3 -m unittest discover -s tests -p 'test_*.py' -v
 ```
 
 - `test_validation.py`: real YAML parsing, empty/invalid metadata, duplicate keys, missing
-  files and reference reachability.
+  files, required workflow sections and reference reachability.
 - `test_split_csv.py`: record and byte limits, BOM, multiline/quoted fields, leading zeros,
   malformed input and preservation of existing files.
 - `test_workflows.py`: local GDAL/PROJ recipes (axis order, overseas CRS, missing `.prj`,
-  area, mosaic, clip, COG marker, weighted averaging, hillshade and vertical transforms).
+  area, mosaic, clip, COG marker, weighted averaging, hillshade, zonal statistics on
+  GDAL ≥ 3.12 and vertical transforms).
 - `test_geopandas.py`: spatial join, CRS and format round trips, and zonal-statistics
-  attachment after filtering an index.
+  attachment with filtered or repeated indices, without overwriting source attributes.
 - `test_vector_quality.py`: invalid-geometry diagnosis and repair, normalized geometry
-   duplicates, null/empty handling and GeoPackage round trip.
+  duplicates, joint attribute/geometry comparisons, null/empty handling, collapsed
+  components and GeoPackage round trip.
 - `test_mapshaper.py`: percentage and metric simplification, small-feature retention,
   shared borders across layers, TopoJSON arcs, CRS and attribute preservation.
 - `test_live.py`: bounded geocoding, WFS, WMS and WMTS smoke tests; skipped by default.
@@ -75,6 +79,9 @@ Mapshaper tests also need the Mapshaper CLI and the optional Python dependencies
 compatible Node.js installed, users can run `npm install --global mapshaper@0.7.83`.
 CI uses Node.js 22 and that pinned Mapshaper version, and sets
 `GEOSKILLS_REQUIRE_MAPSHAPER=1` so missing Mapshaper dependencies fail instead of skipping.
+The duplicate-feature and statistics-attachment regressions execute the Python examples
+from their skill references via `skill_examples.py`, so changing the documentation changes
+the code under test.
 If `gdalinfo --version` fails (for example, an undefined `sqlite3_total_changes64` symbol),
 repair the active GDAL/SQLite environment or use a clean environment before rerunning.
 The tests deliberately do not hide a broken installation.
