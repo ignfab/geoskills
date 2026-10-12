@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import re
 import subprocess
 import tempfile
 import unittest
@@ -151,6 +152,25 @@ class LocalWorkflowTests(GDALCase):
         self.assertEqual(info["bands"][0]["type"], "Byte")
         self.assertGreater(info["bands"][0]["maximum"], info["bands"][0]["minimum"])
         self.assert_crs(target, 2154)
+
+    def test_gdal_zonal_stats(self):
+        version = re.search(r"GDAL (\d+)\.(\d+)", self.run_tool("gdalinfo", "--version"))
+        if not shutil.which("gdal") or tuple(map(int, version.groups())) < (3, 12):
+            self.skipTest("The zonal-stats CLI needs GDAL >= 3.12")
+        zones = self.output / "zones.gpkg"
+        self.run_tool("ogr2ogr", "-t_srs", "EPSG:2154", zones, DATA / "saint_mande.geojson")
+        target = self.output / "stats.csv"
+        self.run_tool("gdal", "raster", "zonal-stats", "--stat", "mean", "--stat", "min",
+                      "--stat", "max", "--stat", "count", "--zones", zones,
+                      "--include-field", "code_insee", "-f", "CSV", self.mosaic(), target)
+        with target.open(encoding="utf-8", newline="") as handle:
+            rows = list(csv.DictReader(handle))
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["code_insee"], "94067")
+        self.assertEqual(float(rows[0]["count"]), 9046)
+        self.assertAlmostEqual(float(rows[0]["mean"]), 50.15, delta=0.05)
+        self.assertAlmostEqual(float(rows[0]["min"]), 39.30, delta=0.05)
+        self.assertAlmostEqual(float(rows[0]["max"]), 54.08, delta=0.05)
 
     def test_ntf_with_local_grid(self):
         operations = self.run_tool("projinfo", "-s", "EPSG:27572", "-t", "EPSG:2154",
