@@ -3,6 +3,7 @@ import importlib.util
 import unittest
 
 from test_workflows import GDALCase
+from skill_examples import run_example
 
 
 class VectorQualityTests(GDALCase):
@@ -72,6 +73,55 @@ class VectorQualityTests(GDALCase):
         self.assertTrue(check.geometry.is_valid.all())
         self.assertFalse(check.geometry.isna().any())
         self.assertFalse(check.geometry.is_empty.any())
+
+    def test_duplicate_features_require_the_same_pair(self):
+        import geopandas as gpd
+        from shapely.geometry import Point
+
+        source = gpd.GeoDataFrame(
+            {"source": ["a", "a", "b", "b"], "source_id": ["1", "1", "2", "2"],
+             "status": ["active"] * 4},
+            geometry=[Point(0, 0), Point(1, 1), Point(0, 0), Point(1, 1)], crs=2154,
+        )
+        result = run_example("vector-data-quality/references/attributes-and-duplicates.md",
+                             "### Duplicate features", {"gdf": source})
+        self.assertEqual(result["duplicate_feature"].tolist(), [False] * 4)
+
+    def test_duplicate_feature_keys_preserve_nulls_and_separators(self):
+        import geopandas as gpd
+        from shapely.geometry import Polygon
+
+        square = Polygon([(0, 0), (2, 0), (2, 2), (0, 2), (0, 0)])
+        source = gpd.GeoDataFrame(
+            {"source": [None, "<NULL>", "a\x1fb", "a", "same", "same", "x", "x", "y", "y"],
+             "source_id": ["1", "1", "c", "b\x1fc", "2", "2", "3", "3", "4", "4"],
+             "status": ["active"] * 10},
+            geometry=[square] * 5 + [square.reverse(), None, None, Polygon(), Polygon()],
+            crs=2154,
+        )
+        result = run_example("vector-data-quality/references/attributes-and-duplicates.md",
+                             "### Duplicate features", {"gdf": source})
+        self.assertEqual(result["duplicate_feature"].tolist(),
+                         [False, False, False, False, True, True, False, False, False, False])
+
+    def test_cli_repair_discards_collapsed_collection_parts(self):
+        import geopandas as gpd
+        from shapely.geometry import Polygon
+
+        spike = Polygon([(0, 0), (2, 0), (2, 2), (1, 2), (1, 3),
+                         (1, 2), (0, 2), (0, 0)])
+        source = gpd.GeoDataFrame({"id": ["spike"]}, geometry=[spike], crs=2154)
+        python_result = source.geometry.make_valid().iloc[0]
+        self.assertEqual({part.geom_type for part in python_result.geoms},
+                         {"Polygon", "LineString"})
+        path = self.output / "source.gpkg"
+        source.to_file(path, layer="features")
+        target = self.output / "repaired.gpkg"
+        self.run_tool("ogr2ogr", "-f", "GPKG", target, path, "-makevalid")
+        restored = gpd.read_file(target)
+        self.assertEqual(len(restored), 1)
+        self.assertEqual(restored.geometry.iloc[0].geom_type, "Polygon")
+        self.assertAlmostEqual(restored.geometry.iloc[0].area, 4)
 
 
 if __name__ == "__main__":

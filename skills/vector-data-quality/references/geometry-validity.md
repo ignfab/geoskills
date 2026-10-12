@@ -85,15 +85,22 @@ Inspect metadata and geometry types:
 ogrinfo -al -so input.gpkg
 ```
 
-Repair while writing a new GeoPackage:
+When discarding lower-dimensional collection parts fits the requested output, repair
+while writing a new GeoPackage:
 
 ```bash
 ogr2ogr -f GPKG repaired.gpkg input.gpkg -makevalid -nlt PROMOTE_TO_MULTI
 ```
 
-`-nlt PROMOTE_TO_MULTI` promotes single polygons to multipart but does not turn lines from
-collapsed polygons back into polygons. Reopen the result and inspect its geometry types and
-feature count.
+`ogr2ogr -makevalid` calls `MakeValid()` and then removes lower-dimensional components
+from collections. A polygon with a collapsed spike may lose its LineString component;
+`-nlt PROMOTE_TO_MULTI` does not prevent that loss or turn collapsed lines into polygons.
+For a reviewable repair that retains those components, use the Python workflow above.
+Check that the output layer schema accepts the resulting geometry types; a driver warning
+about inserting a GeometryCollection into a Polygon layer is not a conformant export.
+
+Reopen the result and inspect geometry types, empties, feature counts and components.
+See the official [ogr2ogr documentation](https://gdal.org/en/stable/programs/ogr2ogr.html#cmdoption-ogr2ogr-makevalid).
 
 ## Topology between features
 

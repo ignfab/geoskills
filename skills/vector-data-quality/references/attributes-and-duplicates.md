@@ -55,13 +55,24 @@ Geometry duplicates are not necessarily duplicate features: stacked addresses, t
 observations and administrative records may legitimately share geometry. Compare business
 keys and relevant attributes before deleting anything.
 
-A conservative exact-feature key:
+### Duplicate features
+
+Compare the business attributes and normalized geometry **together**, on the same rows:
 
 ```python
 keys = ["source", "source_id", "status"]
-feature_key = gdf[keys].astype("string").fillna("<NULL>").agg("\x1f".join, axis=1)
-duplicate_feature = feature_key.duplicated(keep=False) & duplicate_geometry
+feature_key = gdf[keys].copy()
+feature_key["geometry_wkb"] = gdf.geometry.normalize().to_wkb()
+comparable = ~gdf.geometry.isna() & ~gdf.geometry.is_empty
+duplicate_feature = comparable & feature_key.duplicated(keep=False)
 ```
+
+Choose `keys` from the actual schema and reserve `geometry_wkb` for the comparison.
+Separate duplicate-attribute and duplicate-geometry masks may refer to different pairs
+of rows: intersecting those masks produces false positives. Keep native attribute values;
+joining strings with a separator or replacing nulls with a literal can create collisions.
+Normalization handles coordinate ordering, not every topologically equivalent geometry
+(for example, one with additional collinear vertices).
 
 ## Schema and format constraints
 

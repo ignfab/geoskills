@@ -1,6 +1,6 @@
 ---
 name: vector-data-quality
-description: "Audits and repairs vector geospatial data quality with GeoPandas, Shapely and GDAL: invalid or empty geometries, self-intersections, duplicate features, missing identifiers, schema issues, implausible extents and geometry-type changes after repair. Use when the user wants to check the quality of a vector layer, validate, clean or repair it, fix invalid geometries, remove duplicates, diagnose a TopologyException, or prepare GeoPackage, Shapefile or GeoJSON data before spatial analysis or publication."
+description: "Audits and repairs vector geospatial data quality with GeoPandas, Shapely and GDAL: invalid or empty geometries, self-intersections, duplicate features, missing identifiers, schema issues, implausible extents and geometry-type changes after repair. Use when the user wants to check the quality of a vector layer, validate, clean or repair it, fix invalid geometries, remove duplicates, or diagnose a TopologyException."
 ---
 
 # Vector data quality
@@ -16,9 +16,17 @@ problem is a missing, wrong or unsuitable CRS rather than bad geometry.
 - **GeoPandas ≥ 1.0** and **Shapely ≥ 2.0** for the Python workflow.
 - **GDAL ≥ 3.1** for the optional `ogr2ogr -makevalid` CLI workflow.
 - Check existing versions; if a tool is missing, give the user the install command but do
-  not install it automatically.
+  not install it or run interactive setup yourself.
+
+Install: `python3 -m pip install 'geopandas>=1.0' 'shapely>=2.0'` for Python;
+`sudo apt install gdal-bin` (Ubuntu/Debian) for the optional CLI.
 
 ## Audit first
+
+List the layers with `gpd.list_layers("input.gpkg")` and read the intended layer explicitly
+when there is more than one. Inspect columns and CRS before adapting the examples: `id`
+is a placeholder for a source identifier, not a field guaranteed to exist. If no stable
+identifier exists, retain the source row position in the audit without inventing a business ID.
 
 ```python
 import geopandas as gpd
@@ -64,11 +72,15 @@ clean.loc[bad, "geometry"] = clean.geometry[bad].make_valid()
 `make_valid()` may turn a Polygon into a MultiPolygon or GeometryCollection. Inspect the
 result and decide whether those types fit the target schema; never discard components
 silently. Preserve and review `quarantine` rather than dropping those records unnoticed.
-For a format conversion without Python:
+For a CLI repair where discarding lower-dimensional parts of collections is acceptable:
 
 ```bash
 ogr2ogr -f GPKG repaired.gpkg input.gpkg -makevalid
 ```
+
+Unlike the Python recipe, `ogr2ogr -makevalid` removes lower-dimensional parts from
+collections (for example, a collapsed line beside a polygon). Use Python to retain and
+review every component before choosing the output schema.
 
 See [references/geometry-validity.md](references/geometry-validity.md) for diagnosis,
 repair strategies and topology pitfalls, and
