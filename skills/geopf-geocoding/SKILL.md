@@ -14,6 +14,10 @@ with the IGN Géoplateforme geocoding API. No API key is needed.
 - Optional: `jq` to extract fields, GDAL (`ogr2ogr`) to convert the results.
 - If a tool is missing, give the user the install command and let them run it; do not install software yourself.
 
+Install: `sudo apt install curl` (Ubuntu/Debian); optional tools:
+`sudo apt install jq gdal-bin`. Do not run interactive setup. Inspect the input CSV
+headers and `/getCapabilities` before choosing columns or index-specific filters.
+
 ## Endpoints
 
 Base URL: `https://data.geopf.fr/geocodage`
@@ -82,6 +86,10 @@ The output CSV keeps the input columns and adds `longitude`, `latitude`, `result
 
 ## Validate the output
 
+- For a single query, check that `features` is non-empty or report no match. Verify
+  longitude/latitude order and plausible coordinates for the requested territory,
+  including overseas locations; do not interpret API coordinates as Lambert-93.
+- For a CSV, compare input and output record counts and IDs before reporting completion.
 - Count the results by status (`ok`, `not-found`, `skipped`, `error`) and report the counts.
   Never drop unmatched rows silently.
 - When the input has a postcode or an INSEE code, check that `result_postcode` or
