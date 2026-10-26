@@ -60,7 +60,7 @@ export AB_WITHOUT_FLAGS=""                      # extra claude flags, B runs onl
 
 POSITIVE="GEO-01 GEO-02 GEO-03 GEO-04 GEO-05 CRS-01 CRS-02 CRS-03 CRS-04 CRS-05
 RAS-01 RAS-02 RAS-03 RAS-04 RAS-05 WMS-01 WMS-02 WMS-03 WMS-04 WMS-05
-WFS-01 WFS-02 GPD-01 GPD-02 GPD-03 GPD-04 VDQ-01 VDQ-02 MS-01 MS-02 MS-03 MS-04"
+WFS-01 WFS-02 WFS-04 WFS-05 WFS-06 GPD-01 GPD-02 GPD-03 GPD-04 VDQ-01 VDQ-02 MS-01 MS-02 MS-03 MS-04"
 NEGATIVE="GEO-N1 CRS-N1 RAS-N1 WMS-N1 WFS-N1 GPD-N1 VDQ-N1 MS-N1 MS-N2"
 
 # Print the French prompt of a scenario, read from tests/*.md.
@@ -263,9 +263,9 @@ source ab.sh
 AB_DRY=1 ab_campaign 1
 ```
 
-Then set `export AB=/path/to/a/new/campaign` for actual agent calls. One repetition has **75 runs**:
-33 positive scenarios in both modes and 9 negatives in A. At the example budget of $2 per
-run, the caps total $150 per repetition and $450 for three repetitions. Starting the paid
+Then set `export AB=/path/to/a/new/campaign` for actual agent calls. One repetition has **81 runs**:
+36 positive scenarios in both modes and 9 negatives in A. At the example budget of $2 per
+run, the caps total $162 per repetition and $486 for three repetitions. Starting the paid
 campaign is a separate user decision; a dry run does not authorize it.
 
 Smoke pass, one repetition:
@@ -358,6 +358,9 @@ whose scenarios are all controls adds nothing measurable.
 | WFS-01 | A + B | NET, GDAL | namespaced typename; `-spat_srs`; no `-limit`; completeness checked |
 | WFS-02 | A + B | NET, GDAL | `-limit 5` in a small box; RFC 7946 output |
 | WFS-03 | A + B, after WFS-01 | NET, GDAL | `-update -nln regions`; buildings layer intact; layer name taken from capabilities |
+| WFS-04 | A + B | — | missing Parquet writer: GDAL options before any fallback; one file per layer |
+| WFS-05 | A + B | — | missing CLI: user-run installation choices, no silent Python substitution |
+| WFS-06 | A + B | — | Python proposed only as an agreed last resort, without installing software |
 | WFS-N1 | A | NET | `geopf-wms-wmts` loaded |
 
 ### [geopandas-basics](geopandas-basics.md)
@@ -424,7 +427,7 @@ Summarize per skill over the three repetitions:
 | crs-reprojection-france | /15 | /15 | | | |
 | gdal-raster-basics | /15 | /15 | | | |
 | geopf-wms-wmts | /15 | /15 | | | |
-| geopf-wfs-download | /9 | /9 | | | |
+| geopf-wfs-download | /18 | /18 | | | |
 | geopandas-basics | /12 | /12 | | | |
 | vector-data-quality | /6 | /6 | | | |
 | mapshaper-simplify | /12 | /12 | | | |

@@ -35,6 +35,55 @@ Run after WFS-01. Verify that the existing buildings remain intact and a `region
 is created. Use `-update -nln regions`; reserve `-append` for adding features to an
 existing compatible layer. Resolve the actual ADMIN EXPRESS layer name from capabilities.
 
+## WFS-04 — Missing Parquet driver
+
+> Je veux exporter les communes et les départements ADMIN EXPRESS en GeoParquet.
+> Supposons que le contrôle initial confirme que ogr2ogr fonctionne et lit le WFS, mais
+> que son pilote Parquet est absent. Présente les solutions avant tout téléchargement
+> ou conversion, et explique comment organiser les fichiers de sortie.
+
+**Expected skill:** `geopf-wfs-download`.
+
+- [ ] distinguishes a working GDAL/WFS reader from a missing output writer
+- [ ] offers user-run Conda/Mamba, compatible distribution packages and official GDAL
+  `ubuntu-full` container options; does not promise Parquet in `ubuntu-small`
+- [ ] asks for the environment choice instead of silently using Python, `uv` or GeoPackage
+- [ ] never installs packages or pulls a container image itself
+- [ ] rechecks capabilities in the chosen environment and uses it for output validation
+- [ ] explains one GeoParquet file per typename, with separate validation of both files
+
+## WFS-05 — Missing ogr2ogr
+
+> Comment préparer un téléchargement WFS de la Géoplateforme en GeoPackage si la
+> commande ogr2ogr n'est pas disponible ? Propose la marche à suivre sans rien installer
+> et sans lancer le téléchargement.
+
+**Expected skill:** `geopf-wfs-download`.
+
+- [ ] supplies GDAL installation/container choices for the user, with WFS and GPKG checks
+- [ ] waits for the user's environment choice; does not launch an interactive setup
+- [ ] does not use an already installed Python package as implicit permission to switch
+
+## WFS-06 — Explicit last-resort proposal
+
+> Je dois obtenir du GeoParquet depuis le WFS de la Géoplateforme, mais aucun GDAL avec
+> le pilote Parquet n'est utilisable, je ne peux pas en installer et Docker est
+> indisponible. Quelle solution de dernier recours proposes-tu ? N'installe rien et
+> n'exécute pas encore la conversion.
+
+**Expected skill:** `geopf-wfs-download`, with `geopandas-basics` only for an agreed
+Python fallback.
+
+- [ ] explains why the normal GDAL/container options are unavailable
+- [ ] proposes Python conditionally and obtains agreement before executing a conversion
+- [ ] checks existing dependencies; no automatic installation, including via `uv`
+- [ ] retains the requested format, per-layer files and output-validation requirements
+
+These are planning scenarios and need no service requests. To reproduce WFS-04 against
+real CLI checks, use an isolated test environment with `OGR_SKIP=Parquet`; it disables
+that driver without uninstalling software. Command tests and dry runs do not prove that
+an agent follows the tooling rule.
+
 ## WFS-N1 — Negative: raster imagery
 
 > Télécharge l'orthophoto du Capitole de Toulouse.
