@@ -19,7 +19,9 @@ class ValidationTests(unittest.TestCase):
         self.skill.mkdir(parents=True)
         (self.skill / "README.md").write_text("# Example\n")
 
-    def check(self, frontmatter, body=""):
+    def check(self, frontmatter, body="", *, required_sections=True):
+        if required_sections:
+            body += "\n## Prerequisites\nUse existing tools.\n## Validate the output\nCheck the result.\n"
         (self.skill / "SKILL.md").write_text(f"---\n{frontmatter}\n---\n{body}")
         return validator.validate(self.root)[0]
 
@@ -33,6 +35,16 @@ class ValidationTests(unittest.TestCase):
             with self.subTest(case=case):
                 self.assertTrue(self.check("name: example-skill\n" + case))
         self.assertTrue(self.check("name: other-name\ndescription: Useful"))
+
+    def test_required_workflow_sections(self):
+        fields = "name: example-skill\ndescription: Useful"
+        for heading in ("Prerequisites", "Validate the output"):
+            with self.subTest(missing=heading):
+                other = "Prerequisites" if heading == "Validate the output" else "Validate the output"
+                body = f"## {other}\nInstructions.\n```markdown\n## {heading}\n```\n"
+                errors = self.check(fields, body, required_sections=False)
+                self.assertTrue(any(f"missing required section '## {heading}'" in error
+                                    for error in errors), errors)
 
     def test_reference_links(self):
         refs = self.skill / "references"

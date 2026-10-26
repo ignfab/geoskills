@@ -40,10 +40,13 @@ def frontmatter_fields(text):
     return fields
 
 
+def without_fenced_code(text):
+    return re.sub(r"^(`{3,}|~{3,}).*?^\1[^\n]*$", "", text, flags=re.M | re.S)
+
+
 def local_targets(path):
     """Read inline Markdown links outside fenced code; ignore external URLs and anchors."""
-    text = re.sub(r"^(`{3,}|~{3,}).*?^\1[^\n]*$", "", path.read_text(encoding="utf-8"),
-                  flags=re.M | re.S)
+    text = without_fenced_code(path.read_text(encoding="utf-8"))
     for target in re.findall(r"\[[^\]]*\]\(([^\s)]+)\)", text):
         target = target.strip("<>")
         parsed = urlsplit(target)
@@ -65,8 +68,9 @@ def validate(root):
                 errors.append(f"skills/{directory.name}: missing SKILL.md")
     for path in skill_files:
         relative = path.relative_to(root)
+        text = path.read_text(encoding="utf-8")
         try:
-            fields = frontmatter_fields(path.read_text(encoding="utf-8"))
+            fields = frontmatter_fields(text)
         except (ValueError, yaml.YAMLError) as exc:
             errors.append(f"{relative}: {exc}")
             continue
@@ -82,6 +86,10 @@ def validate(root):
                 errors.append(f"{relative}: invalid skill name '{name}'")
         if not (path.parent / "README.md").is_file():
             errors.append(f"{relative}: missing skill README.md")
+        headings = set(re.findall(r"^## ([^\r\n]+)", without_fenced_code(text), flags=re.M))
+        for heading in ("Prerequisites", "Validate the output"):
+            if heading not in headings:
+                errors.append(f"{relative}: missing required section '## {heading}'")
         # Walk links from the entrypoint: long references must be discoverable by an agent.
         reachable = set()
         pending = [path.resolve()]
