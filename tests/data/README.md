@@ -16,6 +16,12 @@ unchanged; write generated files and sidecars outside this directory.
   intentionally omitted. The two adjacent tiles form a 145 × 195 pixel mosaic.
 - `saint_mande.geojson`: IGN ADMIN EXPRESS boundary of Saint-Mandé (INSEE `94067`),
   EPSG:4326 longitude/latitude; approximately 90.6 ha in Lambert-93.
+- `admin_units_synthetic.geojson`: three invented polygons near 2° E, 48° N, created for
+  Mapshaper tests (repository MIT license, no external data). EPSG:4326 longitude/latitude.
+  Features `001` and `002` partition a 0.02° × 0.02° rectangle with an exactly shared,
+  zigzag border; feature `003` is a separate 0.0002° square. The tiny polygon tests
+  `keep-shapes`; all identifiers deliberately retain leading zeros. These are not real
+  administrative boundaries.
 
 The IGN boundary and DEM extracts are distributed under the
 [Licence Ouverte 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence/).

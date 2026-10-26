@@ -12,13 +12,19 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - name: Install validation dependencies
         run: python -m pip install -r tests/requirements.txt -r tests/requirements-geospatial.txt
       - name: Install GDAL for local fixture tests
         run: sudo apt-get update && sudo apt-get install -y gdal-bin
+      - name: Install Mapshaper for local fixture tests
+        run: npm install --global mapshaper@0.7.83
       - name: Validate metadata and local references
         run: python .github/validate-skills.py
-      - name: Test helpers and local GDAL workflows
+      - name: Test helpers and local geospatial workflows
         run: python -m unittest discover -s tests -p 'test_*.py' -v
         env:
           GEOSKILLS_REQUIRE_GDAL: '1'
+          GEOSKILLS_REQUIRE_MAPSHAPER: '1'
