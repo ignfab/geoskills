@@ -13,12 +13,39 @@ To process the downloaded layers in Python (joins, buffers, overlays), see the
 
 ## Prerequisites
 
-- **GDAL** with WFS support (`ogr2ogr` available).
-- Check WFS support: `ogr2ogr --formats | grep -i WFS`.
+- Working **GDAL** CLI tools (`ogr2ogr` and `ogrinfo`) from the same environment, with
+  WFS read support and an output driver that can create the requested vector format.
+- Check capabilities before downloading. For GeoParquet, use the following commands;
+  replace `Parquet` with the requested driver for other formats (e.g. `GPKG`, `GeoJSON`):
+
+```bash
+ogr2ogr --version
+ogrinfo --format WFS
+ogrinfo --format Parquet
+```
+
+The output driver must report vector support and `Create()` capability, not merely
+appear in the driver list. A GDAL version number alone does not prove driver availability.
 
 Install: `sudo apt install gdal-bin` (Ubuntu/Debian) or `conda install -c conda-forge gdal`.
-If a tool is missing, give the user the install command and let them run it; do not
-install software yourself.
+Distribution packages may omit Parquet. For that driver, offer
+`conda install -c conda-forge gdal libgdal-arrow-parquet` or the
+[GDAL container option](references/formats.md#missing-gdal-or-parquet-support).
+
+## Tooling rule
+
+- Use `ogr2ogr` for downloads and conversions. Do not silently substitute Python
+  (GeoPandas, Fiona, pyogrio, PyArrow), `uv`, or a different output format.
+- If the tool cannot run, WFS support is missing, or the requested driver cannot write,
+  stop the download/conversion and explain the missing capability. Offer a suitable GDAL
+  installation or container and ask which option the user wants, unless they already
+  chose one. Recheck capabilities in that environment before continuing.
+- **Never install software yourself**, including packages pulled implicitly by `uv` or
+  a container command. Provide installation/image-pull commands for the user to run;
+  do not start an interactive installer or login.
+- A Python fallback is a last resort when neither a suitable GDAL environment nor a GDAL
+  container is usable: explain the tradeoff and obtain the user's agreement before using
+  existing Python packages. An explicit user request for Python takes precedence.
 
 ## WFS endpoint
 
@@ -77,6 +104,8 @@ ogr2ogr -f GeoJSON -lco RFC7946=YES -limit 5000 \
 
 Before reporting a download as complete:
 
+- Reopen the output with the same capable GDAL environment/container used to create it;
+  the host's `ogrinfo` may lack the driver even when the container has it.
 - Run `ogrinfo -so <output> <layer>`: the feature count must be non-zero, the CRS the one
   expected, and the extent must cover the requested area.
 - Compare with an order of magnitude you know. For polygons, compute the total area in
@@ -88,7 +117,7 @@ Before reporting a download as complete:
 ## References
 
 - [references/formats.md](references/formats.md) — output formats, `-f` driver names and
-  one example per format (GeoJSON, GPKG, Shapefile, GeoParquet, GML).
+  examples, including missing-driver options and one-file-per-layer GeoParquet exports.
 - [references/ogr2ogr-options.md](references/ogr2ogr-options.md) — filtering, reprojection,
   field selection, performance and troubleshooting.
 

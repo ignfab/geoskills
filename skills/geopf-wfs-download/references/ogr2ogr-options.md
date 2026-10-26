@@ -138,7 +138,10 @@ ogr2ogr -spat 1.43 43.59 1.45 43.61 -spat_srs EPSG:4326 -f GPKG -progress \
 ## Troubleshooting
 
 - **`unable to find driver WFS`** — GDAL was built without WFS support; check with
-  `ogr2ogr --formats | grep -i WFS`.
+  `ogrinfo --format WFS`. Follow the [tooling rule](../SKILL.md#tooling-rule): offer a
+  suitable GDAL environment instead of switching to Python or installing packages.
+- **Missing output driver** (for example Parquet) — check `ogrinfo --format Parquet`
+  for vector creation support and use the [missing-driver options](formats.md#missing-gdal-or-parquet-support).
 - **`Layer not found`** — the namespace prefix is missing, or the layer name changed. List
   the available layers with `ogrinfo "WFS:https://data.geopf.fr/wfs/ows"`.
 - **Empty output** — the `-spat` bounding box is probably expressed in the wrong SRS; check
