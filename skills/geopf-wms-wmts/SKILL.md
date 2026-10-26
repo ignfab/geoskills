@@ -78,10 +78,14 @@ public services.
 
 - A non-zero exit code means the download failed.
 - Run `gdalinfo -stats <output>`: check the CRS, pixel size and size you asked for, and
-  statistics that are not all 0 or nodata. After a transient HTTP error (502, 400) from
-  the tile server, GDAL can still write a file with empty blocks. Rerun the command: the
-  tiles already fetched come from GDAL's local cache. Do not add those codes to
-  `<ZeroBlockHttpCodes>`, which would hide the error.
+  statistics that are not all 0 or nodata. GDAL can leave a partial file after an HTTP
+  error; non-empty statistics alone do not prove that every tile was fetched. Retry a
+  transient 429/502/503/504 at most twice, respecting `Retry-After` when present. Use a new
+  output path for each attempt or replace only the failed output; `gdalwarp` may otherwise
+  refuse to recreate it. Reuse cached tiles only when a persistent GDAL cache is configured.
+  Investigate a repeated HTTP 400 as a request/configuration error. Do not add these codes
+  to `<ZeroBlockHttpCodes>`, which would hide failures. Report an incomplete download if
+  retries fail.
 - For elevation, check that the values are plausible: about −10 to 4,810 m in mainland
   France, with `-99999` as nodata.
 - Do not pipe `gdalwarp` or `gdal_translate` through `head` or `tail`.
