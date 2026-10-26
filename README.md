@@ -1,5 +1,7 @@
 # geoskills
 
+[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-Compatible-blue)](https://agentskills.io/)
+
 Some experimental [skills](https://cursor.com/fr/docs/context/skills) for working with
 spatial data.
 
