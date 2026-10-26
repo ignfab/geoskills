@@ -17,6 +17,7 @@ This project is in an exploratory phase. The stability of the skills is not yet 
 | Skill | Description |
 | --- | --- |
 | [geopf-wfs-download](skills/geopf-wfs-download/README.md) | Download vector layers (BD TOPO, ADMIN EXPRESS, cadastre) from the Géoplateforme WFS with `ogr2ogr`. |
+| [geoserver-cql-filter](skills/geoserver-cql-filter/README.md) | Write GeoServer WFS/WMS ECQL filters, including URL encoding and CRS:84 geometries with EWKT. |
 | [geopf-wms-wmts](skills/geopf-wms-wmts/README.md) | Download raster layers (orthophotos, Plan IGN, elevation) from the Géoplateforme WMTS / WMS-R with GDAL. |
 | [geopf-geocoding](skills/geopf-geocoding/README.md) | Geocode addresses, POIs and parcels (one by one or from a CSV file) with the Géoplateforme API. |
 | [gdal-raster-basics](skills/gdal-raster-basics/README.md) | Clip, reproject, mosaic and convert rasters (DEM, orthophotos) with GDAL, build COGs and compute zonal statistics. |
@@ -71,6 +72,7 @@ travailler la donnée géographique :
 - téléchargement de couches vecteur (WFS) et raster (WMTS / WMS — orthophotos, Plan IGN,
   altitude) de la Géoplateforme (IGN) ;
 - géocodage d'adresses, de lieux et de parcelles, unitaire ou en masse à partir d'un CSV ;
+- filtres attributaires et spatiaux GeoServer, avec prise en charge des géométries en CRS:84 ;
 - traitement de rasters (découpe, reprojection, mosaïque, COG, statistiques zonales) ;
 - systèmes de coordonnées français (Lambert-93, coniques conformes, DOM) ;
 - traitement vecteur en Python avec GeoPandas (jointures spatiales, croisements, tampons,
