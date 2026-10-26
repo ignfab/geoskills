@@ -16,6 +16,7 @@ whose `description` is written in English.
 | [gdal-raster-basics.md](gdal-raster-basics.md) | `gdal-raster-basics` |
 | [geopf-wms-wmts.md](geopf-wms-wmts.md) | `geopf-wms-wmts` |
 | [geopf-wfs-download.md](geopf-wfs-download.md) | `geopf-wfs-download` |
+| [geoserver-cql-filter.md](geoserver-cql-filter.md) | `geoserver-cql-filter` |
 | [geopandas-basics.md](geopandas-basics.md) | `geopandas-basics` |
 | [vector-data-quality.md](vector-data-quality.md) | `vector-data-quality` |
 | [mapshaper-simplify.md](mapshaper-simplify.md) | `mapshaper-simplify` |
@@ -58,6 +59,9 @@ python3 -m unittest discover -s tests -p 'test_*.py' -v
   files, required workflow sections and reference reachability.
 - `test_ab_runner.py`: complete dry-run scenario coverage, isolated fixture copies and
   failure propagation in the documented runner; agent calls are replaced by a test double.
+- `test_cql_requests.py`: documented curl commands against a local HTTP recorder; checks
+  parameter encoding, EWKT preservation, WFS sampling and WMS layer ordering. Requires
+  `curl` and `bash`; does not validate ECQL parsing or a live GeoServer datastore.
 - `test_split_csv.py`: record and byte limits, BOM, multiline/quoted fields, leading zeros,
   malformed input and preservation of existing files.
 - `test_workflows.py`: local GDAL/PROJ recipes (axis order, overseas CRS, missing `.prj`,
