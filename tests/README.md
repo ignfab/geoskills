@@ -56,6 +56,8 @@ python3 -m unittest discover -s tests -p 'test_*.py' -v
 
 - `test_validation.py`: real YAML parsing, empty/invalid metadata, duplicate keys, missing
   files, required workflow sections and reference reachability.
+- `test_ab_runner.py`: complete dry-run scenario coverage, isolated fixture copies and
+  failure propagation in the documented runner; agent calls are replaced by a test double.
 - `test_split_csv.py`: record and byte limits, BOM, multiline/quoted fields, leading zeros,
   malformed input and preservation of existing files.
 - `test_workflows.py`: local GDAL/PROJ recipes (axis order, overseas CRS, missing `.prj`,

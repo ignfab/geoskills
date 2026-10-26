@@ -1,9 +1,9 @@
 # A/B testing the skills
 
-This protocol measures what each skill adds. Every scenario of the `tests/<skill>.md` files
+This protocol measures what each skill adds. Every positive scenario in `tests/<skill>.md`
 is run twice under the same conditions: **A** with the skills of this repository installed,
-**B** without them. A scenario that passes in A and fails in B shows the value of the
-skill; a scenario that passes in both shows none.
+**B** without them. A higher pass rate in A is evidence of added value on those scenarios;
+when both pass, compare effort and cost as well as output quality.
 
 The scenario files remain the reference for prompts, expected results and checklists.
 This file adds the procedure, a runner and a scoring grid.
@@ -11,12 +11,12 @@ This file adds the procedure, a runner and a scoring grid.
 ## Principle
 
 - **One variable.** A and B differ only by `.claude/skills/` in the run directory: same
-  prompt, data, model, budget and allowed tools. Every run uses Opus.
+  prompt, data, model, budget and allowed tools. Choose the same model version in both modes.
 - **Outside the repository.** Runs happen under `$AB`, not under `tests/`. Inside the
   clone, the agent loads the root `CLAUDE.md` and can read `skills/`, which contaminates B.
 - **A fresh directory per run.** Each run gets its own copy of `data/` and an empty
-  `output/`, and is a new project for Claude Code: no memory, session or stale output
-  carries over. The runner refuses to reuse a directory.
+  `output/`, and starts a new session. The runner refuses to reuse a directory, but global
+  instructions and skills still apply; check the contamination limits below.
 - **A then B, back to back.** Live services change; running both modes of a scenario
   together keeps their data comparable.
 - **Repetitions.** Agent runs are not deterministic: after a one-repetition smoke pass, run
@@ -27,8 +27,8 @@ This file adds the procedure, a runner and a scoring grid.
 ## Prerequisites
 
 The runner needs the `claude` CLI and Python 3. The scenarios need the tools listed in the
-[scenario matrix](#scenario-matrix); install them before the campaign, since the runner
-denies install commands to the agent:
+[scenario matrix](#scenario-matrix). The user must install any missing tools before the
+campaign; the runner denies common installation commands:
 
 - GDAL ≥ 3.1 that starts (`gdalinfo --version`); GDAL ≥ 3.12 for the
   `gdal raster zonal-stats` path of RAS-05;
@@ -36,6 +36,8 @@ denies install commands to the agent:
   for example with `projsync --source-id fr_ign`;
 - `python3 -m pip install -r tests/requirements-geospatial.txt` for the GPD and VDQ
   scenarios;
+- Mapshaper 0.7.83 and compatible Node.js for the MS scenarios; see
+  [Mapshaper requirements](../skills/mapshaper-simplify/README.md#requirements);
 - network access to `data.geopf.fr` for the GEO, WFS and WMS scenarios.
 
 A missing tool fails both modes and hides the effect of the skill. `ab_env` records the
@@ -47,9 +49,9 @@ Save the block below as `ab.sh`, outside the repository, check the variables at 
 then load it with `source ab.sh`.
 
 ```bash
-export GEOSKILLS="$HOME/projects/geoskills"     # the repository clone
-export AB="$HOME/geoskills-ab/$(date +%F)"      # campaign root, outside the repository
-export AB_MODEL="opus"                          # Opus only, in both modes
+export GEOSKILLS="${GEOSKILLS:-$HOME/projects/geoskills}"  # the repository clone
+export AB="${AB:-$HOME/geoskills-ab/$(date +%F)}"          # outside the repository
+export AB_MODEL="${AB_MODEL:-opus}"              # same model/version in both modes
 export AB_BUDGET="2"                            # USD cap per run
 export AB_TOOLS="Bash Read Write Edit Glob Grep WebFetch WebSearch"
 export AB_DENY="Bash(sudo *) Bash(pip install *) Bash(pip3 install *) Bash(python3 -m pip install *) Bash(conda install *) Bash(mamba install *) Bash(apt *) Bash(apt-get *) Bash(brew install *) Bash(npm install *)"
@@ -58,8 +60,8 @@ export AB_WITHOUT_FLAGS=""                      # extra claude flags, B runs onl
 
 POSITIVE="GEO-01 GEO-02 GEO-03 GEO-04 GEO-05 CRS-01 CRS-02 CRS-03 CRS-04 CRS-05
 RAS-01 RAS-02 RAS-03 RAS-04 RAS-05 WMS-01 WMS-02 WMS-03 WMS-04 WMS-05
-WFS-01 WFS-02 GPD-01 GPD-02 GPD-03 GPD-04 VDQ-01 VDQ-02"
-NEGATIVE="GEO-N1 CRS-N1 RAS-N1 WMS-N1 WFS-N1 GPD-N1 VDQ-N1"
+WFS-01 WFS-02 GPD-01 GPD-02 GPD-03 GPD-04 VDQ-01 VDQ-02 MS-01 MS-02 MS-03 MS-04"
+NEGATIVE="GEO-N1 CRS-N1 RAS-N1 WMS-N1 WFS-N1 GPD-N1 VDQ-N1 MS-N1 MS-N2"
 
 # Print the French prompt of a scenario, read from tests/*.md.
 ab_prompt() {
@@ -89,6 +91,8 @@ ab_env() {
     date -Iseconds
     echo "model: $AB_MODEL"
     claude --version
+    node --version
+    mapshaper -version
     gdalinfo --version 2>&1 | head -1
     cs2cs 2>&1 | head -1
     ls $(projinfo --searchpaths 2>/dev/null | sed 's|$|/fr_ign_*|') 2>/dev/null \
@@ -103,20 +107,27 @@ ab_env() {
 # Run one scenario in a fresh directory: ab_run <scenario> <with|without> [rep] [after]
 ab_run() {
   : "${GEOSKILLS:?}" "${AB:?}"
-  local id=$1 mode=$2 rep=${3:-1} after=$4 prompt flags=$AB_EXTRA_FLAGS
+  local id=$1 mode=$2 rep=${3:-1} after=${4:-} prompt flags=$AB_EXTRA_FLAGS status=0
   local dir="$AB/runs/$id/$mode-$rep"
   case $mode in with|without) ;; *) echo "mode must be with or without" >&2; return 1 ;; esac
   [ -e "$dir" ] && { echo "$dir exists: use another rep or AB" >&2; return 1; }
   prompt=$(ab_prompt "$id") || return 1
-  mkdir -p "$dir/output"
-  cp -r "$GEOSKILLS/tests/data" "$dir/data"
-  if [ "$mode" = with ]; then
-    mkdir -p "$dir/.claude/skills"
-    cp -r "$GEOSKILLS"/skills/* "$dir/.claude/skills/"
+  [ -n "$prompt" ] || { echo "$id has no prompt" >&2; return 1; }
+  if [ -n "$after" ] && [ ! -d "$AB/runs/$after/$mode-$rep/output" ]; then
+    echo "Missing prerequisite output: $after $mode-$rep" >&2
+    return 1
   fi
-  [ -n "$after" ] && cp -r "$AB/runs/$after/$mode-$rep/output/." "$dir/output/"
-  printf '%s\n' "$prompt" > "$dir/prompt.txt"
-  if [ -n "$AB_DRY" ]; then echo "$dir"; return 0; fi
+  mkdir -p "$dir/output" || return 1
+  cp -r "$GEOSKILLS/tests/data" "$dir/data" || return 1
+  if [ "$mode" = with ]; then
+    mkdir -p "$dir/.claude/skills" || return 1
+    cp -r "$GEOSKILLS"/skills/* "$dir/.claude/skills/" || return 1
+  fi
+  if [ -n "$after" ]; then
+    cp -r "$AB/runs/$after/$mode-$rep/output/." "$dir/output/" || return 1
+  fi
+  printf '%s\n' "$prompt" > "$dir/prompt.txt" || return 1
+  if [ "${AB_DRY:-0}" = 1 ]; then echo "$dir"; return 0; fi
   [ "$mode" = without ] && flags="$flags $AB_WITHOUT_FLAGS"
   echo "== $id $mode-$rep"
   (cd "$dir" && claude -p "$prompt" \
@@ -127,16 +138,22 @@ ab_run() {
       --allowedTools "$AB_TOOLS" \
       --disallowedTools "$AB_DENY" \
       $flags \
-      > transcript.jsonl)
-  ab_summary "$dir"
+      > transcript.jsonl) || status=$?
+  printf '%s\n' "$status" > "$dir/exit-code.txt" || return 1
+  ab_summary "$dir" || return 1
+  return "$status"
 }
 
 # One repetition of every scenario: A and B for positives, A only for negatives.
 ab_campaign() {
   local rep=${1:-1} id
-  for id in $POSITIVE; do ab_run "$id" with "$rep"; ab_run "$id" without "$rep"; done
-  ab_run WFS-03 with "$rep" WFS-01; ab_run WFS-03 without "$rep" WFS-01
-  for id in $NEGATIVE; do ab_run "$id" with "$rep"; done
+  for id in $POSITIVE; do
+    ab_run "$id" with "$rep" || return 1
+    ab_run "$id" without "$rep" || return 1
+  done
+  ab_run WFS-03 with "$rep" WFS-01 || return 1
+  ab_run WFS-03 without "$rep" WFS-01 || return 1
+  for id in $NEGATIVE; do ab_run "$id" with "$rep" || return 1; done
 }
 
 # Extract skills loaded, commands, final answer, cost and turns from a transcript.
@@ -146,6 +163,7 @@ import json, os, pathlib, re, sys
 d = pathlib.Path(sys.argv[1])
 ours = {p.name for p in pathlib.Path(os.environ["GEOSKILLS"], "skills").iterdir()}
 mode, rep = d.name.rsplit("-", 1)
+exit_code = int((d / "exit-code.txt").read_text())
 skills, files, cmds, result, model = [], [], [], {}, None
 for line in (d / "transcript.jsonl").read_text(encoding="utf-8").splitlines():
     try:
@@ -177,7 +195,8 @@ summary = {
     "install_attempts": len(installs),
     "turns": result.get("num_turns"), "cost_usd": result.get("total_cost_usd"),
     "duration_s": round(result.get("duration_ms", 0) / 1000),
-    "ok": bool(result) and not result.get("is_error"),
+    "exit_code": exit_code,
+    "ok": exit_code == 0 and bool(result) and not result.get("is_error"),
 }
 (d / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
 (d / "answer.md").write_text(str(result.get("result", "")) + "\n", encoding="utf-8")
@@ -187,6 +206,7 @@ flag = "  <-- CHECK: skill used in a run without skills" if leak else ""
 print(f"{summary['scenario']} {mode}-{rep}: model={model} skills={','.join(skills) or '-'} "
       f"turns={summary['turns']} cost={summary['cost_usd']} "
       f"time={summary['duration_s']}s installs={len(installs)}{flag}")
+sys.exit(0 if summary["ok"] else 1)
 PY
 }
 
@@ -227,13 +247,28 @@ PY
 | `ab_report` | Writes `$AB/report.md`: the environment and one row per run, with blank columns to score. |
 
 `claude -p` cannot ask for permission, so the allowed tools are listed in `AB_TOOLS`. The
-agent can run any shell command and reach the web; installations are denied and counted.
-Run the campaign on a machine where that is acceptable, and cap the cost with `AB_BUDGET`.
+agent can run shell commands and reach the web. The deny list and install counter cover
+common spellings, not every possible installer invocation; they are not a sandbox.
+Run the campaign in a disposable environment and cap the cost with `AB_BUDGET`.
 `AB_DRY=1` prepares a run directory without starting the agent.
+Preparation or agent failures stop the campaign; inspect the failing run before using a
+new repetition or campaign directory. Missing prerequisites must not count as skill failures.
 
 ## Run the campaign
 
-Smoke pass, one repetition (65 runs: 29 scenarios in both modes, 7 negatives in A):
+Prepare all directories without calling an agent first:
+
+```bash
+source ab.sh
+AB_DRY=1 ab_campaign 1
+```
+
+Then set `export AB=/path/to/a/new/campaign` for actual agent calls. One repetition has **75 runs**:
+33 positive scenarios in both modes and 9 negatives in A. At the example budget of $2 per
+run, the caps total $150 per repetition and $450 for three repetitions. Starting the paid
+campaign is a separate user decision; a dry run does not authorize it.
+
+Smoke pass, one repetition:
 
 ```bash
 source ab.sh
@@ -343,6 +378,17 @@ whose scenarios are all controls adds nothing measurable.
 | VDQ-02 | A + B | PY | `normalize()` before `duplicated()`; null and empty excluded |
 | VDQ-N1 | A | PY | `geopandas-basics` loaded, not `vector-data-quality` |
 
+### [mapshaper-simplify](mapshaper-simplify.md)
+
+| Scenario | Modes | Needs | Watch in B |
+|----------|-------|-------|------------|
+| MS-01 | A + B | Mapshaper, PY | shared borders, string identifiers and small-feature retention |
+| MS-02 | A + B | Mapshaper, PY | 100 m tolerance in a suitable projected CRS, then WGS84 export |
+| MS-03 | A + B | — | `keep-shapes` does not preserve every multipart island or hole |
+| MS-04 | A + B | Mapshaper, PY | independent variants from the source; measured size and geometry changes |
+| MS-N1 | A | PY | geometry repair without simplification; `vector-data-quality` selected |
+| MS-N2 | A | GDAL | raster resampling handled by `gdal-raster-basics` |
+
 ## Score a run
 
 For each row of `report.md`, in the run directory:
@@ -381,7 +427,8 @@ Summarize per skill over the three repetitions:
 | geopf-wfs-download | /9 | /9 | | | |
 | geopandas-basics | /12 | /12 | | | |
 | vector-data-quality | /6 | /6 | | | |
-| Negative scenarios (A only) | /21 | — | — | — | |
+| mapshaper-simplify | /12 | /12 | | | |
+| Negative scenarios (A only) | /27 | — | — | — | |
 
 ## Variants
 
@@ -395,8 +442,15 @@ Use a new `AB` directory for each variant, so that reports do not mix.
 ## Limits
 
 - User-level skills, plugins and `~/.claude/CLAUDE.md` load in both modes. A user-level
-  geospatial skill can solve a scenario in B: note it, or use the no-skill variant.
+  geospatial skill can solve a scenario in B. Use a disposable profile without overlapping
+  geospatial skills for a paired comparison; the no-skill variant is a separate experiment.
+  The transcript check detects explicit reads and invocations, not every form of inherited
+  context. Absence of a warning does not prove that B was uncontaminated.
 - VDQ-01 and VDQ-02 have no fixture: the agent builds its own data, so compare the
   procedure, not the values.
 - Live results (scores, labels, layer lists) drift: compare A and B of the same repetition.
 - GDAL < 3.12 removes the `gdal raster zonal-stats` path of RAS-05 in both modes.
+- Automated runner tests use a fake CLI and make no paid calls. They verify preparation,
+  bookkeeping and error handling, not live agent behavior or skill selection. Record the
+  installed CLI version and check its flags against the
+  [official programmatic usage guide](https://code.claude.com/docs/en/headless).
