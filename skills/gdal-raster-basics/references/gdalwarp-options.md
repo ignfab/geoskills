@@ -114,5 +114,7 @@ gdalwarp -multi -wo NUM_THREADS=ALL_CPUS -wm 2048 \
   gdalwarp would instead warp *into* the existing file.
 - **Blocky DEM after reprojection**: the default resampling is `near`. Use `-r bilinear`.
 - **Missing or unknown CRS** (`gdalinfo` shows no coordinate system): assign one with
-  `gdal_translate -a_srs EPSG:2154 in.tif out.tif`. Do not use `gdalwarp -t_srs` for this,
-  because it would transform the data.
+  `gdal_translate -a_srs <confirmed_source_crs> in.tif out.tif` only after confirming it
+  from the delivery metadata or a known control point. Coordinates alone do not prove
+  that a raster is Lambert-93. Assignment changes metadata; `gdalwarp -t_srs` transforms
+  coordinates and requires a known source CRS.
