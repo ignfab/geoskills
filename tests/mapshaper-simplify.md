@@ -43,6 +43,22 @@ scenarios below separately check agent selection and judgment.
 **Expected result:** explains the largest-original-bounding-box limitation for multipart
 features, recommends comparing parts/holes, and does not promise complete preservation.
 
+## MS-04 — Compare delivery variants
+
+> Compare des versions conservant 50 %, 20 % et 5 % des sommets supprimables de
+> data/admin_units_synthetic.geojson pour une carte web. Écris les trois versions dans
+> output/ et compare le poids des fichiers, les sommets, les surfaces et les îles
+> conservées, sans perdre les identifiants ni les autres attributs.
+
+**Expected skill:** `mapshaper-simplify`
+
+- [ ] generates each variant from the unchanged source, simplifying all neighbors together
+- [ ] uses distinct unused output paths and checks every exported file
+- [ ] compares exact attribute values after matching features by identifier
+- [ ] reports actual byte and vertex counts rather than interpreting 20% as a file-size ratio
+- [ ] measures area in a suitable metric CRS and checks shared borders, parts and holes
+- [ ] explains that a tiny fixture cannot establish production performance or map quality
+
 ## MS-N1 — Negative: geometry repair
 
 > Répare les auto-intersections de mes polygones sans réduire le détail des limites.

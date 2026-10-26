@@ -48,11 +48,16 @@ field and suitable metric CRS first; `unit_id` and EPSG:2154 below are example c
 The example assumes one unique identifier per feature and inputs with known CRS.
 
 ```python
+from pathlib import Path
+
 import geopandas as gpd
+from pandas.testing import assert_frame_equal
 from shapely import get_num_coordinates
 
-source = gpd.read_file("units.geojson")
-result = gpd.read_file("units-simplified.geojson")
+source_path = Path("units.geojson")
+result_path = Path("units-simplified.geojson")
+source = gpd.read_file(source_path)
+result = gpd.read_file(result_path)
 assert source.crs is not None and result.crs is not None
 assert result.crs.to_epsg() == 4326
 assert len(result) == len(source) > 0
@@ -66,9 +71,20 @@ assert result.geom_type.isin(["Polygon", "MultiPolygon"]).all()
 
 before = source.set_index("unit_id").sort_index().to_crs(2154)
 after = result.set_index("unit_id").sort_index().to_crs(2154)
+assert_frame_equal(
+    before.drop(columns=before.geometry.name),
+    after.drop(columns=after.geometry.name),
+    check_like=True, check_dtype=False, check_exact=True,
+)
+assert before.geometry.is_valid.all() and (before.area > 0).all()
 print("Bounds before/after:", before.total_bounds, after.total_bounds)
-print("Vertices before/after:", get_num_coordinates(before.geometry).sum(),
-      get_num_coordinates(after.geometry).sum())
+vertices_before = int(get_num_coordinates(before.geometry).sum())
+vertices_after = int(get_num_coordinates(after.geometry).sum())
+bytes_before, bytes_after = source_path.stat().st_size, result_path.stat().st_size
+print("Vertices before/after:", vertices_before, vertices_after)
+print("Vertex reduction (%):", 100 * (1 - vertices_after / vertices_before))
+print("File bytes before/after:", bytes_before, bytes_after)
+print("File-size reduction (%):", 100 * (1 - bytes_after / bytes_before))
 print("Area change (%):", 100 * (after.area - before.area) / before.area)
 
 def parts_and_holes(geometry):
@@ -79,8 +95,15 @@ print("Parts/holes before:", before.geometry.map(parts_and_holes).to_dict())
 print("Parts/holes after:", after.geometry.map(parts_and_holes).to_dict())
 ```
 
-Also compare the attribute tables and inspect originally adjacent pairs: their boundary
-intersection should remain a line, without new overlaps or gaps. For large coverages,
+The attribute comparison ignores column order and reader-inferred dtype differences,
+but checks exact values, including string identifiers. The vertex totals count ring
+closures and shared coordinates in each polygon; they are not Mapshaper's percentage of
+removable arc vertices. File-size changes also depend on formatting and output format,
+so fewer vertices do not guarantee a smaller file. Compare equivalent encodings when
+choosing a delivery format.
+
+Inspect originally adjacent pairs: their boundary intersection should remain a line,
+without new overlaps or gaps. For large coverages,
 use a spatial index rather than all pairs. Individual polygon validity does not establish
 coverage validity. Evaluate changes relative to source quality and the intended scale;
 there is no universal acceptable area-loss percentage. If the dataset includes all of

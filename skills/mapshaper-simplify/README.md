@@ -4,6 +4,21 @@ Simplify administrative polygons for cartographic display and smaller web-map fi
 keeping shared borders consistent. Includes percentage-based and metric-distance recipes,
 GeoJSON/TopoJSON exports, and checks for feature loss and geometric changes.
 
+## Example uses
+
+- Prepare an ADMIN EXPRESS extract for a web map: download the required neighboring
+  units with `geopf-wfs-download`, audit them with `vector-data-quality`, then simplify
+  the display layer while preserving identifiers for joins to statistical data.
+- Compare 50%, 20% and 5% retention at the intended display scale. Generate each variant
+  from the same original dataset and report vertices, file bytes, per-unit area changes
+  and lost parts or holes before choosing the tradeoff.
+- Export neighboring layers together as TopoJSON so shared borders use common arcs,
+  or as WGS84 GeoJSON for a viewer that expects independent features.
+
+Keep the original geometry for measurements and spatial analysis; join computed results
+to the simplified display layer by identifier. Simplification does not create vector tiles
+or provide different detail levels automatically.
+
 ## Requirements
 
 - Mapshaper CLI and Node.js. Automated command tests use Mapshaper 0.7.83 with Node.js 22;
