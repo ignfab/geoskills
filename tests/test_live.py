@@ -3,11 +3,17 @@ import csv
 import io
 import json
 import os
+from pathlib import Path
+import shutil
+import subprocess
+import tempfile
 import unittest
+import xml.etree.ElementTree as ET
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 from test_workflows import DATA, GDALCase
+from skill_examples import read_example
 
 LIVE = os.environ.get("GEOSKILLS_LIVE") == "1"
 BASE = "https://data.geopf.fr/geocodage/"
@@ -32,6 +38,69 @@ def post_csv(data, fields):
         if "csv" not in response.headers.get("Content-Type", ""):
             raise AssertionError("Expected a CSV response")
         return list(csv.DictReader(io.StringIO(response.read().decode("utf-8-sig"))))
+
+
+@unittest.skipUnless(LIVE, "Set GEOSKILLS_LIVE=1 to discover public IGN services")
+@unittest.skipUnless(shutil.which("curl") and shutil.which("bash"), "curl and bash required")
+class LiveDiscoveryTests(unittest.TestCase):
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory(prefix="geoskills-discovery-")
+        self.addCleanup(temporary.cleanup)
+        self.output = Path(temporary.name)
+
+    def discover(self, example, filename):
+        recipe = read_example("geopf-services/SKILL.md", "## Minimal discovery commands",
+                              language="bash", example=example)
+        result = subprocess.run(["bash", "-eu", "-c", recipe], cwd=self.output,
+                                text=True, capture_output=True, timeout=70)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        path = self.output / filename
+        self.assertGreater(path.stat().st_size, 0)
+        return path
+
+    def test_wfs_capabilities_advertise_the_sample_layer(self):
+        path = self.discover(0, "wfs-capabilities.xml")
+        root = ET.parse(path).getroot()
+        ns = {"wfs": "http://www.opengis.net/wfs/2.0"}
+        self.assertEqual(root.tag, "{http://www.opengis.net/wfs/2.0}WFS_Capabilities")
+        self.assertEqual(root.attrib["version"], "2.0.0")
+        layers = {layer.findtext("wfs:Name", namespaces=ns): layer
+                  for layer in root.findall("wfs:FeatureTypeList/wfs:FeatureType", ns)}
+        self.assertIn("BDTOPO_V3:batiment", layers)
+        self.assertTrue(layers["BDTOPO_V3:batiment"].findtext("wfs:DefaultCRS", namespaces=ns))
+
+    def test_navigation_advertises_operations_and_resources(self):
+        path = self.discover(1, "navigation-capabilities.json")
+        metadata = json.loads(path.read_text())
+        operations = {operation["id"] for operation in metadata["operations"]}
+        self.assertTrue({"route", "isochrone"}.issubset(operations))
+        self.assertTrue(metadata["resources"])
+        for resource in metadata["resources"]:
+            self.assertTrue(resource["id"])
+            available = {operation["id"] for operation in resource["availableOperations"]}
+            self.assertTrue(available)
+            self.assertTrue(available.issubset(operations))
+
+    def test_download_feed_is_bounded_and_advertises_pagination(self):
+        path = self.discover(2, "download-capabilities.xml")
+        root = ET.parse(path).getroot()
+        ns = {"atom": "http://www.w3.org/2005/Atom"}
+        self.assertEqual(root.tag, "{http://www.w3.org/2005/Atom}feed")
+        entries = root.findall("atom:entry", ns)
+        self.assertGreater(len(entries), 0)
+        self.assertLessEqual(len(entries), 10)
+        for entry in entries:
+            self.assertTrue(entry.findtext("atom:id", namespaces=ns))
+            self.assertTrue(entry.findtext("atom:title", namespaces=ns))
+            self.assertTrue(entry.findall("atom:link", ns))
+        # This API uses gpf_dl attributes, not Atom rel="next" links.
+        prefix = "{https://data.geopf.fr/annexes/ressources/xsd/gpf_dl.xsd}"
+        total = int(root.attrib[prefix + "totalentries"])
+        size = int(root.attrib[prefix + "pagesize"])
+        self.assertEqual(int(root.attrib[prefix + "page"]), 1)
+        self.assertEqual(size, 10)
+        self.assertEqual(len(entries), min(total, size))
+        self.assertEqual(int(root.attrib[prefix + "pagecount"]), (total + size - 1) // size)
 
 
 @unittest.skipUnless(LIVE, "Set GEOSKILLS_LIVE=1 to call public IGN services")

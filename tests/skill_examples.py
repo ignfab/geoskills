@@ -1,14 +1,17 @@
-"""Execute documented Python recipes against independent regression fixtures."""
+"""Read documented recipes and execute Python examples on regression fixtures."""
 from pathlib import Path
 import re
 
 SKILLS = Path(__file__).resolve().parents[1] / "skills"
 
 
-def run_example(reference, heading, namespace, *, example=0):
+def read_example(reference, heading, *, language="python", example=0):
     path = SKILLS / reference
     text = path.read_text(encoding="utf-8")
-    section = text.split(heading + "\n", 1)[1]
+    sections = text.split(heading + "\n")
+    if len(sections) != 2:
+        raise AssertionError(f"Expected one heading {heading!r} in {path}")
+    section = sections[1]
     lines = []
     in_fence = False
     for line in section.splitlines(keepends=True):
@@ -17,6 +20,14 @@ def run_example(reference, heading, namespace, *, example=0):
         elif not in_fence and re.match(r"^#{1,6} ", line):
             break
         lines.append(line)
-    snippets = re.findall(r"^```python\n(.*?)^```", "".join(lines), flags=re.M | re.S)
-    exec(compile(snippets[example], str(path), "exec"), namespace)
+    snippets = re.findall(rf"^```{re.escape(language)}\n(.*?)^```", "".join(lines),
+                          flags=re.M | re.S)
+    if not 0 <= example < len(snippets):
+        raise AssertionError(f"Missing {language} example {example} in {path}: {heading}")
+    return snippets[example]
+
+
+def run_example(reference, heading, namespace, *, example=0):
+    code = read_example(reference, heading, example=example)
+    exec(compile(code, str(SKILLS / reference), "exec"), namespace)
     return namespace

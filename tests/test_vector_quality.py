@@ -39,15 +39,17 @@ class VectorQualityTests(GDALCase):
         duplicate_geometry = (
             comparable & gdf.geometry.normalize().duplicated(keep=False)
         )
-        invalid = ~gdf.geometry.isna() & ~gdf.geometry.is_valid
+        audit = run_example("vector-data-quality/references/geometry-validity.md",
+                            "## Classify geometry problems", {"gdf": gdf})
+        invalid = audit["invalid"]
 
-        self.assertEqual(gdf.geometry.isna().tolist(), [False, False, False, True, False])
-        self.assertEqual(gdf.geometry.is_empty.tolist(), [False, False, False, False, True])
+        self.assertEqual(audit["null"].tolist(), [False, False, False, True, False])
+        self.assertEqual(audit["empty"].tolist(), [False, False, False, False, True])
         self.assertEqual(invalid.tolist(), [True, False, False, False, False])
         self.assertEqual(duplicate_geometry.tolist(), [False, True, True, False, False])
         self.assertEqual(gdf["id"].duplicated(keep=False).tolist(),
                          [False, True, True, False, False])
-        self.assertIn("Self-intersection", gdf.geometry[invalid].is_valid_reason().iloc[0])
+        self.assertIn("Self-intersection", audit["reasons"].iloc[0])
 
     def test_make_valid_and_roundtrip(self):
         import geopandas as gpd
@@ -56,8 +58,8 @@ class VectorQualityTests(GDALCase):
         quarantine_mask = source.geometry.isna() | source.geometry.is_empty
         quarantine = source.loc[quarantine_mask].copy()
         clean = source.loc[~quarantine_mask].copy()
-        bad = ~clean.geometry.is_valid
-        clean.loc[bad, "geometry"] = clean.geometry[bad].make_valid()
+        clean = run_example("vector-data-quality/references/geometry-validity.md",
+                            "## Repair with `make_valid`", {"gdf": clean})["fixed"]
 
         self.assertTrue(quarantine["id"].isna().iloc[0])
         self.assertEqual(quarantine["id"].iloc[1], "empty")
@@ -73,6 +75,29 @@ class VectorQualityTests(GDALCase):
         self.assertTrue(check.geometry.is_valid.all())
         self.assertFalse(check.geometry.isna().any())
         self.assertFalse(check.geometry.is_empty.any())
+        self.assertEqual(check["id"].tolist(), ["bad", "duplicate", "duplicate"])
+        self.assertAlmostEqual(check.geometry.iloc[0].area, 2)
+        self.assertFalse(source.geometry.iloc[0].is_valid)
+
+    def test_documented_polygon_quarantine_keeps_collapsed_parts_auditable(self):
+        import geopandas as gpd
+        from shapely.geometry import Polygon
+
+        source = self.sample()
+        # A wholly collapsed polygon becomes a line, not a usable polygon.
+        source.loc[0, "geometry"] = Polygon([(0, 0), (1, 1), (2, 2), (0, 0)])
+        before = source.copy(deep=True)
+        result = run_example("vector-data-quality/references/geometry-validity.md",
+                             "## Repair with `make_valid`", {"gdf": source})
+        result = run_example("vector-data-quality/references/geometry-validity.md",
+                             "## Repair with `make_valid`", result, example=2)
+        self.assertEqual(result["fixed"].index.tolist(), [1, 2])
+        self.assertEqual(result["quarantine"].index.tolist(), [0, 3, 4])
+        self.assertIn(result["quarantine"].geometry.iloc[0].geom_type,
+                      ("LineString", "MultiLineString"))
+        self.assertEqual(len(result["fixed"]) + len(result["quarantine"]), len(source))
+        from geopandas.testing import assert_geodataframe_equal
+        assert_geodataframe_equal(source, before)
 
     def test_duplicate_features_require_the_same_pair(self):
         import geopandas as gpd
