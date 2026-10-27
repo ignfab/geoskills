@@ -18,6 +18,7 @@ This project is in an exploratory phase. The stability of the skills is not yet 
 
 | Skill | Description |
 | --- | --- |
+| [geopf-services](skills/geopf-services/README.md) | Choose a Géoplateforme API for dataset discovery, maps, vector features, downloads, geocoding and geographic calculations. |
 | [geopf-wfs-download](skills/geopf-wfs-download/README.md) | Download vector layers (BD TOPO, ADMIN EXPRESS, cadastre) from the Géoplateforme WFS with `ogr2ogr`. |
 | [geoserver-cql-filter](skills/geoserver-cql-filter/README.md) | Write GeoServer WFS/WMS ECQL filters, including URL encoding and CRS:84 geometries with EWKT. |
 | [geopf-wms-wmts](skills/geopf-wms-wmts/README.md) | Download raster layers (orthophotos, Plan IGN, elevation) from the Géoplateforme WMTS / WMS-R with GDAL. |
@@ -71,6 +72,8 @@ Ce projet est en phase exploratoire. La stabilité des compétences n’est pas 
 `geoskills` est un ensemble expérimental de compétences pour agents de code, destinées à
 travailler la donnée géographique :
 
+- choix des services de la Géoplateforme selon le besoin : découverte de données, diffusion,
+  téléchargement, extraction et calculs ;
 - téléchargement de couches vecteur (WFS) et raster (WMTS / WMS — orthophotos, Plan IGN,
   altitude) de la Géoplateforme (IGN) ;
 - géocodage d'adresses, de lieux et de parcelles, unitaire ou en masse à partir d'un CSV ;

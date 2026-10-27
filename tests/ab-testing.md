@@ -58,10 +58,10 @@ export AB_DENY="Bash(sudo *) Bash(pip install *) Bash(pip3 install *) Bash(pytho
 export AB_EXTRA_FLAGS=""                        # extra claude flags, both modes
 export AB_WITHOUT_FLAGS=""                      # extra claude flags, B runs only
 
-POSITIVE="GEO-01 GEO-02 GEO-03 GEO-04 GEO-05 CRS-01 CRS-02 CRS-03 CRS-04 CRS-05
+POSITIVE="GSV-01 GSV-02 GSV-03 GSV-04 GSV-05 GEO-01 GEO-02 GEO-03 GEO-04 GEO-05 CRS-01 CRS-02 CRS-03 CRS-04 CRS-05
 RAS-01 RAS-02 RAS-03 RAS-04 RAS-05 WMS-01 WMS-02 WMS-03 WMS-04 WMS-05
 WFS-01 WFS-02 WFS-04 WFS-05 WFS-06 CQL-01 CQL-02 CQL-03 CQL-04 GPD-01 GPD-02 GPD-03 GPD-04 VDQ-01 VDQ-02 MS-01 MS-02 MS-03 MS-04"
-NEGATIVE="GEO-N1 CRS-N1 RAS-N1 WMS-N1 WFS-N1 CQL-N1 CQL-N2 GPD-N1 VDQ-N1 MS-N1 MS-N2"
+NEGATIVE="GSV-N1 GSV-N2 GEO-N1 CRS-N1 RAS-N1 WMS-N1 WFS-N1 CQL-N1 CQL-N2 GPD-N1 VDQ-N1 MS-N1 MS-N2"
 
 # Print the French prompt of a scenario, read from tests/*.md.
 ab_prompt() {
@@ -263,9 +263,9 @@ source ab.sh
 AB_DRY=1 ab_campaign 1
 ```
 
-Then set `export AB=/path/to/a/new/campaign` for actual agent calls. One repetition has **91 runs**:
-40 positive scenarios in both modes and 11 negatives in A. At the example budget of $2 per
-run, the caps total $182 per repetition and $546 for three repetitions. Starting the paid
+Then set `export AB=/path/to/a/new/campaign` for actual agent calls. One repetition has **103 runs**:
+45 positive scenarios in both modes and 13 negatives in A. At the example budget of $2 per
+run, the caps total $206 per repetition and $618 for three repetitions. Starting the paid
 campaign is a separate user decision; a dry run does not authorize it.
 
 Smoke pass, one repetition:
@@ -306,6 +306,21 @@ Needs: **NET** public IGN services, **GDAL**, **PROJ** with the named grid, **PY
 GeoPandas stack. *Watch in B* is the trap the skill is meant to prevent: if the skill is
 useful, B fails there. *Control* scenarios are expected to pass in both modes; a skill
 whose scenarios are all controls adds nothing measurable.
+
+### [geopf-services](geopf-services.md)
+
+These scenarios ask for advice only. No data download, upload, calculation or account is
+needed. Web access can check official guides; distinguish advice from live availability.
+
+| Scenario | Modes | Needs | Watch in B |
+|----------|-------|-------|------------|
+| GSV-01 | A + B | — | service selection by output, metadata and access requirements |
+| GSV-02 | A + B | — | WMS-V images and vector tiles are not complete analysis features |
+| GSV-03 | A + B | — | package discovery, authenticated extraction and standards-validation reports |
+| GSV-04 | A + B | — | autocomplete, reverse geocoding, elevation, routing and isochrones distinguished |
+| GSV-05 | A + B | — | dataset search and CSW metadata kept separate from address geocoding |
+| GSV-N1 | A | — | local reprojection goes directly to `crs-reprojection-france` |
+| GSV-N2 | A | — | explicit WFS workflow goes directly to `geopf-wfs-download` |
 
 ### [geopf-geocoding](geopf-geocoding.md)
 
@@ -436,6 +451,7 @@ Summarize per skill over the three repetitions:
 
 | Skill | A pass | B pass | A − B | Cost A / B | Verdict |
 |-------|--------|--------|-------|------------|---------|
+| geopf-services | /15 | /15 | | | |
 | geopf-geocoding | /15 | /15 | | | |
 | crs-reprojection-france | /15 | /15 | | | |
 | gdal-raster-basics | /15 | /15 | | | |
@@ -445,7 +461,7 @@ Summarize per skill over the three repetitions:
 | geopandas-basics | /12 | /12 | | | |
 | vector-data-quality | /6 | /6 | | | |
 | mapshaper-simplify | /12 | /12 | | | |
-| Negative scenarios (A only) | /33 | — | — | — | |
+| Negative scenarios (A only) | /39 | — | — | — | |
 
 ## Variants
 

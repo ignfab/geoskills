@@ -11,6 +11,7 @@ whose `description` is written in English.
 
 | File | Skill |
 |------|-------|
+| [geopf-services.md](geopf-services.md) | `geopf-services` |
 | [geopf-geocoding.md](geopf-geocoding.md) | `geopf-geocoding` |
 | [crs-reprojection-france.md](crs-reprojection-france.md) | `crs-reprojection-france` |
 | [gdal-raster-basics.md](gdal-raster-basics.md) | `gdal-raster-basics` |
