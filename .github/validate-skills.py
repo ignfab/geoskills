@@ -104,7 +104,8 @@ def validate(root):
         for reference in (path.parent / "references").rglob("*.md"):
             if reference.resolve() not in reachable:
                 errors.append(f"{relative}: unlinked reference {reference.name}")
-    documents = [*root.glob("*.md"), *skill_root.rglob("*.md"), *(root / "tests").glob("*.md")]
+    documents = [*root.glob("*.md"), *skill_root.rglob("*.md"), *(root / "tests").glob("*.md"),
+                 *(root / "docs").glob("*.md")]
     for path in sorted(set(documents)):
         for target in local_targets(path):
             if not target.exists():
