@@ -3,6 +3,11 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+      live:
+        description: 'Also run bounded requests to public IGN services'
+        type: boolean
+        default: false
 
 jobs:
   validate:
@@ -28,3 +33,4 @@ jobs:
         env:
           GEOSKILLS_REQUIRE_GDAL: '1'
           GEOSKILLS_REQUIRE_MAPSHAPER: '1'
+          GEOSKILLS_LIVE: ${{ github.event_name == 'workflow_dispatch' && inputs.live && '1' || '0' }}

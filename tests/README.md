@@ -24,6 +24,7 @@ whose `description` is written in English.
 | [data/README.md](data/README.md) | Fixture provenance, CRS and missing-metadata traps |
 | [ab-testing.md](ab-testing.md) | Running every scenario with and without the skills, and scoring the difference |
 | [review-2026-10-12.md](review-2026-10-12.md) | Recent-skill review, reproduced defects, fixes and validation limits |
+| [review-2026-10-27.md](review-2026-10-27.md) | Test audit, added edge cases and remaining coverage limits |
 
 Test data in `data/`:
 
@@ -59,7 +60,8 @@ python3 -m unittest discover -s tests -p 'test_*.py' -v
 - `test_validation.py`: real YAML parsing, empty/invalid metadata, duplicate keys, missing
   files, required workflow sections and reference reachability.
 - `test_ab_runner.py`: complete dry-run scenario coverage, isolated fixture copies and
-  failure propagation in the documented runner; agent calls are replaced by a test double.
+  prerequisite outputs, rerun protection, failure propagation and exclusion of detected
+  contamination/install attempts; agent calls are replaced by a test double.
 - `test_cql_requests.py`: documented curl commands against a local HTTP recorder; checks
   parameter encoding, EWKT preservation, WFS sampling and WMS layer ordering. Requires
   `curl` and `bash`; does not validate ECQL parsing or a live GeoServer datastore.
@@ -67,15 +69,18 @@ python3 -m unittest discover -s tests -p 'test_*.py' -v
   malformed input and preservation of existing files.
 - `test_workflows.py`: local GDAL/PROJ recipes (axis order, overseas CRS, missing `.prj`,
   area, mosaic, clip, COG marker, weighted averaging, hillshade, zonal statistics on
-  GDAL ≥ 3.12 and vertical transforms).
-- `test_geopandas.py`: spatial join, CRS and format round trips, and zonal-statistics
-  attachment with filtered or repeated indices, without overwriting source attributes.
+  GDAL ≥ 3.12, explicit nodata conversion preserving valid zeroes and vertical transforms).
+- `test_geopandas.py`: join boundaries, unmatched points and multiple matches, metric
+  nearest joins/buffers, overlay areas, CRS and format round trips with nullable fields
+  and string identifiers, and zonal-statistics attachment with filtered or repeated indices.
+  Checks zero versus nodata/outside, mismatched result counts and attribute collisions.
 - `test_vector_quality.py`: invalid-geometry diagnosis and repair, normalized geometry
   duplicates, joint attribute/geometry comparisons, null/empty handling, collapsed
-  components and GeoPackage round trip.
+  components, polygon quarantine and GeoPackage round trip.
 - `test_mapshaper.py`: percentage and metric simplification, small-feature retention,
   shared borders across layers, TopoJSON arcs, CRS and attribute preservation.
-- `test_live.py`: bounded geocoding, WFS, WMS and WMTS smoke tests; skipped by default.
+- `test_live.py`: bounded geocoding, WFS, WMS and WMTS smoke tests plus WFS, navigation
+  and download-catalogue discovery; skipped by default.
 
 GDAL ≥ 3.1 and PROJ CLI tools are required for local geospatial checks. Install the optional
 Python workflows with `python3 -m pip install -r tests/requirements-geospatial.txt`.
@@ -86,9 +91,11 @@ Mapshaper tests also need the Mapshaper CLI and the optional Python dependencies
 compatible Node.js installed, users can run `npm install --global mapshaper@0.7.83`.
 CI uses Node.js 22 and that pinned Mapshaper version, and sets
 `GEOSKILLS_REQUIRE_MAPSHAPER=1` so missing Mapshaper dependencies fail instead of skipping.
-The duplicate-feature and statistics-attachment regressions execute the Python examples
-from their skill references via `skill_examples.py`, so changing the documentation changes
-the code under test.
+The spatial-operation, geometry audit/repair, duplicate-feature and statistics-attachment
+regressions execute Python examples from their skill references via `skill_examples.py`.
+The nodata, two Mapshaper entry recipes and live service-discovery tests execute the
+documented Bash blocks. Changing those examples changes the code under test; other tests
+exercise representative workflows, not every documented command.
 If `gdalinfo --version` fails (for example, an undefined `sqlite3_total_changes64` symbol),
 repair the active GDAL/SQLite environment or use a clean environment before rerunning.
 The tests deliberately do not hide a broken installation.
@@ -104,9 +111,12 @@ GEOSKILLS_LIVE=1 python3 -m unittest discover -s tests -p 'test_live.py' -v
 
 This sends the eight fixture addresses in `data/adresses.csv` to the public IGN geocoder,
 queries the three public test coordinates and a cadastral parcel, and downloads small
-WFS/raster extracts. Do not replace those fixtures with private data for a live run.
+WFS/raster extracts and service catalogues. Do not replace those fixtures with private data for a live run.
 Network/service failures are reported as failures, not silently treated as passed tests.
 Live calls are bounded by timeouts and small extents and do not run in routine CI.
+They can also be enabled deliberately in GitHub Actions: **Validate skills → Run workflow →
+Also run bounded requests to public IGN services**. The default remains off; pushes and
+pull requests never enable network tests through this option.
 
 To check CLI discovery without installing skills (Node.js required):
 
