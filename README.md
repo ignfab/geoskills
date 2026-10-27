@@ -14,6 +14,9 @@ This project is in an exploratory phase. The stability of the skills is not yet 
   (and skills could provide detailled documentation for MCP in
   [ignfab/demo-geocontext](https://github.com/ignfab/demo-geocontext))
 
+See [docs/landscape.md](docs/landscape.md) for a comparison with other geospatial skill
+collections and the proposed target of this repository.
+
 ## Skills
 
 | Skill | Description |
