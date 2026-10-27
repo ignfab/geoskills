@@ -29,7 +29,7 @@ proposed target in the last sections is a proposal for the maintainers, not a de
 
 | Repository | Stars | License | Last push | Skills | Focus | Testing and evaluation |
 | --- | --- | --- | --- | --- | --- | --- |
-| [ignfab/geoskills](https://github.com/ignfab/geoskills) (this repository) | 0 | MIT | 2026-10-27 | 10 | Géoplateforme services, French CRS, GDAL/PROJ, GeoPandas and Mapshaper recipes | 67 unit tests on 8 fixtures, opt-in live IGN tests, 58 manual scenarios (negatives included), documented A/B protocol |
+| [ignfab/geoskills](https://github.com/ignfab/geoskills) (this repository) | 0 | MIT | 2026-10-27 | 10 | Géoplateforme services, French CRS, GDAL/PROJ, GeoPandas and Mapshaper recipes | 71 automated test methods (including 11 opt-in live tests) on 8 fixtures, 58 manual scenarios (negatives included), documented A/B protocol |
 | [dekart-xyz/geosql](https://github.com/dekart-xyz/geosql) | 682 | MIT | 2026-10-09 | 1 | Spatial SQL on PostGIS, BigQuery, Snowflake and Wherobots, with a Dekart map in the loop | Test and eval files |
 | [maplibre/maplibre-agent-skills](https://github.com/maplibre/maplibre-agent-skills) | 155 | MIT | 2026-10-26 | 11 | MapLibre GL JS application code | Eval suite; separates eval-verified and provisional skills |
 | [mapbox/mapbox-agent-skills](https://github.com/mapbox/mapbox-agent-skills) | 83 | MIT | 2026-10-26 | 20 | Mapbox platform application code | Eval files |
