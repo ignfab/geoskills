@@ -9,6 +9,7 @@ import subprocess
 import tempfile
 import unittest
 
+from skill_examples import read_example
 DATA = Path(__file__).resolve().parent / "data"
 
 
@@ -23,7 +24,7 @@ class GDALCase(unittest.TestCase):
             if os.environ.get("GEOSKILLS_REQUIRE_GDAL") == "1":
                 raise RuntimeError(message)
             raise unittest.SkipTest(message)
-        probe = subprocess.run(["gdalinfo", "--version"], text=True, capture_output=True)
+        probe = subprocess.run(["gdalinfo", "--version"], text=True, capture_output=True, timeout=30)
         if probe.returncode:
             raise RuntimeError("GDAL is installed but cannot start: " + probe.stderr)
 
@@ -58,11 +59,13 @@ class LocalWorkflowTests(GDALCase):
             rows = list(csv.DictReader(handle))
         expected = [(2154, 652296.97, 6861636.36), (2154, 574357.38, 6279620.75),
                     (2975, 338568.32, 7690475.44)]
+        self.assertEqual(len(rows), len(expected))
         for row, (epsg, x, y) in zip(rows, expected):
             with self.subTest(point=row["nom"]):
                 result = self.run_tool("gdaltransform", "-s_srs", "EPSG:4326", "-t_srs", f"EPSG:{epsg}",
                                        input=f'{row["longitude"]} {row["latitude"]}\n')
                 actual = list(map(float, result.split()))
+                self.assertEqual(len(actual), 3)
                 self.assertAlmostEqual(actual[0], x, delta=0.1)
                 self.assertAlmostEqual(actual[1], y, delta=0.1)
 
@@ -153,6 +156,30 @@ class LocalWorkflowTests(GDALCase):
         self.assertGreater(info["bands"][0]["maximum"], info["bands"][0]["minimum"])
         self.assert_crs(target, 2154)
 
+    @unittest.skipUnless(shutil.which("bash"), "Documented recipe requires Bash")
+    def test_documented_nodata_conversion_preserves_valid_zero(self):
+        # Producer metadata confirms the sentinel, but the file has no nodata tag.
+        source = self.output / "unlabelled.asc"
+        source.write_text("ncols 2\nnrows 2\nxllcorner 650000\nyllcorner 6860000\n"
+                          "cellsize 10\n0 -99999\n10 20\n")
+        input_path = self.output / "input.tif"
+        self.run_tool("gdal_translate", "-a_srs", "EPSG:2154", "-a_nodata", "none",
+                      source, input_path)
+        self.assertNotIn("noDataValue", self.info(input_path)["bands"][0])
+        recipe = read_example("gdal-raster-basics/references/gdalwarp-options.md",
+                              "## Nodata", language="bash")
+        self.run_tool("bash", "-eu", "-c", recipe)
+        target = self.output / "output.tif"
+        self.assert_crs(target, 2154)
+        info = self.info(target)
+        self.assertEqual(info["size"], [2, 2])
+        self.assertEqual(info["geoTransform"], [650000, 10, 0, 6860020, 0, -10])
+        band = info["bands"][0]
+        self.assertEqual(band["noDataValue"], -9999)
+        xyz = self.run_tool("gdal_translate", "-q", "-of", "XYZ", target, "/vsistdout/")
+        self.assertEqual([float(line.split()[-1]) for line in xyz.splitlines()], [0, -9999, 10, 20])
+        self.assertEqual(band["mean"], 10)
+
     def test_gdal_zonal_stats(self):
         version = re.search(r"GDAL (\d+)\.(\d+)", self.run_tool("gdalinfo", "--version"))
         if not shutil.which("gdal") or tuple(map(int, version.groups())) < (3, 12):
@@ -179,7 +206,9 @@ class LocalWorkflowTests(GDALCase):
             self.skipTest("Accurate NTF transformation needs an installed IGN grid")
         result = self.run_tool("gdaltransform", "-s_srs", "EPSG:27572", "-t_srs", "EPSG:2154",
                                input="600000 2428000\n536000 1841000\n")
+        self.assertEqual(len(result.splitlines()), 2)
         for line, expected in zip(result.splitlines(), [(651313.03,6861349.81),(582461.10,6275414.00)]):
+            self.assertEqual(len(line.split()), 3)
             for actual, wanted in zip(map(float,line.split()),expected):
                 self.assertAlmostEqual(actual, wanted, delta=0.1)
 

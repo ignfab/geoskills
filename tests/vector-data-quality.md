@@ -16,6 +16,8 @@ changes after `make_valid()` are reported.
 - [ ] copies the source before repair and writes to a new file
 - [ ] uses `make_valid()` rather than presenting `buffer(0)` as a universal fix
 - [ ] inspects Polygon → MultiPolygon / GeometryCollection changes
+- [ ] quarantines null, empty and non-polygonal results; a `Polygon EMPTY` is not accepted
+- [ ] accounts for every input feature in either the repaired output or the quarantine
 - [ ] reopens and validates the output
 
 ## VDQ-02 — Detect duplicate geometries safely

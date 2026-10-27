@@ -44,11 +44,13 @@ print(comparison)
 ```
 
 A repaired Polygon may become MultiPolygon. A collapsed polygon may become a LineString or
-GeometryCollection. If the target accepts polygons only, quarantine non-polygonal results
-instead of silently deleting them:
+GeometryCollection. If the target accepts polygons only, quarantine null, empty and
+non-polygonal results instead of silently deleting them. A `Polygon EMPTY` still has a
+polygon type, so checking `geom_type` alone is insufficient:
 
 ```python
-allowed = fixed.geom_type.isin(["Polygon", "MultiPolygon"])
+allowed = (fixed.geom_type.isin(["Polygon", "MultiPolygon"])
+           & ~fixed.geometry.isna() & ~fixed.geometry.is_empty)
 quarantine = fixed.loc[~allowed]
 fixed = fixed.loc[allowed]
 ```

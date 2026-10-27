@@ -8,6 +8,7 @@ import subprocess
 import tempfile
 import unittest
 
+from skill_examples import read_example
 
 FIXTURE = Path(__file__).parent / "data" / "admin_units_synthetic.geojson"
 
@@ -18,6 +19,8 @@ class MapshaperTests(unittest.TestCase):
         missing = [name for name in ("geopandas", "shapely")
                    if importlib.util.find_spec(name) is None]
         cls.executable = shutil.which("mapshaper")
+        if not shutil.which("bash"):
+            missing.append("bash")
         if cls.executable is None:
             missing.append("mapshaper")
         if missing:
@@ -35,6 +38,7 @@ class MapshaperTests(unittest.TestCase):
         self.output = Path(self.temporary.name)
         self.source_bytes = FIXTURE.read_bytes()
         self.source = json.loads(self.source_bytes)
+        (self.output / "units.geojson").write_bytes(self.source_bytes)
 
     def tearDown(self):
         self.assertEqual(FIXTURE.read_bytes(), self.source_bytes)
@@ -44,6 +48,12 @@ class MapshaperTests(unittest.TestCase):
             [self.executable, *map(str, arguments)], cwd=self.output,
             capture_output=True, text=True, timeout=60,
         )
+        self.assertEqual(process.returncode, 0, process.stdout + process.stderr)
+
+    def run_documented_recipe(self, heading):
+        recipe = read_example("mapshaper-simplify/SKILL.md", heading, language="bash")
+        process = subprocess.run(["bash", "-eu", "-c", recipe], cwd=self.output,
+                                 capture_output=True, text=True, timeout=60)
         self.assertEqual(process.returncode, 0, process.stdout + process.stderr)
 
     def check_geojson(self, path, original=None):
@@ -78,8 +88,7 @@ class MapshaperTests(unittest.TestCase):
     def test_weighted_percentage_keeps_features_and_shared_border(self):
         result = self.output / "units-simplified.geojson"
         self.run_mapshaper(FIXTURE, "-info")
-        self.run_mapshaper(FIXTURE, "-simplify", "20%", "weighted", "keep-shapes",
-                           "-proj", "wgs84", "-o", "format=geojson", result)
+        self.run_documented_recipe("## Simplify by retained percentage")
         source, check = self.check_geojson(result)
         west, east = check.loc["001"].geometry, check.loc["002"].geometry
         self.assertGreater(west.boundary.intersection(east.boundary).length, 0.019)
@@ -89,28 +98,15 @@ class MapshaperTests(unittest.TestCase):
         self.assertGreater(check.loc["003"].geometry.area, 0)
 
     def test_dp_metric_tolerance_and_crs_roundtrip(self):
-        import geopandas as gpd
-
-        projected = self.output / "units-100m.shp"
         result = self.output / "units-100m.geojson"
-        self.run_mapshaper(
-            FIXTURE, "-proj", "EPSG:2154", "-simplify", "dp", "interval=100",
-            "keep-shapes", "-o", "format=shapefile", projected,
-            "-proj", "wgs84", "-o", "format=geojson", result,
-        )
+        self.run_documented_recipe("## Simplify with a metric tolerance")
         source, check = self.check_geojson(result)
-        metric = gpd.read_file(projected).set_index("unit_id")
-        self.assertEqual(metric.crs.to_epsg(), 2154)
-        self.assertTrue(metric.geometry.is_valid.all())
-        self.assertFalse(metric.geometry.is_empty.any())
         original_metric = source.to_crs(2154)
         returned_metric = check.to_crs(2154)
         for identifier in source.index:
             original = original_metric.loc[identifier].geometry
-            simplified = metric.loc[identifier].geometry
+            simplified = returned_metric.loc[identifier].geometry
             self.assertLessEqual(original.boundary.hausdorff_distance(simplified.boundary), 100.01)
-            self.assertLessEqual(simplified.hausdorff_distance(
-                returned_metric.loc[identifier].geometry), 0.01)
 
     def test_combined_layers_share_topojson_arcs(self):
         inputs = []
