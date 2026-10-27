@@ -39,7 +39,8 @@ claude() {
             ["bash", "-c", script, "bash", str(self.runner), str(root),
              str(self.campaign), "1" if dry else "0"],
             env=dict(os.environ, FAKE_EXIT=str(exit_code),
-                     FAKE_TRANSCRIPT=json.dumps(transcript)),
+                     FAKE_TRANSCRIPT="\n".join(json.dumps(event) for event in (
+                         transcript if isinstance(transcript, list) else [transcript]))),
             text=True, capture_output=True, timeout=60,
         )
 
@@ -63,6 +64,56 @@ claude() {
                 installed = {p.name for p in (run / ".claude/skills").glob("*")}
                 self.assertEqual(installed, skills if run.name == "with-1" else set())
         self.assertFalse((self.campaign / "agent-invocations.txt").exists())
+
+    def test_reusing_a_run_preserves_its_results(self):
+        first = self.run_shell("ab_run MS-01 with 1")
+        self.assertEqual(first.returncode, 0, first.stderr)
+        output = self.campaign / "runs/MS-01/with-1/output/keep.txt"
+        output.write_text("previous result")
+        second = self.run_shell("ab_run MS-01 with 1")
+        self.assertNotEqual(second.returncode, 0)
+        self.assertEqual(output.read_text(), "previous result")
+        self.assertEqual((self.campaign / "agent-invocations.txt").read_text(), "called\n")
+
+    def test_prerequisite_outputs_are_copied_without_sharing_files(self):
+        result = self.run_shell('''
+ab_run WFS-01 with 1 || exit 1
+printf 'source result' > "$AB/runs/WFS-01/with-1/output/communes.gpkg"
+ab_run WFS-03 with 1 WFS-01
+''', dry=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        before = self.campaign / "runs/WFS-01/with-1/output/communes.gpkg"
+        after = self.campaign / "runs/WFS-03/with-1/output/communes.gpkg"
+        self.assertEqual(after.read_bytes(), before.read_bytes())
+        after.write_text("changed by dependent scenario")
+        self.assertEqual(before.read_text(), "source result")
+        self.assertFalse((self.campaign / "agent-invocations.txt").exists())
+
+    def test_invalid_comparisons_are_preserved_in_summary_and_report(self):
+        cases = [
+            ("skill", "without", "Skill", {"skill": "mapshaper-simplify"}, True, 0),
+            ("read", "without", "Read", {"file_path": "/repo/skills/mapshaper-simplify/SKILL.md"}, True, 0),
+            ("install", "with", "Bash", {"command": "python3 -m pip install geopandas"}, False, 1),
+        ]
+        for name, mode, tool, arguments, contaminated, installs in cases:
+            with self.subTest(case=name):
+                self.campaign = self.directory / name
+                transcript = [
+                    {"type": "assistant", "message": {"content": [
+                        {"type": "tool_use", "name": tool, "input": arguments}]}},
+                    {"type": "result", "is_error": False, "result": "done"},
+                ]
+                result = self.run_shell(f"ab_run MS-01 {mode} 1", transcript=transcript)
+                self.assertNotEqual(result.returncode, 0)
+                run = self.campaign / f"runs/MS-01/{mode}-1"
+                summary = json.loads((run / "summary.json").read_text())
+                self.assertTrue(summary["ok"])  # Process success is not evaluation validity.
+                self.assertEqual(summary["contaminated"], contaminated)
+                self.assertEqual(summary["install_attempts"], installs)
+                self.assertFalse(summary["comparable"])
+                report = self.run_shell("ab_report")
+                self.assertEqual(report.returncode, 0, report.stderr)
+                self.assertIn("INVALID", (self.campaign / "report.md").read_text())
 
     def test_missing_prerequisite_stops_before_creating_a_run(self):
         result = self.run_shell("ab_run WFS-03 with 1 WFS-01", dry=True)
@@ -101,6 +152,8 @@ claude() {
         summary = json.loads((self.campaign / "runs/MS-01/with-1/summary.json").read_text())
         self.assertEqual(summary["exit_code"], 0)
         self.assertTrue(summary["ok"])
+        self.assertTrue(summary["comparable"])
+        self.assertFalse(summary["contaminated"])
 
 
 if __name__ == "__main__":

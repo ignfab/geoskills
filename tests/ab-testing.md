@@ -189,6 +189,7 @@ for line in (d / "transcript.jsonl").read_text(encoding="utf-8").splitlines():
 skill_files = [p for p in files + cmds if "/skills/" in p]
 installs = [c for c in cmds
             if re.search(r"\bsudo\b|\b(pip3?|conda|mamba|apt(-get)?|brew|npm)\s+install\b", c)]
+contaminated = mode == "without" and bool(skill_files or set(skills) & ours)
 summary = {
     "scenario": d.parent.name, "mode": mode, "rep": rep, "model": model,
     "skills": skills, "skill_file_reads": len(skill_files),
@@ -197,16 +198,18 @@ summary = {
     "duration_s": round(result.get("duration_ms", 0) / 1000),
     "exit_code": exit_code,
     "ok": exit_code == 0 and bool(result) and not result.get("is_error"),
+    "contaminated": contaminated,
 }
+# Process success alone does not make an A/B run usable or its task result correct.
+summary["comparable"] = summary["ok"] and not contaminated and not installs
 (d / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
 (d / "answer.md").write_text(str(result.get("result", "")) + "\n", encoding="utf-8")
 (d / "commands.txt").write_text("\n\n".join(cmds) + "\n", encoding="utf-8")
-leak = mode == "without" and (skill_files or set(skills) & ours)
-flag = "  <-- CHECK: skill used in a run without skills" if leak else ""
+flag = "  <-- INVALID: skill used in a run without skills" if contaminated else ""
 print(f"{summary['scenario']} {mode}-{rep}: model={model} skills={','.join(skills) or '-'} "
       f"turns={summary['turns']} cost={summary['cost_usd']} "
       f"time={summary['duration_s']}s installs={len(installs)}{flag}")
-sys.exit(0 if summary["ok"] else 1)
+sys.exit(0 if summary["comparable"] else 1)
 PY
 }
 
@@ -225,9 +228,13 @@ out = ["## Environment", "", "```text", env.read_text(encoding="utf-8").strip() 
        "| Scenario | Mode | Rep | Skills loaded | Turns | Cost $ | Time s | Installs | Result | Checklist | Notes |",
        "|---|---|---|---|---|---|---|---|---|---|---|"]
 for s in rows:
+    # Missing comparability evidence in old summaries requires manual review.
+    status = "ERROR" if not s["ok"] else (
+        "INVALID" if s.get("comparable") is False else (
+            "CHECK" if "comparable" not in s else ""))
     out.append(f"| {s['scenario']} | {s['mode']} | {s['rep']} | {', '.join(s['skills']) or '-'} "
                f"| {s['turns']} | {s['cost_usd']} | {s['duration_s']} | {s['install_attempts']} "
-               f"| {'' if s['ok'] else 'ERROR'} | | |")
+               f"| {status} | | |")
 for mode in ("with", "without"):
     cost = sum(s["cost_usd"] or 0 for s in rows if s["mode"] == mode)
     out.append(f"\nTotal cost {mode}: {cost:.2f} $")
@@ -243,7 +250,7 @@ PY
 | `ab_prompt <id>` | Prints the prompt of a scenario, read from `tests/*.md`. |
 | `ab_run <id> <with\|without> [rep] [after]` | Creates `$AB/runs/<id>/<mode>-<rep>/`, copies `data/` (and the skills in A), copies the output of the `after` run, runs `claude -p` and keeps `transcript.jsonl`. |
 | `ab_campaign [rep]` | One repetition of every scenario. |
-| `ab_summary <dir>` | Writes `summary.json`, `commands.txt` (Bash commands run) and `answer.md` (final answer). Flags a B run that used a skill of this repository. |
+| `ab_summary <dir>` | Writes `summary.json`, `commands.txt` (Bash commands run) and `answer.md` (final answer). Rejects detected contamination in B and installation attempts. |
 | `ab_report` | Writes `$AB/report.md`: the environment and one row per run, with blank columns to score. |
 
 `claude -p` cannot ask for permission, so the allowed tools are listed in `AB_TOOLS`. The
@@ -251,8 +258,12 @@ agent can run shell commands and reach the web. The deny list and install counte
 common spellings, not every possible installer invocation; they are not a sandbox.
 Run the campaign in a disposable environment and cap the cost with `AB_BUDGET`.
 `AB_DRY=1` prepares a run directory without starting the agent.
-Preparation or agent failures stop the campaign; inspect the failing run before using a
+Preparation or agent failures, detected contamination and installation attempts stop the
+campaign; inspect the failing run before using a
 new repetition or campaign directory. Missing prerequisites must not count as skill failures.
+`ok` records process completion; `comparable` excludes detected contamination and conduct
+violations. Neither field scores the task result. The report retains `INVALID` for those
+runs and `CHECK` for historical summaries without comparability evidence.
 
 ## Run the campaign
 
@@ -426,7 +437,8 @@ For each row of `report.md`, in the run directory:
 
 1. **Skill selection.** In A, `Skills loaded` contains the expected skill of the scenario;
    for a `-N` scenario, it does not contain the excluded one. In B, it contains none of
-   the skills of this repository: a run flagged `CHECK` is contaminated and discarded.
+   the skills of this repository: a run flagged `INVALID` is excluded; a historical run
+   flagged `CHECK` needs manual review before scoring.
 2. **Result.** Compare `output/` and `answer.md` with the expected result of the scenario
    file. Write `pass` or `fail`.
 3. **Checklist.** Count the checklist items met, for example `4/5`. `commands.txt` shows
