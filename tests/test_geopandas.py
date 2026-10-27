@@ -20,9 +20,13 @@ class GeoPandasTests(GDALCase):
         rows = pd.read_csv(DATA / "points.csv")
         points = gpd.GeoDataFrame(rows, geometry=gpd.points_from_xy(rows.lon, rows.lat), crs=4326)
         commune = gpd.read_file(DATA / "saint_mande.geojson").to_crs(points.crs)
-        joined = gpd.sjoin(points, commune[["geometry"]], how="left", predicate="within")
+        joined = run_example("geopandas-basics/references/spatial-operations.md",
+            "## Spatial join", {"gpd": gpd, "points": points, "communes": commune})["joined"]
         self.assertEqual(len(joined), 3)
         self.assertEqual(joined.loc[joined.index_right.notna(), "id"].tolist(), [1])
+        matched = joined.loc[joined.index_right.notna()]
+        self.assertEqual(matched["code_insee"].tolist(), ["94067"])
+        self.assertEqual(matched["nom_officiel"].tolist(), ["Saint-Mandé"])
 
     def test_documented_join_keeps_unmatched_and_multiple_matches(self):
         import geopandas as gpd
@@ -30,7 +34,7 @@ class GeoPandasTests(GDALCase):
 
         points = gpd.GeoDataFrame({"id": ["inside", "edge", "overlap", "outside"]},
             geometry=[Point(1, 1), Point(0, 1), Point(3, 1), Point(9, 9)], crs=2154)
-        communes = gpd.GeoDataFrame({"code_insee": ["001", "002"], "nom": ["A", "B"]},
+        communes = gpd.GeoDataFrame({"code_insee": ["001", "002"], "nom_officiel": ["A", "B"]},
             geometry=[box(0, 0, 4, 4), box(2, 0, 6, 4)], crs=2154)
         communes.index.name = "municipality_row"
         joined = run_example("geopandas-basics/references/spatial-operations.md",
