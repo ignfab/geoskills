@@ -52,8 +52,8 @@ Distribution packages may omit Parquet. For that driver, offer
 - **Géoplateforme WFS**: `https://data.geopf.fr/wfs/ows` (WFS 2.0).
 - GetCapabilities: `https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetCapabilities`
 - Layer names include a namespace prefix, e.g. `BDTOPO_V3:batiment`, `ADMINEXPRESS-COG.LATEST:region`.
-- Discover layers with the MCP tool `gpf_wfs_search_types` from
-  [@ignfab/geocontext](https://github.com/ignfab/demo-geocontext), or by opening
+- Discover layers with the MCP tool `gpf_search_types` from
+  [@ignfab/geocontext](https://github.com/ignfab/geocontext), or by opening
   GetCapabilities in a browser.
 
 ## Discover before querying

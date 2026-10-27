@@ -8,7 +8,7 @@ All the operations below require the layers to share the same CRS: align them fi
 Attach the attributes of the polygon containing each point:
 
 ```python
-joined = gpd.sjoin(points, communes[["code_insee", "nom", "geometry"]],
+joined = gpd.sjoin(points, communes[["code_insee", "nom_officiel", "geometry"]],
                    predicate="within", how="left")
 ```
 

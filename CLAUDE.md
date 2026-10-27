@@ -10,8 +10,9 @@ One directory per skill, under `skills/`:
 skills/<skill-name>/
 ├── SKILL.md      # agent-facing instructions (required)
 ├── README.md     # human-facing documentation
-└── references/   # long-form documentation, loaded on demand
-    └── *.md
+├── references/   # long-form documentation, loaded on demand
+│   └── *.md
+└── scripts/      # optional helper scripts, covered by tests in tests/
 ```
 
 `<skill-name>` is lowercase with hyphens, and matches the `name` in the frontmatter.
@@ -77,14 +78,22 @@ these rules, and states them where they apply:
 - [ ] `description` says what the skill does and when to use it, in English only
 - [ ] long-form content moved to `references/` and linked from `SKILL.md`
 - [ ] `skills/<skill-name>/README.md` with requirements, install command and contents
-- [ ] entry added to the `Skills` table of the root `README.md`
+- [ ] entry added to the `Skills` table and to the `Résumé (FR)` section of the root `README.md`
 - [ ] `npx skills add <path-to-this-repo>` lists the skill without a warning
-- [ ] `SKILL.md` has a `## Validate the output` section, and its prerequisites follow the
-  agent conduct rules above
+- [ ] `SKILL.md` has `## Prerequisites` and `## Validate the output` sections, and its
+  prerequisites follow the agent conduct rules above
+- [ ] `tests/<skill-name>.md` with French scenario prompts, including at least one negative
+  scenario, and a row in the `Contents` table of `tests/README.md`
+- [ ] scenario identifiers added to `POSITIVE` / `NEGATIVE`, to a skill section and to the
+  score table of `tests/ab-testing.md`
 
 CI runs [.github/validate-skills.py](.github/validate-skills.py) to parse YAML, validate
-names and descriptions, require skill READMEs, and check local links and discoverable
-references. It also runs the automated helper and local GDAL tests in `tests/`.
+names and descriptions, require skill READMEs and the `## Prerequisites` and
+`## Validate the output` sections, and check local links and discoverable references. It
+also runs the unit tests in `tests/`: helper scripts, local GDAL/PROJ, GeoPandas and
+Mapshaper workflows, the documented curl requests, and a dry run of the A/B runner. That dry
+run fails when a skill has no `tests/<skill-name>.md` or when one of its scenarios is missing
+from `tests/ab-testing.md`.
 Install the Python validation dependency with `python3 -m pip install -r tests/requirements.txt`.
 
 Discovery by the Skills CLI and agent skill selection remain separate checks; see
