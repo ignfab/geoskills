@@ -29,7 +29,7 @@ collections and the proposed target of this repository.
 | [gdal-raster-basics](skills/gdal-raster-basics/README.md) | Clip, reproject, mosaic and convert rasters (DEM, orthophotos) with GDAL, build COGs and compute zonal statistics. |
 | [crs-reprojection-france](skills/crs-reprojection-france/README.md) | French CRS (Lambert-93, CC zones, NTF, overseas territories): EPSG codes, reprojection and pitfalls. |
 | [geopandas-basics](skills/geopandas-basics/README.md) | Process vector data in Python with GeoPandas: I/O, reprojection, spatial joins, overlay, buffers, zonal statistics. |
-| [vector-data-quality](skills/vector-data-quality/README.md) | Audit and repair invalid, empty or duplicate vector features before analysis or publication. |
+| [vector-data-quality](skills/vector-data-quality/README.md) | Audit and repair invalid, empty or duplicate vector features, and gaps or overlaps between polygons, before analysis or publication. |
 | [mapshaper-simplify](skills/mapshaper-simplify/README.md) | Simplify polygon boundaries with Mapshaper, preserve shared borders and export lighter GeoJSON or TopoJSON. |
 
 ## Installation
@@ -85,7 +85,8 @@ travailler la donnée géographique :
 - systèmes de coordonnées français (Lambert-93, coniques conformes, DOM) ;
 - traitement vecteur en Python avec GeoPandas (jointures spatiales, croisements, tampons,
   statistiques zonales) ;
-- contrôle qualité vectoriel (géométries invalides ou vides, doublons, schéma et réparation) ;
+- contrôle qualité vectoriel (géométries invalides ou vides, trous et chevauchements entre
+  polygones, doublons, schéma et réparation) ;
 - simplification de limites administratives avec Mapshaper, en conservant les frontières communes.
 
 Installation : `npx skills add ignfab/geoskills`

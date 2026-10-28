@@ -31,7 +31,8 @@ The runner needs the `claude` CLI and Python 3. The scenarios need the tools lis
 campaign; the runner denies common installation commands:
 
 - GDAL ≥ 3.1 that starts (`gdalinfo --version`); GDAL ≥ 3.12 for the
-  `gdal raster zonal-stats` path of RAS-05;
+  `gdal raster zonal-stats` path of RAS-05 and the `gdal vector check-coverage` path of
+  VDQ-03;
 - PROJ with the IGN grids `fr_ign_ntf_r93.tif` (CRS-02) and `fr_ign_RAF18.tif` (CRS-04),
   for example with `projsync --source-id fr_ign`;
 - `python3 -m pip install -r tests/requirements-geospatial.txt` for the GPD and VDQ
@@ -60,8 +61,8 @@ export AB_WITHOUT_FLAGS=""                      # extra claude flags, B runs onl
 
 POSITIVE="GSV-01 GSV-02 GSV-03 GSV-04 GSV-05 GEO-01 GEO-02 GEO-03 GEO-04 GEO-05 CRS-01 CRS-02 CRS-03 CRS-04 CRS-05
 RAS-01 RAS-02 RAS-03 RAS-04 RAS-05 WMS-01 WMS-02 WMS-03 WMS-04 WMS-05
-WFS-01 WFS-02 WFS-04 WFS-05 WFS-06 CQL-01 CQL-02 CQL-03 CQL-04 GPD-01 GPD-02 GPD-03 GPD-04 VDQ-01 VDQ-02 MS-01 MS-02 MS-03 MS-04"
-NEGATIVE="GSV-N1 GSV-N2 GEO-N1 CRS-N1 RAS-N1 WMS-N1 WFS-N1 CQL-N1 CQL-N2 GPD-N1 VDQ-N1 MS-N1 MS-N2"
+WFS-01 WFS-02 WFS-04 WFS-05 WFS-06 CQL-01 CQL-02 CQL-03 CQL-04 GPD-01 GPD-02 GPD-03 GPD-04 VDQ-01 VDQ-02 VDQ-03 MS-01 MS-02 MS-03 MS-04"
+NEGATIVE="GSV-N1 GSV-N2 GEO-N1 CRS-N1 RAS-N1 WMS-N1 WFS-N1 CQL-N1 CQL-N2 GPD-N1 VDQ-N1 VDQ-N2 MS-N1 MS-N2"
 
 # Print the French prompt of a scenario, read from tests/*.md.
 ab_prompt() {
@@ -418,7 +419,9 @@ All CQL scenarios use supplied metadata and require no live service.
 |----------|-------|-------|------------|
 | VDQ-01 | A + B | PY | null, empty and invalid separated; `make_valid()`; new file re-audited |
 | VDQ-02 | A + B | PY | `normalize()` before `duplicated()`; null and empty excluded |
+| VDQ-03 | A + B | PY or GDAL ≥ 3.12 | coverage checked, not only `is_valid`; overlap, enclosed gap and narrow gap found; sliver not called a gap |
 | VDQ-N1 | A | PY | `geopandas-basics` loaded, not `vector-data-quality` |
+| VDQ-N2 | A | PY | `crs-reprojection-france` loaded, not `vector-data-quality`; no geometry repair |
 
 ### [mapshaper-simplify](mapshaper-simplify.md)
 
@@ -471,9 +474,9 @@ Summarize per skill over the three repetitions:
 | geopf-wfs-download | /18 | /18 | | | |
 | geoserver-cql-filter | /12 | /12 | | | |
 | geopandas-basics | /12 | /12 | | | |
-| vector-data-quality | /6 | /6 | | | |
+| vector-data-quality | /9 | /9 | | | |
 | mapshaper-simplify | /12 | /12 | | | |
-| Negative scenarios (A only) | /39 | — | — | — | |
+| Negative scenarios (A only) | /42 | — | — | — | |
 
 ## Variants
 
@@ -493,6 +496,9 @@ Use a new `AB` directory for each variant, so that reports do not mix.
   context. Absence of a warning does not prove that B was uncontaminated.
 - VDQ-01 and VDQ-02 have no fixture: the agent builds its own data, so compare the
   procedure, not the values.
+- VDQ-03 uses `data/coverage_synthetic.geojson`, whose defects are known. With
+  GeoPandas < 1.1 and GDAL < 3.12, only the overlap-pair and enclosed-gap recipes remain,
+  in both modes.
 - Live results (scores, labels, layer lists) drift: compare A and B of the same repetition.
 - GDAL < 3.12 removes the `gdal raster zonal-stats` path of RAS-05 in both modes.
 - Automated runner tests use a fake CLI and make no paid calls. They verify preparation,
