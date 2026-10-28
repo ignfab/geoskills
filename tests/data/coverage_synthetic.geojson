@@ -1,0 +1,16 @@
+{
+"type": "FeatureCollection",
+"name": "coverage_synthetic",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::2154" } },
+"features": [
+{"type": "Feature", "properties": {"parcel_id": "P01"}, "geometry": {"type": "Polygon", "coordinates": [[[653000, 6859000], [653020, 6859000], [653020, 6859020], [653000, 6859020], [653000, 6859010], [653000, 6859010], [653000, 6859000]]]}},
+{"type": "Feature", "properties": {"parcel_id": "P02"}, "geometry": {"type": "Polygon", "coordinates": [[[653020, 6859000], [653040, 6859000], [653040, 6859020], [653020, 6859020], [653020, 6859000]]]}},
+{"type": "Feature", "properties": {"parcel_id": "P03"}, "geometry": {"type": "Polygon", "coordinates": [[[653039.95, 6859000], [653060, 6859000], [653060, 6859020], [653039.95, 6859020], [653039.95, 6859000]]]}},
+{"type": "Feature", "properties": {"parcel_id": "P04"}, "geometry": {"type": "Polygon", "coordinates": [[[653060.05, 6859000], [653080, 6859000], [653080, 6859020], [653060.05, 6859020], [653060.05, 6859000]]]}},
+{"type": "Feature", "properties": {"parcel_id": "P05"}, "geometry": {"type": "Polygon", "coordinates": [[[653000, 6859030], [653040, 6859030], [653040, 6859040], [653040, 6859044], [653040, 6859050], [653000, 6859050], [653000, 6859030]]]}},
+{"type": "Feature", "properties": {"parcel_id": "P06"}, "geometry": {"type": "Polygon", "coordinates": [[[653044, 6859030], [653080, 6859030], [653080, 6859050], [653044, 6859050], [653044, 6859044], [653044, 6859040], [653044, 6859030]]]}},
+{"type": "Feature", "properties": {"parcel_id": "P07"}, "geometry": {"type": "Polygon", "coordinates": [[[653040, 6859030], [653044, 6859030], [653044, 6859040], [653040, 6859040], [653040, 6859030]]]}},
+{"type": "Feature", "properties": {"parcel_id": "P08"}, "geometry": {"type": "Polygon", "coordinates": [[[653040, 6859044], [653044, 6859044], [653044, 6859050], [653040, 6859050], [653040, 6859044]]]}},
+{"type": "Feature", "properties": {"parcel_id": "P09"}, "geometry": {"type": "Polygon", "coordinates": [[[653000, 6859050], [653040, 6859050], [653044, 6859050], [653080, 6859050], [653080, 6859050.1], [653000, 6859050.1], [653000, 6859050]]]}}
+]
+}

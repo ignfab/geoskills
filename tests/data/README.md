@@ -22,6 +22,13 @@ unchanged; write generated files and sidecars outside this directory.
   zigzag border; feature `003` is a separate 0.0002° square. The tiny polygon tests
   `keep-shapes`; all identifiers deliberately retain leading zeros. These are not real
   administrative boundaries.
+- `coverage_synthetic.geojson`: nine invented parcels `P01`–`P09` in **EPSG:2154**, near
+  653000 E, 6859000 N (repository MIT license, no external data). Every polygon is valid on
+  its own, but the set is not a valid coverage: `P02` and `P03` overlap by 1 m²
+  (0.05 m × 20 m), `P03` and `P04` leave a 5 cm gap open to the outside, `P07` and `P08`
+  leave an enclosed 4 m × 4 m gap, `P09` is an 8 m² sliver (0.1 m × 80 m) along the top of
+  the second row, and `P01` has one repeated vertex. Shared edges otherwise have matching
+  vertices. Used by the vector-data-quality tests and scenario VDQ-03.
 
 The IGN boundary and DEM extracts are distributed under the
 [Licence Ouverte 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence/).

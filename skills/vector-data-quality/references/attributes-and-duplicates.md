@@ -114,3 +114,29 @@ report.to_csv("quality_report.csv", index=False)
 ```
 
 This makes exclusions and repairs reviewable and reproducible.
+
+### Severity levels
+
+Rank issues so the user sees first what blocks the requested use:
+
+- **blocker**: stops the analysis or publication (null, empty or invalid geometry before an
+  overlay, missing CRS);
+- **major**: gives wrong results unless resolved (duplicate identifiers where the contract
+  requires unique ones, overlaps in a coverage);
+- **minor**: worth reporting, without effect at the intended scale (slivers, repeated
+  points, shared geometries with distinct attributes).
+
+```python
+severity = {"null_geometry": "blocker", "empty_geometry": "blocker",
+            "invalid_geometry": "blocker", "duplicate_id": "major",
+            "duplicate_geometry": "minor"}
+issues = (report.melt(id_vars="id", var_name="issue", value_name="flagged")
+          .query("flagged").drop(columns="flagged"))
+issues["severity"] = issues["issue"].map(severity)
+print(issues.groupby(["severity", "issue"]).size())
+issues.to_csv("quality_issues.csv", index=False)
+```
+
+This mapping is a default: adapt it to the data contract and the requested use, and state
+the changes in the report. A duplicate geometry is minor for stacked addresses but major
+for a parcel layer.

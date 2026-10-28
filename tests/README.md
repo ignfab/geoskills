@@ -37,6 +37,7 @@ Test data in `data/`:
 | `monuments_sans_prj/` | Shapefile of 3 Paris monuments in Lambert-93, **without a `.prj`** |
 | `saint_mande.geojson` | Boundary of Saint-Mandé (INSEE 94067), EPSG:4326, from ADMIN EXPRESS |
 | `admin_units_synthetic.geojson` | Three invented EPSG:4326 polygons: two neighbors with a detailed shared border and a small island feature |
+| `coverage_synthetic.geojson` | Nine invented EPSG:2154 parcels, each valid, with an overlap, an enclosed gap, a narrow gap and a sliver |
 | `mnt_dalles/` | 10 m DEM of Saint-Mandé (RGE ALTI) split into 2 ESRI ASCII tiles, **without a `.prj`** |
 
 `saint_mande.geojson` and `mnt_dalles/` are extracts of IGN data (ADMIN EXPRESS, RGE ALTI),
@@ -74,9 +75,12 @@ python3 -m unittest discover -s tests -p 'test_*.py' -v
   nearest joins/buffers, overlay areas, CRS and format round trips with nullable fields
   and string identifiers, and zonal-statistics attachment with filtered or repeated indices.
   Checks zero versus nodata/outside, mismatched result counts and attribute collisions.
-- `test_vector_quality.py`: invalid-geometry diagnosis and repair, normalized geometry
+- `test_vector_quality.py`: invalid-geometry diagnosis and repair, reason grouping, CRS
+  area-of-use check, `linework` and `structure` repair methods, normalized geometry
   duplicates, joint attribute/geometry comparisons, null/empty handling, collapsed
-  components, polygon quarantine and GeoPackage round trip.
+  components, polygon quarantine, suspicious valid geometries, severity report, coverage
+  overlaps and gaps, and GeoPackage round trip. The `gdal vector check-geometry`,
+  `check-coverage` and `make-valid` recipes run on GDAL ≥ 3.12 and skip otherwise.
 - `test_mapshaper.py`: percentage and metric simplification, small-feature retention,
   shared borders across layers, TopoJSON arcs, CRS and attribute preservation.
 - `test_live.py`: bounded geocoding, WFS, WMS and WMTS smoke tests plus WFS, navigation
