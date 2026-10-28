@@ -33,3 +33,5 @@ curl -fsS --max-time 300 -X POST https://data.geopf.fr/geocodage/search/csv \
   -F data=@adresses.csv -F columns=adresse -F postcode=cp \
   -o adresses_geocodees.csv
 ```
+
+Additional workflow: [quality-policy](references/quality-policy.md).

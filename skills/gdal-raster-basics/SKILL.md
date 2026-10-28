@@ -84,10 +84,20 @@ Before reporting a result, run `gdalinfo -stats <output>` and check:
   polygon);
 - a declared nodata value, and a plausible min/max: a mainland France DEM lies between about
   −10 and 4,810 m, and zeros along the edges usually mean a missing `-dstnodata`;
-- `LAYOUT=COG` in the metadata when a COG was requested.
+- `LAYOUT=COG` as a quick check when a COG was requested; use the structural validator
+  described in [quality checks](references/quality-checks.md) when available.
+
+## Report the result
+
+Report the source and edition/access date when known, output path and format, CRS and
+units, extent and counts (or raster dimensions), processing choices and checks performed.
+Separate failed checks, warnings and checks not performed; keep unknown metadata explicit.
+For advice-only requests, report the recommendation and its evidence without inventing files.
 
 ## References
 
+- [references/quality-checks.md](references/quality-checks.md) — nodata coverage, grids,
+  categorical values and COG structure.
 - [references/gdalwarp-options.md](references/gdalwarp-options.md) — reprojection, clipping,
   resolution, resampling, nodata, performance and troubleshooting.
 - [references/cog-and-vrt.md](references/cog-and-vrt.md) — COG creation options, overviews,

@@ -1,0 +1,82 @@
+{
+  "date": "2026-10-28",
+  "cli": "Claude Code 2.1.287",
+  "mode": "with skills only; not an A/B comparison",
+  "per_run_budget_usd": 1,
+  "runs": [
+    {
+      "scenario": "ALT-02",
+      "repetition": "pilot1",
+      "model": "claude-opus-5-5",
+      "skills": [
+        "geopf-altimetry"
+      ],
+      "process_ok": true,
+      "install_attempts": 0,
+      "source_files_unchanged": true,
+      "reported_cost_usd": 0.1589716,
+      "duration_seconds": 27,
+      "selection_pass": true
+    },
+    {
+      "scenario": "GEO-06",
+      "repetition": "pilot1",
+      "model": "claude-opus-5-5",
+      "skills": [],
+      "process_ok": true,
+      "install_attempts": 0,
+      "source_files_unchanged": true,
+      "reported_cost_usd": 0.1322486,
+      "duration_seconds": 20,
+      "selection_pass": false
+    },
+    {
+      "scenario": "GEO-06",
+      "repetition": "pilot2",
+      "model": "claude-opus-5-5",
+      "skills": [
+        "geopf-geocoding"
+      ],
+      "process_ok": true,
+      "install_attempts": 0,
+      "source_files_unchanged": true,
+      "reported_cost_usd": 0.1288552,
+      "duration_seconds": 21,
+      "selection_pass": true
+    },
+    {
+      "scenario": "INT-01",
+      "repetition": "pilot1",
+      "model": "claude-opus-5-5",
+      "skills": [
+        "geodata-intake"
+      ],
+      "process_ok": true,
+      "install_attempts": 0,
+      "source_files_unchanged": true,
+      "reported_cost_usd": 0.29699200000000003,
+      "duration_seconds": 52,
+      "selection_pass": true
+    },
+    {
+      "scenario": "RTE-N1",
+      "repetition": "pilot1",
+      "model": "claude-opus-5-5",
+      "skills": [
+        "geopandas-basics"
+      ],
+      "process_ok": true,
+      "install_attempts": 0,
+      "source_files_unchanged": true,
+      "reported_cost_usd": 0.1290034,
+      "duration_seconds": 25,
+      "selection_pass": true
+    }
+  ],
+  "reported_total_cost_usd": 0.8460708,
+  "limitations": [
+    "Five calls, no repetitions for most cases and no without-skills baseline.",
+    "No skill selection claim for scenarios not run.",
+    "CLI-reported cost is not an invoice."
+  ]
+}

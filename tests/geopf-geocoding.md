@@ -110,3 +110,14 @@ correct)
 **Expected skill:** not `geopf-geocoding`.
 
 - [ ] no call to `data.geopf.fr`
+
+## GEO-06 — Explicit review policy
+
+> Classe les lignes de `data/geocoded_synthetic.csv` dans `output/adresses_controlees.csv`.
+> Accepte seulement les résultats au numéro, avec un score d'au moins 0,7, un écart
+> d'au moins 0,1 avec le deuxième candidat, des coordonnées valides et le même code
+> communal que la colonne `expected_citycode`. Préserve toutes les lignes et leurs
+> colonnes et explique les motifs de révision. Aucun appel réseau n'est nécessaire.
+
+Expected: 1 accepted, 5 review, 1 unmatched; unchanged input columns and string IDs.
+Report thresholds and reasons; accepted does not mean independently verified.

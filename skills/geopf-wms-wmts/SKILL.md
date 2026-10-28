@@ -90,6 +90,13 @@ public services.
   France, with `-99999` as nodata.
 - Do not pipe `gdalwarp` or `gdal_translate` through `head` or `tail`.
 
+## Report the result
+
+Report the source and edition/access date when known, output path and format, CRS and
+units, extent and counts (or raster dimensions), processing choices and checks performed.
+Separate failed checks, warnings and checks not performed; keep unknown metadata explicit.
+For advice-only requests, report the recommendation and its evidence without inventing files.
+
 ## References
 
 - [references/wmts.md](references/wmts.md) — GDAL WMTS driver: connection string, zoom /

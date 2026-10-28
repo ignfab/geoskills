@@ -54,15 +54,15 @@ export GEOSKILLS="${GEOSKILLS:-$HOME/projects/geoskills}"  # the repository clon
 export AB="${AB:-$HOME/geoskills-ab/$(date +%F)}"          # outside the repository
 export AB_MODEL="${AB_MODEL:-opus}"              # same model/version in both modes
 export AB_BUDGET="2"                            # USD cap per run
-export AB_TOOLS="Bash Read Write Edit Glob Grep WebFetch WebSearch"
+export AB_TOOLS="Bash Read Write Edit Glob Grep Skill WebFetch WebSearch"
 export AB_DENY="Bash(sudo *) Bash(pip install *) Bash(pip3 install *) Bash(python3 -m pip install *) Bash(conda install *) Bash(mamba install *) Bash(apt *) Bash(apt-get *) Bash(brew install *) Bash(npm install *)"
 export AB_EXTRA_FLAGS=""                        # extra claude flags, both modes
 export AB_WITHOUT_FLAGS=""                      # extra claude flags, B runs only
 
 POSITIVE="GSV-01 GSV-02 GSV-03 GSV-04 GSV-05 GEO-01 GEO-02 GEO-03 GEO-04 GEO-05 CRS-01 CRS-02 CRS-03 CRS-04 CRS-05
 RAS-01 RAS-02 RAS-03 RAS-04 RAS-05 WMS-01 WMS-02 WMS-03 WMS-04 WMS-05
-WFS-01 WFS-02 WFS-04 WFS-05 WFS-06 CQL-01 CQL-02 CQL-03 CQL-04 GPD-01 GPD-02 GPD-03 GPD-04 VDQ-01 VDQ-02 VDQ-03 MS-01 MS-02 MS-03 MS-04"
-NEGATIVE="GSV-N1 GSV-N2 GEO-N1 CRS-N1 RAS-N1 WMS-N1 WFS-N1 CQL-N1 CQL-N2 GPD-N1 VDQ-N1 VDQ-N2 MS-N1 MS-N2"
+WFS-01 WFS-02 WFS-04 WFS-05 WFS-06 CQL-01 CQL-02 CQL-03 CQL-04 GPD-01 GPD-02 GPD-03 GPD-04 VDQ-01 VDQ-02 VDQ-03 MS-01 MS-02 MS-03 MS-04 INT-01 INT-02 DLF-01 DLF-02 ALT-01 ALT-02 RTE-01 RTE-02 GEO-06 WFS-07 RAS-06"
+NEGATIVE="GSV-N1 GSV-N2 GEO-N1 CRS-N1 RAS-N1 WMS-N1 WFS-N1 CQL-N1 CQL-N2 GPD-N1 VDQ-N1 VDQ-N2 MS-N1 MS-N2 INT-N1 DLF-N1 ALT-N1 RTE-N1"
 
 # Print the French prompt of a scenario, read from tests/*.md.
 ab_prompt() {
@@ -275,9 +275,9 @@ source ab.sh
 AB_DRY=1 ab_campaign 1
 ```
 
-Then set `export AB=/path/to/a/new/campaign` for actual agent calls. One repetition has **103 runs**:
-45 positive scenarios in both modes and 13 negatives in A. At the example budget of $2 per
-run, the caps total $206 per repetition and $618 for three repetitions. Starting the paid
+Then set `export AB=/path/to/a/new/campaign` for actual agent calls. One repetition has **132 runs**:
+57 positive scenarios in both modes and 18 negatives in A. At the example budget of $2 per
+run, the caps total $264 per repetition and $792 for three repetitions. Starting the paid
 campaign is a separate user decision; a dry run does not authorize it.
 
 Smoke pass, one repetition:
@@ -343,6 +343,7 @@ needed. Web access can check official guides; distinguish advice from live avail
 | GEO-03 | A + B | NET | lon/lat order (point 3 is in Réunion) |
 | GEO-04 | A + B | NET | `index=parcel` and `truegeometry` promoted: a `Point` output fails |
 | GEO-05 | A + B | — | control |
+| GEO-06 | A + B | — | explicit policy, ambiguity, row conservation and reasons |
 | GEO-N1 | A | — | `geopf-geocoding` not loaded, no call to `data.geopf.fr` |
 
 ### [crs-reprojection-france](crs-reprojection-france.md)
@@ -365,6 +366,7 @@ needed. Web access can check official guides; distinguish advice from live avail
 | RAS-03 | A + B | GDAL | `-tap -r average`, not the default `near` |
 | RAS-04 | A + B | GDAL | control |
 | RAS-05 | A + B | GDAL ≥ 3.12 or PY | zones reprojected to EPSG:2154, not the DEM; `count = 0` caught |
+| RAS-06 | A + B | GDAL | class zero remains valid; no interpolation; full COG check distinguished |
 | RAS-N1 | A | NET | `geopf-wms-wmts` loaded |
 
 ### [geopf-wms-wmts](geopf-wms-wmts.md)
@@ -388,6 +390,7 @@ needed. Web access can check official guides; distinguish advice from live avail
 | WFS-04 | A + B | — | missing Parquet writer: GDAL options before any fallback; one file per layer |
 | WFS-05 | A + B | — | missing CLI: user-run installation choices, no silent Python substitution |
 | WFS-06 | A + B | — | Python proposed only as an agreed last resort, without installing software |
+| WFS-07 | A + B | — | equal counts with duplicated source IDs remain unverified |
 | WFS-N1 | A | NET | `geopf-wms-wmts` loaded |
 
 ### [geoserver-cql-filter](geoserver-cql-filter.md)
@@ -434,6 +437,38 @@ All CQL scenarios use supplied metadata and require no live service.
 | MS-N1 | A | PY | geometry repair without simplification; `vector-data-quality` selected |
 | MS-N2 | A | GDAL | raster resampling handled by `gdal-raster-basics` |
 
+### [geodata-intake](geodata-intake.md)
+
+| Scenario | Modes | Needs | Watch in B |
+| --- | --- | --- | --- |
+| INT-01 | A + B | GDAL | missing CRS retained; sidecars and sources unchanged |
+| INT-02 | A + B | — | latitude-first CSV; overseas point |
+| INT-N1 | A | GDAL or PY | explicit conversion bypasses inventory |
+
+### [geopf-download-files](geopf-download-files.md)
+
+| Scenario | Modes | Needs | Watch in B |
+| --- | --- | --- | --- |
+| DLF-01 | A + B | NET | paginated discovery and explicit incomplete catalogue |
+| DLF-02 | A + B | — | mutable URL cannot safely resume without original identity |
+| DLF-N1 | A | — | WFS sample does not trigger full archives |
+
+### [geopf-altimetry](geopf-altimetry.md)
+
+| Scenario | Modes | Needs | Watch in B |
+| --- | --- | --- | --- |
+| ALT-01 | A + B | NET | source discovery, profile sampling, nodata and vertical datum |
+| ALT-02 | A + B | — | count/order checked; sentinel not a height; IDs preserved |
+| ALT-N1 | A | — | local DEM mosaic bypasses elevation API |
+
+### [geopf-routing](geopf-routing.md)
+
+| Scenario | Modes | Needs | Watch in B |
+| --- | --- | --- | --- |
+| RTE-01 | A + B | NET, GDAL or PY | resource discovery, units, snapping, actual FeatureCollection |
+| RTE-02 | A + B | NET, GDAL or PY | arrival direction and explicit duration units |
+| RTE-N1 | A | — | geometric buffer bypasses network routing |
+
 ## Score a run
 
 For each row of `report.md`, in the run directory:
@@ -467,16 +502,20 @@ Summarize per skill over the three repetitions:
 | Skill | A pass | B pass | A − B | Cost A / B | Verdict |
 |-------|--------|--------|-------|------------|---------|
 | geopf-services | /15 | /15 | | | |
-| geopf-geocoding | /15 | /15 | | | |
+| geopf-geocoding | /18 | /18 | | | |
 | crs-reprojection-france | /15 | /15 | | | |
-| gdal-raster-basics | /15 | /15 | | | |
+| gdal-raster-basics | /18 | /18 | | | |
 | geopf-wms-wmts | /15 | /15 | | | |
-| geopf-wfs-download | /18 | /18 | | | |
+| geopf-wfs-download | /21 | /21 | | | |
 | geoserver-cql-filter | /12 | /12 | | | |
 | geopandas-basics | /12 | /12 | | | |
 | vector-data-quality | /9 | /9 | | | |
 | mapshaper-simplify | /12 | /12 | | | |
-| Negative scenarios (A only) | /42 | — | — | — | |
+| geodata-intake | /6 | /6 | | | |
+| geopf-download-files | /6 | /6 | | | |
+| geopf-altimetry | /6 | /6 | | | |
+| geopf-routing | /6 | /6 | | | |
+| Negative scenarios (A only) | /54 | — | — | — | |
 
 ## Variants
 

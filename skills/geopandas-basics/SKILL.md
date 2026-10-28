@@ -77,6 +77,13 @@ GeoPandas emits a `Geometry is in a geographic CRS` warning.
 - For zonal statistics, check valid pixel counts and plausible values, and attach results
   by position as shown in the reference so repeated indices cannot multiply rows.
 
+## Report the result
+
+Report the source and edition/access date when known, output path and format, CRS and
+units, extent and counts (or raster dimensions), processing choices and checks performed.
+Separate failed checks, warnings and checks not performed; keep unknown metadata explicit.
+For advice-only requests, report the recommendation and its evidence without inventing files.
+
 ## References
 
 - [references/io-and-crs.md](references/io-and-crs.md) — formats (GPKG, GeoParquet,

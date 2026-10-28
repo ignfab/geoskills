@@ -95,6 +95,13 @@ If checks fail, reduce simplification or investigate source quality. Do not auto
 add `-clean`, snapping, coordinate rounding, `no-topology` or `no-repair` to make a run pass.
 See the reference for a concrete validation snippet and export caveats.
 
+## Report the result
+
+Report the source and edition/access date when known, output path and format, CRS and
+units, extent and counts (or raster dimensions), processing choices and checks performed.
+Separate failed checks, warnings and checks not performed; keep unknown metadata explicit.
+For advice-only requests, report the recommendation and its evidence without inventing files.
+
 ## References
 
 - [Shared topology, export formats and validation](references/simplification.md).

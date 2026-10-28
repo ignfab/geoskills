@@ -21,10 +21,15 @@ whose `description` is written in English.
 | [geopandas-basics.md](geopandas-basics.md) | `geopandas-basics` |
 | [vector-data-quality.md](vector-data-quality.md) | `vector-data-quality` |
 | [mapshaper-simplify.md](mapshaper-simplify.md) | `mapshaper-simplify` |
+| [geodata-intake.md](geodata-intake.md) | `geodata-intake` |
+| [geopf-download-files.md](geopf-download-files.md) | `geopf-download-files` |
+| [geopf-altimetry.md](geopf-altimetry.md) | `geopf-altimetry` |
+| [geopf-routing.md](geopf-routing.md) | `geopf-routing` |
 | [data/README.md](data/README.md) | Fixture provenance, CRS and missing-metadata traps |
 | [ab-testing.md](ab-testing.md) | Running every scenario with and without the skills, and scoring the difference |
 | [review-2026-10-12.md](review-2026-10-12.md) | Recent-skill review, reproduced defects, fixes and validation limits |
 | [review-2026-10-27.md](review-2026-10-27.md) | Test audit, added edge cases and remaining coverage limits |
+| [review-2026-10-28.md](review-2026-10-28.md) | Four added skills, workflow checks, live evidence and an actual agent pilot |
 
 Test data in `data/`:
 
@@ -58,6 +63,12 @@ python3 .github/validate-skills.py
 python3 -m unittest discover -s tests -p 'test_*.py' -v
 ```
 
+- `test_enrichment.py`: WFS count/ID checks, geocoding policies, Atom pagination and
+  documented elevation/navigation response handling.
+- `test_download_transfers.py`: actual curl downloads and safe/changed-edition range resume
+  against a loopback archive server.
+- `test_raster_quality.py`: read-only intake, categorical values/nodata/grid, and full COG
+  validation (GDAL >= 3.13).
 - `test_validation.py`: real YAML parsing, empty/invalid metadata, duplicate keys, missing
   files, required workflow sections and reference reachability.
 - `test_ab_runner.py`: complete dry-run scenario coverage, isolated fixture copies and
@@ -105,17 +116,22 @@ repair the active GDAL/SQLite environment or use a clean environment before reru
 The tests deliberately do not hide a broken installation.
 
 The NTF and vertical tests skip if the required IGN grids are unavailable locally; install
-those grids separately to enable them. The `LAYOUT=COG` check is not a full COG validator.
+those grids separately to enable them. The `LAYOUT=COG` check is not a full COG validator; the structural COG regression
+requires GDAL >= 3.13 with matching Python bindings and is skipped on older installations.
 
 To run the live tests deliberately:
 
 ```bash
-GEOSKILLS_LIVE=1 python3 -m unittest discover -s tests -p 'test_live.py' -v
+GEOSKILLS_LIVE=1 python3 -m unittest discover -s tests -p 'test_live*.py' -v
 ```
 
 This sends the eight fixture addresses in `data/adresses.csv` to the public IGN geocoder,
 queries the three public test coordinates and a cadastral parcel, and downloads small
-WFS/raster extracts and service catalogues. Do not replace those fixtures with private data for a live run.
+WFS/raster extracts and service catalogues. The enrichment probes also query two public
+elevation points, a 20-sample profile, a short pedestrian route, a five-minute isochrone,
+and three communes with one feature per WFS page. Real ECQL tests check attribute/BBOX
+predicates and malformed syntax on the IGN service; they do not establish universal EWKT
+compatibility. Do not replace those fixtures with private data for a live run.
 Network/service failures are reported as failures, not silently treated as passed tests.
 Live calls are bounded by timeouts and small extents and do not run in routine CI.
 They can also be enabled deliberately in GitHub Actions: **Validate skills → Run workflow →

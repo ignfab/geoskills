@@ -89,3 +89,13 @@ an agent follows the tooling rule.
 > Télécharge l'orthophoto du Capitole de Toulouse.
 
 **Expected skill:** `geopf-wms-wmts`; do not use the WFS for imagery.
+
+## WFS-07 — Count alone hides duplicates
+
+> Un export WFS contient cinq objets dont les identifiants source sont 01, 02, 03, 04, 04.
+> Le service annonçait cinq correspondances avant et après le téléchargement. Peut-on
+> dire que l'export est complet ? Écris ton diagnostic dans `output/completude.md`, sans
+> faire d'appel réseau ni installer d'outil.
+
+Expected: duplicated source ID makes completeness unverified despite equal counts;
+check paging/order, retain partial output/logs and avoid blind append.

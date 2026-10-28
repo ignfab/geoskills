@@ -1,0 +1,8 @@
+id,expected_citycode,result_citycode,result_status,result_score,result_score_next,result_type,longitude,latitude
+001,94067,94067,ok,0.95,0.4,housenumber,2.42,48.84
+002,94067,94067,ok,0.95,0.94,housenumber,2.42,48.84
+003,94067,75056,ok,0.95,0.4,housenumber,2.42,48.84
+004,94067,94067,ok,0.95,0.4,street,2.42,48.84
+005,94067,94067,error,0.95,0.4,housenumber,2.42,48.84
+006,94067,94067,ok,0.95,0.4,housenumber,nan,48.84
+007,94067,94067,not-found,0.95,0.4,housenumber,2.42,48.84
