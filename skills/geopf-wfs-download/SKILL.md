@@ -15,6 +15,8 @@ To process the downloaded layers in Python (joins, buffers, overlays), see the
 
 - Working **GDAL** CLI tools (`ogr2ogr` and `ogrinfo`) from the same environment, with
   WFS read support and an output driver that can create the requested vector format.
+- `curl` for discovery/count requests; Python 3 for the optional GeoPackage completeness
+  helper (standard library only). User install command: `sudo apt install curl python3`.
 - Check capabilities before downloading. For GeoParquet, use the following commands;
   replace `Parquet` with the requested driver for other formats (e.g. `GPKG`, `GeoJSON`):
 

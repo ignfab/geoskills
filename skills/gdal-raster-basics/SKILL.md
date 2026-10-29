@@ -18,6 +18,8 @@ Handle raster data with the GDAL tools that cover most needs:
 ## Prerequisites
 
 - **GDAL** 3.1 or later (the COG driver was added in 3.1).
+- Optional: GDAL ≥ 3.12 for `gdal raster zonal-stats`; GDAL ≥ 3.13 with matching Python
+  bindings for `gdal driver cog validate`. Check command availability before using it.
 - Install: `sudo apt install gdal-bin` (Ubuntu/Debian) or `conda install -c conda-forge gdal`.
 - If GDAL is missing, give the user the install command and let them run it; do not install
   software yourself.
@@ -82,8 +84,9 @@ Before reporting a result, run `gdalinfo -stats <output>` and check:
 
 - the CRS, pixel size and extent you asked for (after clipping, close to the extent of the
   polygon);
-- a declared nodata value, and a plausible min/max: a mainland France DEM lies between about
-  −10 and 4,810 m, and zeros along the edges usually mean a missing `-dstnodata`;
+- the nodata value or mask, valid-data coverage and plausible min/max for the source and
+  area. A raster can be entirely valid without a nodata marker; zero can be a valid value.
+  Investigate unexpected edge values using the source metadata before changing nodata;
 - `LAYOUT=COG` as a quick check when a COG was requested; use the structural validator
   described in [quality checks](references/quality-checks.md) when available.
 
@@ -106,8 +109,9 @@ For advice-only requests, report the recommendation and its evidence without inv
 - [references/zonal-stats.md](references/zonal-stats.md) — statistics of a raster per
   polygon with `gdal raster zonal-stats` (GDAL ≥ 3.12), options and pitfalls.
 
-To download rasters (orthophotos, elevation) from the Géoplateforme, see the
-`geopf-wms-wmts` skill. For the choice of CRS (Lambert-93, CC zones, overseas territories),
+To download rasters (orthophotos, elevation) from the Géoplateforme, use
+`geopf-wms-wmts` for map-service extracts or `geopf-download-files` for ready-made files.
+For the choice of CRS (Lambert-93, CC zones, overseas territories),
 see the `crs-reprojection-france` skill.
 
 ## Additional resources

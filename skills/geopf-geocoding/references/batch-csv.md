@@ -49,7 +49,7 @@ if their original values must be preserved. Common result columns include:
 Address split across several columns, filtered by postcode, keeping only a few output columns:
 
 ```bash
-curl -fsS --max-time 300 -X POST https://data.geopf.fr/geocodage/search/csv \
+curl --fail --show-error --max-time 300 -X POST https://data.geopf.fr/geocodage/search/csv \
   -F data=@adresses.csv \
   -F columns=adresse -F columns=ville \
   -F postcode=cp \
@@ -67,7 +67,7 @@ output has no coordinates. Keep `result_status` and the quality fields needed be
 Reverse geocoding of a CSV file with `lon` and `lat` columns:
 
 ```bash
-curl -fsS --max-time 300 -X POST https://data.geopf.fr/geocodage/reverse/csv \
+curl --fail --show-error --max-time 300 -X POST https://data.geopf.fr/geocodage/reverse/csv \
   -F data=@points.csv \
   -o points_adresses.csv
 ```
@@ -125,7 +125,7 @@ partial chunks. Use a separate results directory so output files cannot become n
 mkdir -p /path/to/results
 for f in /path/to/uploads/chunk_*.csv; do
   [ -f "$f" ] || continue
-  curl -fsS --max-time 300 -X POST https://data.geopf.fr/geocodage/search/csv \
+  curl --fail --show-error --max-time 300 -X POST https://data.geopf.fr/geocodage/search/csv \
     -F data=@"$f" -F columns=adresse -F postcode=cp \
     -o "/path/to/results/$(basename "$f")" || break
 done

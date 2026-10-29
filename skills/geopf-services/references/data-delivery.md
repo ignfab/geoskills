@@ -69,7 +69,9 @@ use `geoserver-cql-filter` for GeoServer ECQL filters where supported.
 [Official download guide](https://cartes.gouv.fr/aide/fr/guides-utilisateur/utiliser-les-services-de-la-geoplateforme/telechargement/).
 
 Choose this API for existing product editions, archives and large offline datasets.
-It returns Atom feeds, not WFS features or map images:
+Use `geopf-download-files` when installed for paginated discovery, edition selection,
+foreground transfers, safe resume and integrity checks. The API returns Atom feeds,
+not WFS features or map images:
 
 1. Discover resources at `https://data.geopf.fr/telechargement/capabilities`.
 2. Follow the advertised resource to `/telechargement/resource/{resourceName}`.

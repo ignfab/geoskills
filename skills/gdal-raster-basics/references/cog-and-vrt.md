@@ -41,6 +41,9 @@ Inspect the COG layout marker (a quick check, not a full structural validation):
 gdalinfo output_cog.tif | grep -i "LAYOUT=COG"
 ```
 
+For structural validation with GDAL ≥ 3.13 and matching Python bindings, follow
+[quality checks](quality-checks.md#structural-cog-validation); retain any warnings.
+
 ## Overviews on an existing GeoTIFF
 
 ```bash

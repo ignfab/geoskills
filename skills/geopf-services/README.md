@@ -7,8 +7,8 @@ files, coordinates, elevation, routes, reachable areas or standards-validation r
 
 The skill distinguishes WMS-R/WMS-V, WMTS, TMS and WFS, explains when to prefer ready-made
 downloads or authenticated extraction, and links to current official service guides.
-It routes implementation to `geopf-wfs-download`, `geopf-wms-wmts` and `geopf-geocoding`
-where appropriate rather than duplicating their workflows.
+It routes implementation to `geopf-wfs-download`, `geopf-wms-wmts`, `geopf-geocoding`,
+`geopf-download-files`, `geopf-altimetry` and `geopf-routing` when installed.
 
 ## Requirements
 
