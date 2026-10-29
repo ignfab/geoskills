@@ -31,7 +31,7 @@ unchanged; write generated files and sidecars outside this directory.
   vertices. Used by the vector-data-quality tests and scenario VDQ-03.
 
 The IGN boundary and DEM extracts are distributed under the
-[Licence Ouverte 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence/).
+[Licence Ouverte 2.0](https://www.data.gouv.fr/pages/legal/licences/etalab-2-0).
 The historical fixture acquisition version/date is not recorded separately; regression
 values were supplied with the scenarios and rechecked against the stored fixtures on
 2026-09-30. Live service responses can differ from these snapshots.

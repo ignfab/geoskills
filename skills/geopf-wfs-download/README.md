@@ -21,6 +21,11 @@ The agent uses `ogr2ogr`, never installs software itself and asks for an environ
 choice when a capability is missing. It does not silently switch to Python or another
 format. GeoParquet exports use one file per layer.
 
+The discovery/count requests use `curl`. The optional GeoPackage completeness helper
+uses Python 3 and its standard library: the user can install them with
+`sudo apt install curl python3`. This helper audits an export; downloads and conversions
+still use `ogr2ogr`.
+
 ## Installation
 
 ```bash
@@ -34,6 +39,8 @@ npx skills add ignfab/geoskills --skill geopf-wfs-download
 | [SKILL.md](SKILL.md) | Tool/driver checks, tooling rule, endpoint, download recipes and validation. |
 | [references/formats.md](references/formats.md) | Output formats, missing-driver options and GeoParquet layer limits. |
 | [references/ogr2ogr-options.md](references/ogr2ogr-options.md) | Filtering, reprojection, performance, troubleshooting. |
+| [references/completeness.md](references/completeness.md) | Compare WFS counts before/after export, check source IDs and handle interrupted jobs. |
+| [scripts/check_export.py](scripts/check_export.py) | Audit GeoPackage counts and source IDs against saved WFS hits responses. |
 
 ## Example
 
@@ -43,5 +50,3 @@ ogr2ogr -f GPKG -spat 1.43 43.59 1.45 43.61 -spat_srs EPSG:4326 \
   "WFS:https://data.geopf.fr/wfs/ows" \
   "BDTOPO_V3:batiment"
 ```
-
-Additional workflow: [completeness](references/completeness.md).

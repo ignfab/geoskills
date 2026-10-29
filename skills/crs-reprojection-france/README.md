@@ -7,6 +7,8 @@ pyproj, without the usual pitfalls.
 ## Requirements
 
 GDAL and PROJ (`sudo apt install gdal-bin proj-bin`, or `conda install -c conda-forge gdal`).
+The optional Python workflow uses `pyproj` (`python3 -m pip install pyproj`).
+These installation commands are for the user; the agent does not install software.
 Accurate NTF and altitude transformations also need the IGN grids (`projsync --source-id fr_ign`
 or `PROJ_NETWORK=ON`).
 

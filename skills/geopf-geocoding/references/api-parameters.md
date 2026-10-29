@@ -3,7 +3,7 @@
 Parameters checked against the live OpenAPI specification on 2026-09-30.
 
 Full specification: <https://data.geopf.fr/geocodage/openapi.yaml>. Live list of indexes and
-fields: `curl -fsS --max-time 30 https://data.geopf.fr/geocodage/getCapabilities`.
+fields: `curl -fsS --max-time 30 https://data.geopf.fr/geocodage/getcapabilities`.
 
 ## `/search` parameters
 
@@ -29,6 +29,9 @@ Polygon, or the API's Circle extension) to search by intersection. Check the Ope
 specification for the parameters accepted by each operation.
 
 ## Response fields
+
+Fields vary by index and operation. In particular, a structured parcel search can omit
+`score`; do not interpret its absence as a zero score or a failed request.
 
 Address (`_type: "address"`):
 
@@ -78,10 +81,13 @@ Find a municipality and its INSEE code:
 curl -fsS --max-time 30 "https://data.geopf.fr/geocodage/search?q=saint-mande&type=municipality&limit=1"
 ```
 
-Autocompletion, as used by search boxes (note the different parameter names):
+Autocompletion, as used by search boxes, has its own metadata at
+`https://data.geopf.fr/geocodage/completion/getcapabilities` and a limit of 10 requests
+per second per IP address. Check the [official autocomplete guide](https://cartes.gouv.fr/aide/fr/guides-utilisateur/utiliser-les-services-de-la-geoplateforme/autocompletion/)
+for current limits and supported filters. Note the different parameter names:
 
 ```bash
-curl -fsS --max-time 30 "https://data.geopf.fr/geocodage/completion?text=73+av+de+paris&maximumResponses=5"
+curl -fsS --max-time 30 "https://data.geopf.fr/geocodage/completion/?text=73+av+de+paris&maximumResponses=5"
 ```
 
 ## Using the results

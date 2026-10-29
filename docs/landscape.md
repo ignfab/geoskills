@@ -5,6 +5,13 @@ study the other geospatial skill collections and propose a target for this repos
 counts, skill counts and dates were observed on 2026-10-27 and are not kept up to date. The
 proposed target in the last sections is a proposal for the maintainers, not a decision.
 
+Implementation follow-up (2026-10-29): the repository now includes the intake, file-download,
+altimetry and routing skills, raster quality checks, and shared output-report conventions.
+See the [current skill list](../README.md#skills), [report conventions](output-reports.md)
+and [2026-10-28 implementation review](../tests/review-2026-10-28.md) for the changes and
+their validation. That review includes a small agent pilot, not a complete A/B campaign.
+The comparisons, counts and proposed gaps below retain their original snapshot date.
+
 ## Scope and method
 
 - **Sources.**

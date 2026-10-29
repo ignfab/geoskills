@@ -43,6 +43,9 @@ and identifiers. An overview request does not authorize sending user address lis
 [Official elevation guide](https://cartes.gouv.fr/aide/fr/guides-utilisateur/utiliser-les-services-de-la-geoplateforme/calcul-altimetrique/)
 and [API schema](https://data.geopf.fr/altimetrie/api/index.html).
 
+Use `geopf-altimetry` when installed for point/CSV requests, missing-elevation handling
+and sampled profiles.
+
 Discover resources at `https://data.geopf.fr/altimetrie/resources`, then inspect the
 chosen resource's coverage, source and precision. The service can return elevations at
 points or a sampled profile along a line. Point elevation uses
@@ -61,6 +64,9 @@ and `gdal-raster-basics`, not millions of point-elevation requests.
 
 Both use `https://data.geopf.fr/navigation/getcapabilities` and the
 [navigation API schema](https://data.geopf.fr/navigation/openapi/).
+
+Use `geopf-routing` when installed for route and isochrone requests, unit/direction
+checks and geometry exports.
 
 | Need | Endpoint | Official guide |
 |------|----------|----------------|

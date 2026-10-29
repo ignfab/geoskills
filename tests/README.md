@@ -31,6 +31,10 @@ whose `description` is written in English.
 | [review-2026-10-27.md](review-2026-10-27.md) | Test audit, added edge cases and remaining coverage limits |
 | [review-2026-10-28.md](review-2026-10-28.md) | Four added skills, workflow checks, live evidence and an actual agent pilot |
 
+The dated reviews preserve the checks and limitations observed at the time. Use the
+current test inventory and commands below for a new run; a historical pass is not a
+current live-service guarantee. The latest review's agent pilot is not a full A/B evaluation.
+
 Test data in `data/`:
 
 | File | Content |
@@ -44,9 +48,13 @@ Test data in `data/`:
 | `admin_units_synthetic.geojson` | Three invented EPSG:4326 polygons: two neighbors with a detailed shared border and a small island feature |
 | `coverage_synthetic.geojson` | Nine invented EPSG:2154 parcels, each valid, with an overlap, an enclosed gap, a narrow gap and a sliver |
 | `mnt_dalles/` | 10 m DEM of Saint-Mandé (RGE ALTI) split into 2 ESRI ASCII tiles, **without a `.prj`** |
+| `classes_synthetic.asc` | Invented 2 × 2 categorical grid, EPSG:2154, valid classes 0/1/5 and nodata 255 |
+| `geocoded_synthetic.csv` | Seven invented geocoding results for acceptance, review and unmatched-row checks |
+| `elevation_points.csv` | Two invented input points with string identifiers |
+| `elevations_synthetic.json` | Corresponding synthetic elevations, including a missing-value sentinel and unknown vertical datum |
 
 `saint_mande.geojson` and `mnt_dalles/` are extracts of IGN data (ADMIN EXPRESS, RGE ALTI),
-distributed under the [Licence Ouverte 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence/).
+distributed under the [Licence Ouverte 2.0](https://www.data.gouv.fr/pages/legal/licences/etalab-2-0).
 
 The original manual references were supplied for GDAL 3.13. The stored fixture values
 were also checked with GDAL 3.10.3 / PROJ 9.6.2 on 2026-09-30. Local fixture checks use
@@ -96,6 +104,9 @@ python3 -m unittest discover -s tests -p 'test_*.py' -v
   shared borders across layers, TopoJSON arcs, CRS and attribute preservation.
 - `test_live.py`: bounded geocoding, WFS, WMS and WMTS smoke tests plus WFS, navigation
   and download-catalogue discovery; skipped by default.
+- `test_live_enrichment.py`: advertised Atom pages, point elevations and profiles, route
+  and isochrone geometry, WFS pagination/completeness and real GeoServer ECQL checks;
+  skipped by default.
 
 GDAL ≥ 3.1 and PROJ CLI tools are required for local geospatial checks. Install the optional
 Python workflows with `python3 -m pip install -r tests/requirements-geospatial.txt`.
@@ -116,10 +127,14 @@ repair the active GDAL/SQLite environment or use a clean environment before reru
 The tests deliberately do not hide a broken installation.
 
 The NTF and vertical tests skip if the required IGN grids are unavailable locally; install
-those grids separately to enable them. The `LAYOUT=COG` check is not a full COG validator; the structural COG regression
-requires GDAL >= 3.13 with matching Python bindings and is skipped on older installations.
+those grids separately to enable them. The `LAYOUT=COG` check is not a full COG validator;
+the structural COG regression requires GDAL >= 3.13 with matching Python bindings and is
+skipped on older installations.
 
 To run the live tests deliberately:
+
+Use a working GDAL/PROJ environment, `curl`, `bash` and the optional Python dependencies
+listed above. In particular, the navigation and paginated WFS checks need GeoPandas.
 
 ```bash
 GEOSKILLS_LIVE=1 python3 -m unittest discover -s tests -p 'test_live*.py' -v

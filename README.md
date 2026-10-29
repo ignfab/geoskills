@@ -14,8 +14,8 @@ This project is in an exploratory phase. The stability of the skills is not yet 
   (and skills could provide detailed documentation for MCP in
   [ignfab/demo-geocontext](https://github.com/ignfab/demo-geocontext))
 
-See [docs/landscape.md](docs/landscape.md) for a comparison with other geospatial skill
-collections and the proposed target of this repository.
+See [docs/landscape.md](docs/landscape.md) for the dated comparison with other geospatial
+skill collections and its implementation follow-up. The table below lists the current skills.
 
 ## Skills
 
@@ -26,11 +26,11 @@ collections and the proposed target of this repository.
 | [geopf-altimetry](skills/geopf-altimetry/README.md) | Discover terrain/surface resources, preserve missing elevations, join CSV rows and sample profiles. |
 | [geopf-routing](skills/geopf-routing/README.md) | Discover navigation resources, choose units/direction and export route or isochrone geometry. |
 | [geopf-services](skills/geopf-services/README.md) | Choose a Géoplateforme API for dataset discovery, maps, vector features, downloads, geocoding and geographic calculations. |
-| [geopf-wfs-download](skills/geopf-wfs-download/README.md) | Download vector layers (BD TOPO, ADMIN EXPRESS, cadastre) from the Géoplateforme WFS with `ogr2ogr`. |
+| [geopf-wfs-download](skills/geopf-wfs-download/README.md) | Download vector layers (BD TOPO, ADMIN EXPRESS, cadastre) with `ogr2ogr` and check export counts and source IDs. |
 | [geoserver-cql-filter](skills/geoserver-cql-filter/README.md) | Write GeoServer WFS/WMS ECQL filters, including URL encoding and CRS:84 geometries with EWKT. |
 | [geopf-wms-wmts](skills/geopf-wms-wmts/README.md) | Download raster layers (orthophotos, Plan IGN, elevation) from the Géoplateforme WMTS / WMS-R with GDAL. |
-| [geopf-geocoding](skills/geopf-geocoding/README.md) | Geocode addresses, POIs and parcels (one by one or from a CSV file) with the Géoplateforme API. |
-| [gdal-raster-basics](skills/gdal-raster-basics/README.md) | Clip, reproject, mosaic and convert rasters (DEM, orthophotos) with GDAL, build COGs and compute zonal statistics. |
+| [geopf-geocoding](skills/geopf-geocoding/README.md) | Geocode addresses, POIs and parcels, and review CSV matches, ambiguity and unmatched rows. |
+| [gdal-raster-basics](skills/gdal-raster-basics/README.md) | Clip, reproject, mosaic and convert rasters with GDAL; check coverage, grids and COG structure, and compute zonal statistics. |
 | [crs-reprojection-france](skills/crs-reprojection-france/README.md) | French CRS (Lambert-93, CC zones, NTF, overseas territories): EPSG codes, reprojection and pitfalls. |
 | [geopandas-basics](skills/geopandas-basics/README.md) | Process vector data in Python with GeoPandas: I/O, reprojection, spatial joins, overlay, buffers, zonal statistics. |
 | [vector-data-quality](skills/vector-data-quality/README.md) | Audit and repair invalid, empty or duplicate vector features, and gaps or overlaps between polygons, before analysis or publication. |
@@ -86,11 +86,13 @@ travailler la donnée géographique :
 - itinéraires et zones accessibles selon un temps ou une distance sur le réseau routier ;
 - choix des services de la Géoplateforme selon le besoin : découverte de données, diffusion,
   téléchargement, extraction et calculs ;
-- téléchargement de couches vecteur (WFS) et raster (WMTS / WMS — orthophotos, Plan IGN,
-  altitude) de la Géoplateforme (IGN) ;
-- géocodage d'adresses, de lieux et de parcelles, unitaire ou en masse à partir d'un CSV ;
+- téléchargement de couches vecteur (WFS), avec contrôle des effectifs et des identifiants,
+  et raster (WMTS / WMS — orthophotos, Plan IGN, altitude) de la Géoplateforme (IGN) ;
+- géocodage d'adresses, de lieux et de parcelles, unitaire ou en masse à partir d'un CSV,
+  puis examen des correspondances, des ambiguïtés et des lignes sans résultat ;
 - filtres attributaires et spatiaux GeoServer, avec prise en charge des géométries en CRS:84 ;
-- traitement de rasters (découpe, reprojection, mosaïque, COG, statistiques zonales) ;
+- traitement de rasters (découpe, reprojection, mosaïque, COG, statistiques zonales), avec
+  contrôle de la couverture, des grilles et de la structure des COG ;
 - systèmes de coordonnées français (Lambert-93, coniques conformes, DOM) ;
 - traitement vecteur en Python avec GeoPandas (jointures spatiales, croisements, tampons,
   statistiques zonales) ;
