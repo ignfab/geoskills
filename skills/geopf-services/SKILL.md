@@ -1,6 +1,6 @@
 ---
 name: geopf-services
-description: Explains the French Géoplateforme (GPF/IGN, data.geopf.fr) services and selects an API by the required output. Use for a service overview, WMS/WMTS/WFS/TMS comparisons, or choosing between dataset discovery, downloads, extraction, geocoding and geographic calculations. For an explicit WFS download, WMS/WMTS raster request or geocoding task, use the corresponding specialized skill directly.
+description: Explains the French Géoplateforme (GPF/IGN, data.geopf.fr) services and selects an API by the required output. Use for a service overview, WMS/WMTS/WFS/TMS comparisons, or choosing between dataset discovery, downloads, extraction, geocoding and geographic calculations. For an explicit download, geocoding, elevation or navigation task, use the corresponding specialized skill directly.
 ---
 
 # Géoplateforme services overview
@@ -59,9 +59,10 @@ resource, not a coloured relief image.
 3. Read the relevant reference below and the current official guide. Discover layer names,
    fields, resources, formats, CRSs, coverage and limits from metadata, never from memory.
    Check dataset access conditions and licence separately from API availability.
-4. Hand off execution to `geopf-wfs-download`, `geopf-wms-wmts` or `geopf-geocoding` when
-   applicable and available. WMS-V and TMS details are in the delivery reference, not in
-   the raster download skill. For services without a specialized skill, consult their
+4. Hand off execution to `geopf-wfs-download`, `geopf-wms-wmts`, `geopf-geocoding`,
+   `geopf-download-files`, `geopf-altimetry` or `geopf-routing` when applicable and available.
+   WMS-V and TMS details are in the delivery reference, not in the raster download skill.
+   For services without a specialized skill, consult their
    official API schema rather than inventing parameters. Do not install missing skills.
 5. Return the recommended service, expected output, discovery URL, any access/volume
    caveat, and the next skill or official guide. An overview alone needs no data request.
@@ -107,6 +108,13 @@ where available); never pipe them through `head` or `tail`.
 - For asynchronous jobs, require successful completion and inspect the resulting file or
   report. A job identifier, HTTP 200 response or finished validation job does not by itself
   prove that the requested data is complete or conforms to the standard.
+
+## Report the result
+
+Report the recommended service, metadata source/access date, expected output and next
+operation. Distinguish documented capabilities from requests actually tested. If files
+were produced, report their paths, CRS, extent/counts and checks; keep unknown metadata
+explicit. An advice-only request needs no fabricated file or validation result.
 
 ## References
 

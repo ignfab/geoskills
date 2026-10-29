@@ -21,6 +21,10 @@ collections and the proposed target of this repository.
 
 | Skill | Description |
 | --- | --- |
+| [geodata-intake](skills/geodata-intake/README.md) | Read-only inventory of formats, layers, metadata and missing CRS evidence. |
+| [geopf-download-files](skills/geopf-download-files/README.md) | Paginated Atom discovery, edition selection, foreground transfers, safe resume and integrity checks. |
+| [geopf-altimetry](skills/geopf-altimetry/README.md) | Discover terrain/surface resources, preserve missing elevations, join CSV rows and sample profiles. |
+| [geopf-routing](skills/geopf-routing/README.md) | Discover navigation resources, choose units/direction and export route or isochrone geometry. |
 | [geopf-services](skills/geopf-services/README.md) | Choose a Géoplateforme API for dataset discovery, maps, vector features, downloads, geocoding and geographic calculations. |
 | [geopf-wfs-download](skills/geopf-wfs-download/README.md) | Download vector layers (BD TOPO, ADMIN EXPRESS, cadastre) from the Géoplateforme WFS with `ogr2ogr`. |
 | [geoserver-cql-filter](skills/geoserver-cql-filter/README.md) | Write GeoServer WFS/WMS ECQL filters, including URL encoding and CRS:84 geometries with EWKT. |
@@ -66,7 +70,8 @@ New skills go in `skills/<skill-name>/`. See [CLAUDE.md](CLAUDE.md) (also expose
 ## Validation
 
 See [tests/README.md](tests/README.md) for automated checks, optional live IGN tests and
-manual skill-selection scenarios.
+manual skill-selection scenarios. Report conventions are described in
+[docs/output-reports.md](docs/output-reports.md).
 
 ## Résumé (FR)
 
@@ -75,6 +80,10 @@ Ce projet est en phase exploratoire. La stabilité des compétences n’est pas 
 `geoskills` est un ensemble expérimental de compétences pour agents de code, destinées à
 travailler la donnée géographique :
 
+- inventaire des fichiers reçus, des couches et des métadonnées manquantes ;
+- téléchargement des archives IGN par territoire et millésime, avec contrôle des transferts ;
+- altitudes ponctuelles et profils altimétriques, avec gestion des valeurs manquantes ;
+- itinéraires et zones accessibles selon un temps ou une distance sur le réseau routier ;
 - choix des services de la Géoplateforme selon le besoin : découverte de données, diffusion,
   téléchargement, extraction et calculs ;
 - téléchargement de couches vecteur (WFS) et raster (WMTS / WMS — orthophotos, Plan IGN,

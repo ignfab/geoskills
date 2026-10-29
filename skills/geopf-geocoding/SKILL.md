@@ -1,6 +1,6 @@
 ---
 name: geopf-geocoding
-description: Geocodes addresses, points of interest and cadastral parcels with the French Géoplateforme geocoding API (data.geopf.fr/geocodage), one query at a time or in bulk from a CSV file, and reverse-geocodes coordinates. Use when the user wants to geocode an address or a CSV file of addresses, run reverse geocoding, find the coordinates of a French address (BAN), a locality or a cadastral parcel, or find the address at a given point.
+description: Geocodes addresses, points of interest and parcels with the French Géoplateforme API, reverse-geocodes coordinates, and reviews already geocoded CSV results. Use to locate French addresses or parcels, geocode a CSV, or classify geocoding matches by score, ambiguity, municipality and match type while retaining unmatched rows. Quality review of an existing result requires no new API request.
 ---
 
 # Géoplateforme geocoding
@@ -97,8 +97,17 @@ The output CSV keeps the input columns and adds `longitude`, `latitude`, `result
 - Check that accented names are echoed intact in bulk results: garbled names mean the
   service misread the encoding (see the batch reference).
 
+## Report the result
+
+Report the source and edition/access date when known, output path and format, CRS and
+units, extent and counts (or raster dimensions), processing choices and checks performed.
+Separate failed checks, warnings and checks not performed; keep unknown metadata explicit.
+For advice-only requests, report the recommendation and its evidence without inventing files.
+
 ## References
 
+- [references/quality-policy.md](references/quality-policy.md) — classify every CSV row
+  as accepted, review or unmatched with explicit reasons.
 - [references/api-parameters.md](references/api-parameters.md) — common parameters, the
   response fields, the parcel and POI indexes, and loading results into GDAL.
 - [references/batch-csv.md](references/batch-csv.md) — bulk geocoding in detail (form fields,

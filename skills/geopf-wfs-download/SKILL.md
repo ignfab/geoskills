@@ -114,8 +114,17 @@ Before reporting a download as complete:
 - Run long downloads in the foreground, with `-progress`. Do not pipe `ogr2ogr` through
   `head` or `tail`, which hides progress and can cut the output.
 
+## Report the result
+
+Report the source and edition/access date when known, output path and format, CRS and
+units, extent and counts (or raster dimensions), processing choices and checks performed.
+Separate failed checks, warnings and checks not performed; keep unknown metadata explicit.
+For advice-only requests, report the recommendation and its evidence without inventing files.
+
 ## References
 
+- [references/completeness.md](references/completeness.md) — verify export counts and
+  source IDs; handle incomplete or interrupted jobs.
 - [references/formats.md](references/formats.md) — output formats, `-f` driver names and
   examples, including missing-driver options and one-file-per-layer GeoParquet exports.
 - [references/ogr2ogr-options.md](references/ogr2ogr-options.md) — filtering, reprojection,

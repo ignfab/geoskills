@@ -35,3 +35,14 @@ The IGN boundary and DEM extracts are distributed under the
 The historical fixture acquisition version/date is not recorded separately; regression
 values were supplied with the scenarios and rechecked against the stored fixtures on
 2026-09-30. Live service responses can differ from these snapshots.
+
+## Additional synthetic fixtures
+
+- `geocoded_synthetic.csv`: seven invented API rows; policy 0.7 score / 0.1 margin,
+  expected INSEE code and housenumber yields 1 accepted, 5 review and 1 unmatched.
+- `elevation_points.csv` and `elevations_synthetic.json`: two invented points/results,
+  string IDs, one missing elevation sentinel; vertical datum intentionally unknown.
+- `classes_synthetic.asc`: invented 2×2 categorical grid in confirmed EPSG:2154, 10 m
+  cells, classes 0/1/5 and nodata 255; nearest refinement to 5 m yields 75% valid coverage.
+
+These fixtures contain no private user records and may be copied into isolated agent runs.

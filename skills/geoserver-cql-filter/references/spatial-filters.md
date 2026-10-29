@@ -53,6 +53,10 @@ just because the map request uses WMS 1.3.0.
 Test EWKT on the target deployment using a small sample and a feature known to intersect
 the supplied geometry. Check an outside feature too. Compare with a known-good query in
 the layer CRS; a valid parse or HTTP 200 alone does not prove correct reprojection.
+An HTTP 500 with an empty body also leaves EWKT support unverified. Keep the failed
+expression and CRS in the diagnostic; do not infer support from successful attribute
+filters. An explicit-CRS BBOX can test envelope intersection, but cannot replace an
+arbitrary polygon predicate without changing its meaning.
 
 If the server rejects EWKT, report that limitation. Transform the geometry into the
 layer's discovered CRS with an already available CRS-aware tool, then use plain WKT,

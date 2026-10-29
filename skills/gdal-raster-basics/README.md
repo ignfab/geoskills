@@ -34,3 +34,5 @@ gdalbuildvrt mnt.vrt dalles/*.asc
 gdalwarp -cutline commune.gpkg -crop_to_cutline -dstnodata -9999 \
   -of COG -co COMPRESS=DEFLATE mnt.vrt mnt_commune.tif
 ```
+
+Additional workflow: [quality-checks](references/quality-checks.md).

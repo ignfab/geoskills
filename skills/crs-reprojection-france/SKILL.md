@@ -88,6 +88,13 @@ x, y = to_l93.transform(2.3522, 48.8566)   # (652469.02, 6862035.26)
 - State the units: metres for a projected CRS, degrees for EPSG:4326 or 4171. Never report
   an area or a distance computed in degrees or in EPSG:3857.
 
+## Report the result
+
+Report the source and edition/access date when known, output path and format, CRS and
+units, extent and counts (or raster dimensions), processing choices and checks performed.
+Separate failed checks, warnings and checks not performed; keep unknown metadata explicit.
+For advice-only requests, report the recommendation and its evidence without inventing files.
+
 ## References
 
 - [references/pitfalls.md](references/pitfalls.md) — axis order, assigning versus

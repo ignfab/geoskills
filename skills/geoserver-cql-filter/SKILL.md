@@ -79,6 +79,13 @@ Keep downloads in the foreground with curl's progress visible; do not pipe throu
   For WMS, inspect the image and, where available, check matching features with WFS.
 - If only writing a filter, say it has not been executed against the target server.
 
+## Report the result
+
+Report the source and edition/access date when known, output path and format, CRS and
+units, extent and counts (or raster dimensions), processing choices and checks performed.
+Separate failed checks, warnings and checks not performed; keep unknown metadata explicit.
+For advice-only requests, report the recommendation and its evidence without inventing files.
+
 ## References
 
 - [ECQL syntax](references/ecql.md) — attributes, strings, nulls, dates and predicates.

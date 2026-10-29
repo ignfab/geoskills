@@ -96,3 +96,14 @@ all-touched inclusion gives different valid statistics and must be labelled expl
 
 **Expected skill:** `geopf-wms-wmts` (see [WMS-01](geopf-wms-wmts.md#wms-01--orthophoto-extract-in-lambert-93)).
 `gdal-raster-basics` may be loaded as well for the conversion, but not instead.
+
+## RAS-06 — Categorical raster quality
+
+> Le raster `data/classes_synthetic.asc` contient des classes en EPSG:2154 confirmé.
+> Produis un COG à cinq mètres de résolution dans `output/`. La classe zéro est valide
+> et 255 représente l'absence de données. Vérifie les classes obtenues, la couverture
+> valide et la structure du COG si les outils disponibles le permettent.
+
+Expected: 4×4 output; values 0, 1, 5 and nodata 255, each repeated four times; valid
+coverage 75%; nearest resampling/overviews. Structural validation reported separately
+from the layout marker, and unavailable validators are not installed.

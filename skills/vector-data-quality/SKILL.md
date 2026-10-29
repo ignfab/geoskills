@@ -153,9 +153,12 @@ polygon has no reliable area (a bowtie reports 0). Require `id.is_unique` only w
 dataset contract says IDs must be unique; shared identifiers can be legitimate for
 multipart or temporal records.
 
-End with a short report: input file and layer, CRS, features read, written and quarantined,
-issues by class and severity, repairs applied, geometry-type changes, area change, and the
-unresolved issues left for the user to decide.
+## Report the result
+
+Report input source/layer and edition/access date when known, output paths/format, CRS,
+extent, features read/written/quarantined, issues by class and severity, repairs applied,
+geometry-type/area changes and unresolved choices. Separate failed checks, warnings and
+checks not performed; keep unknown metadata explicit.
 
 ## References
 
