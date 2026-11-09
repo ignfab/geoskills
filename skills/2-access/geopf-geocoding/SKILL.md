@@ -85,6 +85,9 @@ be preserved. See the batch reference before choosing output columns.
 - Use `postcode` or `citycode` filters whenever the data has them. They remove most
   mismatches between towns that share a street name.
 - For more than a few hundred addresses, use `/search/csv` rather than looping over `/search`.
+- `index=parcel` locates a parcel from its reference, without its official area. For the
+  `contenance`, every parcel of a municipality or section, or the parcels in an area, use
+  the `apicarto` skill.
 - Stay under **50 requests per second** per IP address for geocoding and **10** for
   autocomplete. On HTTP 429, respect `Retry-After`
   when provided and use bounded retries; do not retry invalid requests unchanged.

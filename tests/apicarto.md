@@ -50,12 +50,6 @@ run reports the outage instead of naming a zone.
 - [ ] says that the approved plan remains the reference
 - [ ] does not invent a zone from memory or from a map image
 
-## APC-N1 — Negative: address geocoding
-
-> Donne les coordonnées de l'adresse 73 avenue de Paris, 94160 Saint-Mandé.
-
-**Expected skill:** `geopf-geocoding`, not `apicarto`.
-
 ## APC-N2 — Negative: bulk cadastral download
 
 > Télécharge toutes les parcelles cadastrales du département du Val-de-Marne pour un

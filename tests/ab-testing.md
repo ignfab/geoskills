@@ -64,7 +64,7 @@ POSITIVE="GSV-01 GSV-02 GSV-03 GSV-04 GSV-05 GEO-01 GEO-02 GEO-03 GEO-04 GEO-05 
 RAS-01 RAS-02 RAS-03 RAS-04 RAS-05 WMS-01 WMS-02 WMS-03 WMS-04 WMS-05
 WFS-01 WFS-02 WFS-04 WFS-05 WFS-06 CQL-01 CQL-02 CQL-03 CQL-04 GPD-01 GPD-02 GPD-03 GPD-04 VDQ-01 VDQ-02 VDQ-03 MS-01 MS-02 MS-03 MS-04 INT-01 INT-02 DLF-01 DLF-02 ALT-01 ALT-02 RTE-01 RTE-02 GEO-06 WFS-07 RAS-06
 GVB-01 GVB-02 GVB-03 GVB-04 APC-01 APC-02 APC-03"
-NEGATIVE="GSV-N1 GSV-N2 GEO-N1 CRS-N1 RAS-N1 WMS-N1 WFS-N1 CQL-N1 CQL-N2 GPD-N1 VDQ-N1 VDQ-N2 MS-N1 MS-N2 INT-N1 DLF-N1 ALT-N1 RTE-N1 GVB-N1 GVB-N2 APC-N1 APC-N2"
+NEGATIVE="GSV-N1 GSV-N2 GEO-N1 CRS-N1 RAS-N1 WMS-N1 WFS-N1 CQL-N1 CQL-N2 GPD-N1 VDQ-N1 VDQ-N2 MS-N1 MS-N2 INT-N1 DLF-N1 ALT-N1 RTE-N1 GVB-N1 GVB-N2 APC-N2"
 
 # Print the French prompt of a scenario or an experimental prompt (XP-NN), read from
 # tests/*.md, then tests/prompts/*.md.
@@ -283,9 +283,9 @@ source ab.sh
 AB_DRY=1 ab_campaign 1
 ```
 
-Then set `export AB=/path/to/a/new/campaign` for actual agent calls. One repetition has **150 runs**:
-64 positive scenarios in both modes and 22 negatives in A. At the example budget of $2 per
-run, the caps total $300 per repetition and $900 for three repetitions. Starting the paid
+Then set `export AB=/path/to/a/new/campaign` for actual agent calls. One repetition has **149 runs**:
+64 positive scenarios in both modes and 21 negatives in A. At the example budget of $2 per
+run, the caps total $298 per repetition and $894 for three repetitions. Starting the paid
 campaign is a separate user decision; a dry run does not authorize it.
 
 Smoke pass, one repetition:
@@ -346,10 +346,10 @@ needed. Web access can check official guides; distinguish advice from live avail
 
 | Scenario | Modes | Needs | Watch in B |
 |----------|-------|-------|------------|
-| GEO-01 | A + B | NET | `data.geopf.fr/geocodage` rather than another geocoder or an API key |
+| GEO-01 | A + B | NET | `data.geopf.fr/geocodage` rather than another geocoder or an API key; `apicarto` not loaded in A |
 | GEO-02 | A + B | NET | one `POST /search/csv`; `postcode=` given a column name; encoding trap on row 1; rows 6–8 flagged |
 | GEO-03 | A + B | NET | lon/lat order (point 3 is in Réunion) |
-| GEO-04 | A + B | NET | `index=parcel` and `truegeometry` promoted: a `Point` output fails |
+| GEO-04 | A + B | NET | `index=parcel` and `truegeometry` promoted, or `apicarto` `cadastre/parcelle`: a `Point` output fails |
 | GEO-05 | A + B | — | control |
 | GEO-06 | A + B | — | explicit policy, ambiguity, row conservation and reasons |
 | GEO-N1 | A | — | `geopf-geocoding` not loaded, no call to `data.geopf.fr` |
@@ -375,7 +375,7 @@ needed. Web access can check official guides; distinguish advice from live avail
 | RAS-04 | A + B | GDAL | control |
 | RAS-05 | A + B | GDAL ≥ 3.12 or PY | zones reprojected to EPSG:2154, not the DEM; `count = 0` caught |
 | RAS-06 | A + B | GDAL | class zero remains valid; no interpolation; full COG check distinguished |
-| RAS-N1 | A | NET | `geopf-wms-wmts` loaded |
+| RAS-N1 | A | NET | `geopf-altimetry` loaded, no DEM tile downloaded |
 
 ### [geopf-wms-wmts](geopf-wms-wmts.md)
 
@@ -495,7 +495,6 @@ All CQL scenarios use supplied metadata and require no live service.
 | APC-01 | A + B | NET | all pages up to `numberMatched`; `localhost` links not followed |
 | APC-02 | A + B | NET | both Natura 2000 networks; longitude, latitude order |
 | APC-03 | A + B | NET | zone with document and date; outage reported, no invented zone |
-| APC-N1 | A | NET | `geopf-geocoding` loaded, not `apicarto` |
 | APC-N2 | A | NET | download or WFS skill loaded; no paging of a whole department |
 
 ## Score a run
@@ -546,7 +545,7 @@ Summarize per skill over the three repetitions:
 | geopf-routing | /6 | /6 | | | |
 | gdal-vector-basics | /12 | /12 | | | |
 | apicarto | /9 | /9 | | | |
-| Negative scenarios (A only) | /66 | — | — | — | |
+| Negative scenarios (A only) | /63 | — | — | — | |
 
 ## Variants
 
