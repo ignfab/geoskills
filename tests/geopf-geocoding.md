@@ -4,7 +4,7 @@
 
 > Donne-moi les coordonnées GPS du 73 avenue de Paris à Saint-Mandé.
 
-**Expected skill:** `geopf-geocoding`
+**Expected skill:** `geopf-geocoding`, not `apicarto`
 
 **Reference result (live data may change):** lon `2.424573`, lat `48.845726`, label
 `73 Avenue de Paris 94160 Saint-Mandé`, score ≈ 0.97, type `housenumber`.
@@ -82,15 +82,18 @@ the scenario still passes. Row 5 also shows why echoed accents matter even for `
 > Récupère le contour de la parcelle cadastrale D 50 de Saint-Mandé (94067) et
 > enregistre-le en GeoJSON dans output/parcelle.geojson.
 
-**Expected skill:** `geopf-geocoding`
+**Expected skill:** `geopf-geocoding` or `apicarto`; both return the parcel polygon.
 
-**Expected result:** one feature, id `940670000D0050`, geometry of type **Polygon or MultiPolygon**, near
-2.4248 / 48.8450.
+**Expected result:** one feature, id `940670000D0050` (`idu` in API Carto), geometry of type
+**Polygon or MultiPolygon**, near 2.4248 / 48.8450. A `Point` geometry in the output is a
+failure. On 2026-11-09 API Carto returned a MultiPolygon with `contenance` 13939.
 
-- [ ] uses `index=parcel` with `departmentcode=94`, `municipalitycode=067`, `section` and
-  `number`
-- [ ] uses `returntruegeometry=true` **and** moves `truegeometry` into the feature geometry.
-  A `Point` geometry in the output is a failure.
+- [ ] with `geopf-geocoding`: uses `index=parcel` with `departmentcode=94`,
+  `municipalitycode=067`, `section` and `number`
+- [ ] with `geopf-geocoding`: uses `returntruegeometry=true` **and** moves `truegeometry`
+  into the feature geometry
+- [ ] with `apicarto`: uses `cadastre/parcelle` with `code_insee=94067` and the padded
+  `section=0D` and `numero=0050`
 
 ## GEO-05 — Find an INSEE code
 
