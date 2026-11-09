@@ -124,6 +124,8 @@ these rules, and states them where they apply:
   scenario, and a row in the `Contents` table of `tests/README.md`
 - [ ] scenario identifiers added to `POSITIVE` / `NEGATIVE`, to a skill section and to the
   score table of `tests/ab-testing.md`
+- [ ] exploratory prompts tried while writing the skill added to
+  `tests/prompts/catalog.md`, and their runs to `tests/prompts/runs.md`
 
 CI runs [.github/validate-skills.py](.github/validate-skills.py) to check the family layout,
 parse YAML, validate names and descriptions and their uniqueness, require skill and family
@@ -137,5 +139,6 @@ from `tests/ab-testing.md`.
 Install the Python validation dependency with `python3 -m pip install -r tests/requirements.txt`.
 
 Discovery by the Skills CLI and agent skill selection remain separate checks; see
-[tests/README.md](tests/README.md). Live IGN service tests are opt-in and do not run on
-ordinary pushes or pull requests.
+[tests/README.md](tests/README.md). Exploratory prompts and their runs are traced in
+[tests/prompts/](tests/prompts/README.md). Live IGN service tests are opt-in and do not
+run on ordinary pushes or pull requests.

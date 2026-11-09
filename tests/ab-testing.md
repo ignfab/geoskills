@@ -66,12 +66,15 @@ WFS-01 WFS-02 WFS-04 WFS-05 WFS-06 CQL-01 CQL-02 CQL-03 CQL-04 GPD-01 GPD-02 GPD
 GVB-01 GVB-02 GVB-03 GVB-04 APC-01 APC-02 APC-03"
 NEGATIVE="GSV-N1 GSV-N2 GEO-N1 CRS-N1 RAS-N1 WMS-N1 WFS-N1 CQL-N1 CQL-N2 GPD-N1 VDQ-N1 VDQ-N2 MS-N1 MS-N2 INT-N1 DLF-N1 ALT-N1 RTE-N1 GVB-N1 GVB-N2 APC-N1 APC-N2"
 
-# Print the French prompt of a scenario, read from tests/*.md.
+# Print the French prompt of a scenario or an experimental prompt (XP-NN), read from
+# tests/*.md, then tests/prompts/*.md.
 ab_prompt() {
-  python3 - "$1" "$GEOSKILLS"/tests/*.md <<'PY'
-import re, sys
+  python3 - "$1" "$GEOSKILLS"/tests/*.md "$GEOSKILLS"/tests/prompts/*.md <<'PY'
+import os, re, sys
 want, paths = sys.argv[1], sys.argv[2:]
 for path in paths:
+    if not os.path.isfile(path):  # unmatched glob
+        continue
     lines = open(path, encoding="utf-8").read().splitlines()
     for i, line in enumerate(lines):
         if re.match(rf"^## {re.escape(want)}\s", line):
@@ -253,7 +256,7 @@ PY
 | Function | Role |
 |----------|------|
 | `ab_env` | Records the date, model, tool versions and IGN grids in `$AB/environment.txt`. |
-| `ab_prompt <id>` | Prints the prompt of a scenario, read from `tests/*.md`. |
+| `ab_prompt <id>` | Prints the prompt of a scenario, read from `tests/*.md`, or of an experimental prompt, read from `tests/prompts/*.md`. |
 | `ab_run <id> <with\|without> [rep] [after]` | Creates `$AB/runs/<id>/<mode>-<rep>/`, copies `data/` (and the skills in A), copies the output of the `after` run, runs `claude -p` and keeps `transcript.jsonl`. |
 | `ab_campaign [rep]` | One repetition of every scenario. |
 | `ab_summary <dir>` | Writes `summary.json`, `commands.txt` (Bash commands run) and `answer.md` (final answer). Rejects detected contamination in B and installation attempts. |
@@ -553,6 +556,14 @@ Use a new `AB` directory for each variant, so that reports do not mix.
   user-level and plugin skills from the B runs.
 - **Prior knowledge only:** `AB_TOOLS="Bash Read Write Edit Glob Grep"` removes web search
   and fetch in both modes; services stay reachable through `curl`.
+
+## Experimental prompts
+
+The runner also takes the prompts of the [experimental catalog](prompts/catalog.md), which
+are not part of the campaign. `ab_run XP-05 with x1` runs one in the same isolated
+directory, with the skills, fixtures, budget and `summary.json` of a scenario run. Copy the
+skills loaded and the outcome to [prompts/runs.md](prompts/runs.md). Scenario files are
+read first, so an `XP` identifier never replaces a scenario prompt.
 
 ## Limits
 

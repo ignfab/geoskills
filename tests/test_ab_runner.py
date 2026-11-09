@@ -65,6 +65,16 @@ claude() {
                 self.assertEqual(installed, skills if run.name == "with-1" else set())
         self.assertFalse((self.campaign / "agent-invocations.txt").exists())
 
+    def test_experimental_prompt_runs_like_a_scenario(self):
+        result = self.run_shell("ab_run XP-05 with x1", dry=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        run = self.campaign / "runs/XP-05/with-x1"
+        prompt = (run / "prompt.txt").read_text(encoding="utf-8")
+        self.assertTrue(prompt.startswith("Quelle part de la commune de Saint-Mandé"), prompt)
+        self.assertTrue((run / ".claude/skills/geopf-routing/SKILL.md").is_file())
+        self.assertTrue((run / "data/saint_mande.geojson").is_file())
+        self.assertFalse((self.campaign / "agent-invocations.txt").exists())
+
     def test_reusing_a_run_preserves_its_results(self):
         first = self.run_shell("ab_run MS-01 with 1")
         self.assertEqual(first.returncode, 0, first.stderr)

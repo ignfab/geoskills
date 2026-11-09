@@ -122,7 +122,8 @@ tooling) for the conventions.
 ## Validation
 
 See [tests/README.md](tests/README.md) for automated checks, optional live IGN tests and
-manual skill-selection scenarios. Report conventions are described in
+manual skill-selection scenarios. Exploratory prompts and their runs are traced in
+[tests/prompts/](tests/prompts/README.md). Report conventions are described in
 [docs/output-reports.md](docs/output-reports.md).
 
 ## Résumé (FR)
@@ -174,12 +175,16 @@ travailler la donnée géographique. Elles sont regroupées en six familles, une
 **Résoudre un besoin métier** : comment assembler les étapes pour répondre à un objectif ?
 
 - pas encore de compétence : la page de la famille liste les cas d'usage (diagnostic
-  territorial, accessibilité, exposition, suivi d'évolution) et les briques disponibles.
+  territorial, accessibilité, exposition, suivi d'évolution) et les briques disponibles ;
+  ces enchaînements sont d'abord explorés avec des prompts expérimentaux.
 
 Installation de toutes les compétences : `npx skills add ignfab/geoskills`
 
 Installation d'une seule famille, par exemple « Accéder et extraire » :
 `npx skills add https://github.com/ignfab/geoskills/tree/main/skills/2-access`
+
+Les prompts expérimentaux qui servent à tester et à valider les compétences sont tracés
+dans `tests/prompts/` : un catalogue des prompts et un journal de leurs exécutions.
 
 Le contenu des compétences est rédigé en anglais — les outils couverts (GDAL, PROJ, WFS)
 sont internationaux, même si les données le sont moins.

@@ -32,6 +32,7 @@ whose `description` is written in English.
 | [review-2026-10-12.md](review-2026-10-12.md) | Recent-skill review, reproduced defects, fixes and validation limits |
 | [review-2026-10-27.md](review-2026-10-27.md) | Test audit, added edge cases and remaining coverage limits |
 | [review-2026-10-28.md](review-2026-10-28.md) | Four added skills, workflow checks, live evidence and an actual agent pilot |
+| [prompts/README.md](prompts/README.md) | Experimental prompts: a catalog of exploratory prompts and a log of their runs |
 
 The dated reviews preserve the checks and limitations observed at the time. Use the
 current test inventory and commands below for a new run; a historical pass is not a
@@ -82,10 +83,14 @@ python3 -m unittest discover -s tests -p 'test_*.py' -v
 - `test_raster_quality.py`: read-only intake, categorical values/nodata/grid, and full COG
   validation (GDAL >= 3.13).
 - `test_validation.py`: real YAML parsing, empty/invalid metadata, duplicate keys, missing
-  files, required workflow sections and reference reachability.
+  files, required workflow sections, reference reachability, the family layout, unique
+  skill names, complete indexes and links that stay inside a skill.
+- `test_prompt_log.py`: experimental prompt identifiers, families, expected skills and
+  statuses, and well-formed rows in the run log.
 - `test_ab_runner.py`: complete dry-run scenario coverage, isolated fixture copies and
-  prerequisite outputs, rerun protection, failure propagation and exclusion of detected
-  contamination/install attempts; agent calls are replaced by a test double.
+  prerequisite outputs, experimental prompts, rerun protection, failure propagation and
+  exclusion of detected contamination/install attempts; agent calls are replaced by a
+  test double.
 - `test_cql_requests.py`: documented curl commands against a local HTTP recorder; checks
   parameter encoding, EWKT preservation, WFS sampling and WMS layer ordering. Requires
   `curl` and `bash`; does not validate ECQL parsing or a live GeoServer datastore.
@@ -216,6 +221,10 @@ copy. Generated agent directories are ignored by git (see [.gitignore](.gitignor
 A scenario passes when the right skill is loaded, the result matches, and none of the
 pitfalls listed in its checklist is hit. The `-N` scenarios are negative: the skill should
 **not** be loaded, or should hand over to another skill.
+
+Prompts tried outside these scenarios, while a skill is written or validated, are traced
+in [prompts/](prompts/README.md): add the prompt to the catalog before the run, then one
+row per run to the log.
 
 ## Cleanup
 
