@@ -16,16 +16,19 @@ with few or no skills and the chains behind business needs. Runs are recorded in
   `geopf-wms-wmts` or `geopf-download-files` named but not run; nothing downloaded.
 - **Status:** open
 
-## XP-02 — Find the latest ADMIN EXPRESS edition
+## XP-02 — Choose the boundary edition for a statistics year
 
-> Quelle est la dernière édition d'ADMIN EXPRESS COG disponible pour la France
-> métropolitaine, et dans quels formats et projections est-elle proposée ? Ne télécharge
-> rien.
+> J'ai des statistiques INSEE par commune au 1er janvier 2024. Quelles limites communales
+> de l'IGN, et quelle édition, dois-je utiliser pour que les codes des communes
+> correspondent ? Justifie ce choix et ne télécharge rien.
 
 - **Family:** `1-discover`
 - **Expected skills:** `geopf-download-files`
-- **Watch:** the Atom catalog paged until the resource is found; edition, formats and CRSs
-  read from the feed; no archive downloaded.
+- **Watch:** the edition chosen for its reference date, not because it is the latest; the
+  choice justified from the feed, which describes ADMIN EXPRESS COG as the annual edition
+  following the INSEE official geographic code at 1 January (on 2026-11-09 the 2024
+  edition was the `3-2` release dated 2024-02-22, and later editions existed); no archive
+  downloaded. Listing the editions alone is DLF-01.
 - **Status:** open
 
 ## XP-03 — Light municipality layer for a web map
