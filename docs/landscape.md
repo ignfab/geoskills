@@ -7,6 +7,8 @@ proposed target in the last sections is a proposal for the maintainers, not a de
 
 Implementation follow-up (2026-10-29): the repository now includes the intake, file-download,
 altimetry and routing skills, raster quality checks, and shared output-report conventions.
+The `gdal-vector-basics` and `apicarto` skills were added the same day, outside the gaps
+listed below.
 See the [current skill list](../README.md#skills), [report conventions](output-reports.md)
 and [2026-10-28 implementation review](../tests/review-2026-10-28.md) for the changes and
 their validation. That review includes a small agent pilot, not a complete A/B campaign.

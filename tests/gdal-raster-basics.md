@@ -90,12 +90,14 @@ all-touched inclusion gives different valid statistics and must be labelled expl
 - [ ] does not compute statistics on the raster in EPSG:4326 (reprojecting the DEM instead
   of the zones changes the values)
 
-## RAS-N1 — Negative: download, not processing
+## RAS-N1 — Negative: elevation of one point
 
-> Télécharge l'orthophoto du centre de Toulouse.
+> Quelle est l'altitude du terrain au point de longitude 2,424573 et de latitude
+> 48,845726 ?
 
-**Expected skill:** `geopf-wms-wmts` (see [WMS-01](geopf-wms-wmts.md#wms-01--orthophoto-extract-in-lambert-93)).
-`gdal-raster-basics` may be loaded as well for the conversion, but not instead.
+**Expected skill:** `geopf-altimetry`, not `gdal-raster-basics`: one point needs a call to
+the Elevation API, not a DEM tile to download and sample. On 2026-11-09 the API returned
+51.99 m (`ign_rge_alti_wld`).
 
 ## RAS-06 — Categorical raster quality
 

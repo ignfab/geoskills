@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "communes_points",
+"features": [
+{"type": "Feature", "properties": {"code_insee": "94067", "nom_officiel": "Saint-Mandé", "nom_officiel_en_majuscules": "SAINT-MANDE", "remarque": "Chef-lieu – point du géocodeur IGN"}, "geometry": {"type": "Point", "coordinates": [2.419441, 48.841526]}},
+{"type": "Feature", "properties": {"code_insee": "94038", "nom_officiel": "L'Haÿ-les-Roses", "nom_officiel_en_majuscules": "L'HAY-LES-ROSES", "remarque": "Chef-lieu – point du géocodeur IGN"}, "geometry": {"type": "Point", "coordinates": [2.341995, 48.776851]}},
+{"type": "Feature", "properties": {"code_insee": "02201", "nom_officiel": "Cœuvres-et-Valsery", "nom_officiel_en_majuscules": "COEUVRES-ET-VALSERY", "remarque": "Chef-lieu – point du géocodeur IGN, nom avec « œ »"}, "geometry": {"type": "Point", "coordinates": [3.150651, 49.339379]}}
+]
+}

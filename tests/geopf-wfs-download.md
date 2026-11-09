@@ -88,7 +88,9 @@ an agent follows the tooling rule.
 
 > Télécharge l'orthophoto du Capitole de Toulouse.
 
-**Expected skill:** `geopf-wms-wmts`; do not use the WFS for imagery.
+**Expected skill:** `geopf-wms-wmts` (see [WMS-01](geopf-wms-wmts.md#wms-01--orthophoto-extract-in-lambert-93));
+do not use the WFS for imagery. `gdal-raster-basics` may be loaded as well for a
+conversion, but not instead of `geopf-wms-wmts`.
 
 ## WFS-07 — Count alone hides duplicates
 

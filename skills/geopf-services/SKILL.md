@@ -35,6 +35,7 @@ ask the user to complete authentication outside the agent when required.
 | Suggestions while typing an address or place | Autocomplete | `/geocodage/completion/getcapabilities` |
 | Point elevations or an elevation profile | Elevation API | `/altimetrie/resources` |
 | A route between locations | Routing API | `/navigation/getcapabilities` |
+| Parcels, urban-planning zones, protected areas or RPG parcels at a point or in an area | API Carto (IGN, another host) | `https://apicarto.ign.fr/api/doc/<module>.yml` |
 | A reachable area by travel time or distance | Isochrone/isodistance API | `/navigation/getcapabilities` |
 | Conformance of an archive to a supported data standard | Validation API (authenticated) | `/validation/swagger-ui/index.html` |
 
@@ -60,7 +61,8 @@ resource, not a coloured relief image.
    fields, resources, formats, CRSs, coverage and limits from metadata, never from memory.
    Check dataset access conditions and licence separately from API availability.
 4. Hand off execution to `geopf-wfs-download`, `geopf-wms-wmts`, `geopf-geocoding`,
-   `geopf-download-files`, `geopf-altimetry` or `geopf-routing` when applicable and available.
+   `geopf-download-files`, `geopf-altimetry`, `geopf-routing` or `apicarto` when applicable
+   and available.
    WMS-V and TMS details are in the delivery reference, not in the raster download skill.
    For services without a specialized skill, consult their
    official API schema rather than inventing parameters. Do not install missing skills.
