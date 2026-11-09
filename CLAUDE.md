@@ -115,8 +115,8 @@ these rules, and states them where they apply:
 - [ ] `skills/<family>/<skill-name>/README.md` with requirements, install command and contents
 - [ ] row added to the table of `skills/<family>/README.md`, and `Also relevant` entries on
   the pages of the other families it serves
-- [ ] entry added to the family table and section of `Skills` and to the `Résumé (FR)`
-  section of the root `README.md`
+- [ ] skill linked from its family row in the `Skills` table of the root `README.md`, and
+  entry added to its `Résumé (FR)` section; the description itself stays on the family page
 - [ ] `npx skills add <path-to-this-repo>` lists the skill without a warning
 - [ ] `SKILL.md` has `## Prerequisites` and `## Validate the output` sections, and its
   prerequisites follow the agent conduct rules above

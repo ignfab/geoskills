@@ -25,58 +25,15 @@ them to meet a business need.
 
 | Family | Question | Skills |
 | --- | --- | --- |
-| [1. Discover and select](skills/1-discover/README.md) | Which data should be used for this request? | `geopf-services` |
-| [2. Access and extract](skills/2-access/README.md) | How do I retrieve the right subset? | `geopf-download-files`, `geopf-wfs-download`, `geopf-wms-wmts`, `geoserver-cql-filter`, `apicarto`, `geopf-geocoding` |
-| [3. Prepare and check](skills/3-prepare/README.md) | Is the data usable and compatible? | `geodata-intake`, `crs-reprojection-france`, `gdal-vector-basics`, `gdal-raster-basics`, `vector-data-quality` |
-| [4. Analyze and derive](skills/4-analyze/README.md) | What information should be computed? | `geopandas-basics`, `geopf-altimetry`, `geopf-routing` |
-| [5. Represent and publish](skills/5-publish/README.md) | How do I make the result usable? | `mapshaper-simplify` |
+| [1. Discover and select](skills/1-discover/README.md) | Which data should be used for this request? | [geopf-services](skills/1-discover/geopf-services/README.md) |
+| [2. Access and extract](skills/2-access/README.md) | How do I retrieve the right subset? | [geopf-download-files](skills/2-access/geopf-download-files/README.md), [geopf-wfs-download](skills/2-access/geopf-wfs-download/README.md), [geopf-wms-wmts](skills/2-access/geopf-wms-wmts/README.md), [geoserver-cql-filter](skills/2-access/geoserver-cql-filter/README.md), [apicarto](skills/2-access/apicarto/README.md), [geopf-geocoding](skills/2-access/geopf-geocoding/README.md) |
+| [3. Prepare and check](skills/3-prepare/README.md) | Is the data usable and compatible? | [geodata-intake](skills/3-prepare/geodata-intake/README.md), [crs-reprojection-france](skills/3-prepare/crs-reprojection-france/README.md), [gdal-vector-basics](skills/3-prepare/gdal-vector-basics/README.md), [gdal-raster-basics](skills/3-prepare/gdal-raster-basics/README.md), [vector-data-quality](skills/3-prepare/vector-data-quality/README.md) |
+| [4. Analyze and derive](skills/4-analyze/README.md) | What information should be computed? | [geopandas-basics](skills/4-analyze/geopandas-basics/README.md), [geopf-altimetry](skills/4-analyze/geopf-altimetry/README.md), [geopf-routing](skills/4-analyze/geopf-routing/README.md) |
+| [5. Represent and publish](skills/5-publish/README.md) | How do I make the result usable? | [mapshaper-simplify](skills/5-publish/mapshaper-simplify/README.md) |
 | [6. Solve a business need](skills/6-workflows/README.md) | How do I chain the steps to reach an objective? | None yet |
 
-### 1. Discover and select
-
-| Skill | Description |
-| --- | --- |
-| [geopf-services](skills/1-discover/geopf-services/README.md) | Choose a Géoplateforme API for dataset discovery, maps, vector features, downloads, geocoding and geographic calculations. |
-
-### 2. Access and extract
-
-| Skill | Description |
-| --- | --- |
-| [geopf-download-files](skills/2-access/geopf-download-files/README.md) | Paginated Atom discovery, edition selection, foreground transfers, safe resume and integrity checks. |
-| [geopf-wfs-download](skills/2-access/geopf-wfs-download/README.md) | Download vector layers (BD TOPO, ADMIN EXPRESS, cadastre) with `ogr2ogr` and check export counts and source IDs. |
-| [geopf-wms-wmts](skills/2-access/geopf-wms-wmts/README.md) | Download raster layers (orthophotos, Plan IGN, elevation) from the Géoplateforme WMTS / WMS-R with GDAL. |
-| [geoserver-cql-filter](skills/2-access/geoserver-cql-filter/README.md) | Write GeoServer WFS/WMS ECQL filters, including URL encoding and CRS:84 geometries with EWKT. |
-| [apicarto](skills/2-access/apicarto/README.md) | Query API Carto for parcels, urban-planning zones and easements, protected areas and RPG parcels at a point, in an area or by code, with complete pagination. |
-| [geopf-geocoding](skills/2-access/geopf-geocoding/README.md) | Geocode addresses, POIs and parcels, and review CSV matches, ambiguity and unmatched rows. |
-
-### 3. Prepare and check
-
-| Skill | Description |
-| --- | --- |
-| [geodata-intake](skills/3-prepare/geodata-intake/README.md) | Read-only inventory of formats, layers, metadata and missing CRS evidence. |
-| [crs-reprojection-france](skills/3-prepare/crs-reprojection-france/README.md) | French CRS (Lambert-93, CC zones, NTF, overseas territories): EPSG codes, reprojection and pitfalls. |
-| [gdal-vector-basics](skills/3-prepare/gdal-vector-basics/README.md) | Convert, reproject, filter, clip and merge vector files with `ogr2ogr` and `gdal vector`, including legacy Shapefile encodings and GeoPackage layers. |
-| [gdal-raster-basics](skills/3-prepare/gdal-raster-basics/README.md) | Clip, reproject, mosaic and convert rasters with GDAL; check coverage, grids and COG structure, and compute zonal statistics. |
-| [vector-data-quality](skills/3-prepare/vector-data-quality/README.md) | Audit and repair invalid, empty or duplicate vector features, and gaps or overlaps between polygons, before analysis or publication. |
-
-### 4. Analyze and derive
-
-| Skill | Description |
-| --- | --- |
-| [geopandas-basics](skills/4-analyze/geopandas-basics/README.md) | Process vector data in Python with GeoPandas: I/O, reprojection, spatial joins, overlay, buffers, zonal statistics. |
-| [geopf-altimetry](skills/4-analyze/geopf-altimetry/README.md) | Discover terrain/surface resources, preserve missing elevations, join CSV rows and sample profiles. |
-| [geopf-routing](skills/4-analyze/geopf-routing/README.md) | Discover navigation resources, choose units/direction and export route or isochrone geometry. |
-
-### 5. Represent and publish
-
-| Skill | Description |
-| --- | --- |
-| [mapshaper-simplify](skills/5-publish/mapshaper-simplify/README.md) | Simplify polygon boundaries with Mapshaper, preserve shared borders and export lighter GeoJSON or TopoJSON. |
-
-### 6. Solve a business need
-
-No skill yet. The [family page](skills/6-workflows/README.md) lists the use cases and the
-building blocks available today.
+Each family page describes its skills, lists the skills of other families that also serve
+it, and names the gaps.
 
 ## Installation
 
