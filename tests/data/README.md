@@ -45,4 +45,14 @@ values were supplied with the scenarios and rechecked against the stored fixture
 - `classes_synthetic.asc`: invented 2×2 categorical grid in confirmed EPSG:2154, 10 m
   cells, classes 0/1/5 and nodata 255; nearest refinement to 5 m yields 75% valid coverage.
 
+- `communes_sans_cpg/communes.shp`: three municipality points (Saint-Mandé `94067`,
+  L'Haÿ-les-Roses `94038`, Cœuvres-et-Valsery `02201`) in **EPSG:2154**, with a `.prj`.
+  Text is encoded in **CP1252 without a `.cpg`** and with no code page in the `.dbf`, as in
+  legacy Windows deliveries; `œ`, `–` and `«` distinguish CP1252 from ISO-8859-1. Read with
+  `-oo ENCODING=CP1252`. Coordinates are the municipality points returned by the IGN
+  geocoder on 2026-10-29, not town-hall positions.
+- `communes_points.geojson`: the same three points in EPSG:4326, UTF-8, with the fields
+  `code_insee`, `nom_officiel`, `nom_officiel_en_majuscules` and `remarque`. Two names
+  exceed the 10 characters of a Shapefile field.
+
 These fixtures contain no private user records and may be copied into isolated agent runs.

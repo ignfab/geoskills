@@ -43,7 +43,8 @@ inventory local files without checking their location and the requested scope.
   one. Coordinate ranges alone do not establish an EPSG code.
 - Vector repair/coverage audit: use `vector-data-quality` if available.
 - Confirmed reprojection: use `crs-reprojection-france` for French CRSs if available.
-- Raster processing: use `gdal-raster-basics`; vector joins/overlay: `geopandas-basics`.
+- Raster processing: use `gdal-raster-basics`; vector conversion, encoding or clipping on
+  the command line: `gdal-vector-basics`; vector joins/overlay: `geopandas-basics`.
 - Known online service task: use its specialized skill directly. Do not install skills.
 
 Read [inspection details](references/inspection.md) for CSVs, sidecars and large inputs.

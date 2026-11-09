@@ -25,6 +25,8 @@ whose `description` is written in English.
 | [geopf-download-files.md](geopf-download-files.md) | `geopf-download-files` |
 | [geopf-altimetry.md](geopf-altimetry.md) | `geopf-altimetry` |
 | [geopf-routing.md](geopf-routing.md) | `geopf-routing` |
+| [gdal-vector-basics.md](gdal-vector-basics.md) | `gdal-vector-basics` |
+| [apicarto.md](apicarto.md) | `apicarto` |
 | [data/README.md](data/README.md) | Fixture provenance, CRS and missing-metadata traps |
 | [ab-testing.md](ab-testing.md) | Running every scenario with and without the skills, and scoring the difference |
 | [review-2026-10-12.md](review-2026-10-12.md) | Recent-skill review, reproduced defects, fixes and validation limits |
@@ -47,6 +49,8 @@ Test data in `data/`:
 | `saint_mande.geojson` | Boundary of Saint-Mandé (INSEE 94067), EPSG:4326, from ADMIN EXPRESS |
 | `admin_units_synthetic.geojson` | Three invented EPSG:4326 polygons: two neighbors with a detailed shared border and a small island feature |
 | `coverage_synthetic.geojson` | Nine invented EPSG:2154 parcels, each valid, with an overlap, an enclosed gap, a narrow gap and a sliver |
+| `communes_sans_cpg/` | Shapefile of 3 municipality points in Lambert-93, **CP1252 text without a `.cpg`** |
+| `communes_points.geojson` | The same 3 points in EPSG:4326, with field names longer than 10 characters |
 | `mnt_dalles/` | 10 m DEM of Saint-Mandé (RGE ALTI) split into 2 ESRI ASCII tiles, **without a `.prj`** |
 | `classes_synthetic.asc` | Invented 2 × 2 categorical grid, EPSG:2154, valid classes 0/1/5 and nodata 255 |
 | `geocoded_synthetic.csv` | Seven invented geocoding results for acceptance, review and unmatched-row checks |
@@ -100,6 +104,15 @@ python3 -m unittest discover -s tests -p 'test_*.py' -v
   components, polygon quarantine, suspicious valid geometries, severity report, coverage
   overlaps and gaps, and GeoPackage round trip. The `gdal vector check-geometry`,
   `check-coverage` and `make-valid` recipes run on GDAL ≥ 3.12 and skip otherwise.
+- `test_gdal_vector.py`: documented `ogr2ogr` recipes on a CP1252 Shapefile without
+  `.cpg` (encoding detection, suspicious-character check), GeoPackage layer addition and
+  silent replacement, field selection, clipping in a stated CRS, CSV points, RFC 7946
+  export, Shapefile field laundering, SQL selection, dissolve, merge and split. The
+  `gdal vector` examples run on GDAL ≥ 3.12 and skip otherwise.
+- `test_apicarto.py`: the API Carto paging script and the documented requests against a
+  loopback server: `_start` paging, POSTed geometries, repeated identifiers, changing or
+  incomplete counts, error bodies with HTTP 200, 400 or 500, projected or multi-feature
+  geometry files and protection of existing outputs.
 - `test_mapshaper.py`: percentage and metric simplification, small-feature retention,
   shared borders across layers, TopoJSON arcs, CRS and attribute preservation.
 - `test_live.py`: bounded geocoding, WFS, WMS and WMTS smoke tests plus WFS, navigation
@@ -107,6 +120,9 @@ python3 -m unittest discover -s tests -p 'test_*.py' -v
 - `test_live_enrichment.py`: advertised Atom pages, point elevations and profiles, route
   and isochrone geometry, WFS pagination/completeness and real GeoServer ECQL checks;
   skipped by default.
+- `test_live_apicarto.py`: API Carto module description, HTTP 400 on unpadded parcel
+  codes, every Saint-Mandé parcel across pages, both Natura 2000 networks at a point and
+  an urban-planning zone; skipped by default.
 
 GDAL ≥ 3.1 and PROJ CLI tools are required for local geospatial checks. Install the optional
 Python workflows with `python3 -m pip install -r tests/requirements-geospatial.txt`.
@@ -144,7 +160,8 @@ This sends the eight fixture addresses in `data/adresses.csv` to the public IGN 
 queries the three public test coordinates and a cadastral parcel, and downloads small
 WFS/raster extracts and service catalogues. The enrichment probes also query two public
 elevation points, a 20-sample profile, a short pedestrian route, a five-minute isochrone,
-and three communes with one feature per WFS page. Real ECQL tests check attribute/BBOX
+and three communes with one feature per WFS page. The API Carto probes fetch every
+parcel of Saint-Mandé in pages of 500 and query three single points. Real ECQL tests check attribute/BBOX
 predicates and malformed syntax on the IGN service; they do not establish universal EWKT
 compatibility. Do not replace those fixtures with private data for a live run.
 Network/service failures are reported as failures, not silently treated as passed tests.

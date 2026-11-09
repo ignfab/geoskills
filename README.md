@@ -27,10 +27,12 @@ skill collections and its implementation follow-up. The table below lists the cu
 | [geopf-routing](skills/geopf-routing/README.md) | Discover navigation resources, choose units/direction and export route or isochrone geometry. |
 | [geopf-services](skills/geopf-services/README.md) | Choose a Géoplateforme API for dataset discovery, maps, vector features, downloads, geocoding and geographic calculations. |
 | [geopf-wfs-download](skills/geopf-wfs-download/README.md) | Download vector layers (BD TOPO, ADMIN EXPRESS, cadastre) with `ogr2ogr` and check export counts and source IDs. |
+| [apicarto](skills/apicarto/README.md) | Query API Carto for parcels, urban-planning zones and easements, protected areas and RPG parcels at a point, in an area or by code, with complete pagination. |
 | [geoserver-cql-filter](skills/geoserver-cql-filter/README.md) | Write GeoServer WFS/WMS ECQL filters, including URL encoding and CRS:84 geometries with EWKT. |
 | [geopf-wms-wmts](skills/geopf-wms-wmts/README.md) | Download raster layers (orthophotos, Plan IGN, elevation) from the Géoplateforme WMTS / WMS-R with GDAL. |
 | [geopf-geocoding](skills/geopf-geocoding/README.md) | Geocode addresses, POIs and parcels, and review CSV matches, ambiguity and unmatched rows. |
 | [gdal-raster-basics](skills/gdal-raster-basics/README.md) | Clip, reproject, mosaic and convert rasters with GDAL; check coverage, grids and COG structure, and compute zonal statistics. |
+| [gdal-vector-basics](skills/gdal-vector-basics/README.md) | Convert, reproject, filter, clip and merge vector files with `ogr2ogr` and `gdal vector`, including legacy Shapefile encodings and GeoPackage layers. |
 | [crs-reprojection-france](skills/crs-reprojection-france/README.md) | French CRS (Lambert-93, CC zones, NTF, overseas territories): EPSG codes, reprojection and pitfalls. |
 | [geopandas-basics](skills/geopandas-basics/README.md) | Process vector data in Python with GeoPandas: I/O, reprojection, spatial joins, overlay, buffers, zonal statistics. |
 | [vector-data-quality](skills/vector-data-quality/README.md) | Audit and repair invalid, empty or duplicate vector features, and gaps or overlaps between polygons, before analysis or publication. |
@@ -90,9 +92,14 @@ travailler la donnée géographique :
   et raster (WMTS / WMS — orthophotos, Plan IGN, altitude) de la Géoplateforme (IGN) ;
 - géocodage d'adresses, de lieux et de parcelles, unitaire ou en masse à partir d'un CSV,
   puis examen des correspondances, des ambiguïtés et des lignes sans résultat ;
+- interrogation de l'API Carto en un point, dans une zone ou par code : parcelles
+  cadastrales, zonage des plans locaux d'urbanisme et servitudes, espaces naturels protégés
+  et parcelles agricoles (RPG), avec récupération de toutes les pages ;
 - filtres attributaires et spatiaux GeoServer, avec prise en charge des géométries en CRS:84 ;
 - traitement de rasters (découpe, reprojection, mosaïque, COG, statistiques zonales), avec
   contrôle de la couverture, des grilles et de la structure des COG ;
+- conversion, reprojection, filtrage, découpage et fusion de fichiers vecteur en ligne de
+  commande, y compris l'encodage des anciens Shapefile et l'ajout de couches à un GeoPackage ;
 - systèmes de coordonnées français (Lambert-93, coniques conformes, DOM) ;
 - traitement vecteur en Python avec GeoPandas (jointures spatiales, croisements, tampons,
   statistiques zonales) ;

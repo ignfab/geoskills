@@ -26,4 +26,5 @@ all points as mainland Lambert-93 or infer spatial column order by position.
 > Convertis `data/saint_mande.geojson` en `output/commune.gpkg`, en conservant son système
 > de coordonnées et ses attributs.
 
-Expected: direct vector I/O workflow; no broad delivery inventory or `geodata-intake` load.
+Expected: `gdal-vector-basics` (or `geopandas-basics`) for a direct conversion; no broad
+delivery inventory or `geodata-intake` load.
