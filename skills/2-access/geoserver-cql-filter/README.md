@@ -26,8 +26,8 @@ npx skills add ignfab/geoskills --skill geoserver-cql-filter
 - [references/ecql.md](references/ecql.md): common attribute, temporal and spatial syntax.
 - [references/spatial-filters.md](references/spatial-filters.md): EWKT, CRS:84 and axes.
 - [references/requests.md](references/requests.md): URL encoding, WMS layers and diagnostics.
-- [Manual scenarios](../../tests/geoserver-cql-filter.md): French prompts and expected decisions.
-- [Request tests](../../tests/test_cql_requests.py): curl examples exercised on a local HTTP recorder.
+- [Manual scenarios](../../../tests/geoserver-cql-filter.md): French prompts and expected decisions.
+- [Request tests](../../../tests/test_cql_requests.py): curl examples exercised on a local HTTP recorder.
 
 This skill builds predicates for GeoServer. It does not administer a server, implement a
 complete downloader, translate PostGIS SQL, or treat OGC API CQL2 as ECQL.

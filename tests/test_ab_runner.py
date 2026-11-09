@@ -47,7 +47,7 @@ claude() {
     def test_dry_campaign_covers_every_scenario_with_isolated_inputs(self):
         result = self.run_shell("ab_campaign 1", dry=True)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        skills = {p.name for p in (ROOT / "skills").iterdir() if p.is_dir()}
+        skills = {p.parent.name for p in (ROOT / "skills").glob("*/*/SKILL.md")}
         expected = set()
         for skill in skills:
             scenarios = (ROOT / "tests" / f"{skill}.md").read_text(encoding="utf-8")

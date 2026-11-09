@@ -36,7 +36,7 @@ the official documentation links.
 | [SKILL.md](SKILL.md) | Service selection, discovery, handoff and validation |
 | [references/data-delivery.md](references/data-delivery.md) | Map images, tiles, vector features, file downloads and extraction |
 | [references/search-and-processing.md](references/search-and-processing.md) | CSW, dataset search, geocoding, elevation, navigation, validation and usage statistics |
-| [Manual scenarios](../../tests/geopf-services.md) | French prompts for service choice and direct handoff to specialized skills |
+| [Manual scenarios](../../../tests/geopf-services.md) | French prompts for service choice and direct handoff to specialized skills |
 
 The references are an original summary of the official guides, checked on 2026-10-27,
 not a frozen API specification. Resource availability, permissions and limits must be

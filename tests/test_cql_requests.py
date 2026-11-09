@@ -10,8 +10,10 @@ import threading
 import unittest
 from urllib.parse import parse_qs, urlsplit
 
+from skill_examples import skill_dir
 
-SKILL = Path(__file__).resolve().parents[1] / "skills/geoserver-cql-filter"
+
+SKILL = skill_dir("geoserver-cql-filter")
 
 
 class Recorder(BaseHTTPRequestHandler):

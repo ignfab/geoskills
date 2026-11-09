@@ -4,7 +4,7 @@ Audit and repair vector geospatial data before analysis or publication: invalid,
 empty geometries, self-intersections, gaps and overlaps between polygons, slivers, duplicate
 features, missing identifiers, schema issues and unexpected geometry-type changes.
 
-This complements [geopandas-basics](../geopandas-basics/README.md), which covers general
+This complements [geopandas-basics](../../4-analyze/geopandas-basics/README.md), which covers general
 vector processing, and [crs-reprojection-france](../crs-reprojection-france/README.md),
 which covers CRS diagnosis and conversion.
 

@@ -7,7 +7,7 @@ format using `gdalwarp` / `gdal_translate`.
 
 For **vector** layers, see the sibling [`geopf-wfs-download`](../geopf-wfs-download/README.md)
 skill. To process the downloaded rasters (clip, mosaic, COG), see
-[`gdal-raster-basics`](../gdal-raster-basics/README.md).
+[`gdal-raster-basics`](../../3-prepare/gdal-raster-basics/README.md).
 
 ## Requirements
 

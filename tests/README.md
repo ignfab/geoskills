@@ -170,10 +170,12 @@ They can also be enabled deliberately in GitHub Actions: **Validate skills → R
 Also run bounded requests to public IGN services**. The default remains off; pushes and
 pull requests never enable network tests through this option.
 
-To check CLI discovery without installing skills (Node.js required):
+To check CLI discovery without installing skills (Node.js required), from the repository
+root:
 
 ```bash
-npx skills add . --list
+npx skills add . --list                 # every skill, in family order
+npx skills add ./skills/2-access --list # the skills of one family only
 ```
 
 ## Manual agent setup

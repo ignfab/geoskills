@@ -38,7 +38,7 @@ campaign; the runner denies common installation commands:
 - `python3 -m pip install -r tests/requirements-geospatial.txt` for the GPD and VDQ
   scenarios;
 - Mapshaper 0.7.83 and compatible Node.js for the MS scenarios; see
-  [Mapshaper requirements](../skills/mapshaper-simplify/README.md#requirements);
+  [Mapshaper requirements](../skills/5-publish/mapshaper-simplify/README.md#requirements);
 - network access to `data.geopf.fr` for the GEO, WFS and WMS scenarios, and to
   `apicarto.ign.fr` for the APC scenarios.
 
@@ -110,7 +110,7 @@ ab_env() {
 # Run one scenario in a fresh directory: ab_run <scenario> <with|without> [rep] [after]
 ab_run() {
   : "${GEOSKILLS:?}" "${AB:?}"
-  local id=$1 mode=$2 rep=${3:-1} after=${4:-} prompt flags=$AB_EXTRA_FLAGS status=0
+  local id=$1 mode=$2 rep=${3:-1} after=${4:-} prompt flags=$AB_EXTRA_FLAGS status=0 skill
   local dir="$AB/runs/$id/$mode-$rep"
   case $mode in with|without) ;; *) echo "mode must be with or without" >&2; return 1 ;; esac
   [ -e "$dir" ] && { echo "$dir exists: use another rep or AB" >&2; return 1; }
@@ -124,7 +124,10 @@ ab_run() {
   cp -r "$GEOSKILLS/tests/data" "$dir/data" || return 1
   if [ "$mode" = with ]; then
     mkdir -p "$dir/.claude/skills" || return 1
-    cp -r "$GEOSKILLS"/skills/* "$dir/.claude/skills/" || return 1
+    # Flat copies, as the Skills CLI installs them: .claude/skills/<skill-name>/
+    for skill in "$GEOSKILLS"/skills/*/*/SKILL.md; do
+      cp -r "${skill%/SKILL.md}" "$dir/.claude/skills/" || return 1
+    done
   fi
   if [ -n "$after" ]; then
     cp -r "$AB/runs/$after/$mode-$rep/output/." "$dir/output/" || return 1
@@ -164,7 +167,7 @@ ab_summary() {
   python3 - "$1" <<'PY'
 import json, os, pathlib, re, sys
 d = pathlib.Path(sys.argv[1])
-ours = {p.name for p in pathlib.Path(os.environ["GEOSKILLS"], "skills").iterdir()}
+ours = {p.parent.name for p in pathlib.Path(os.environ["GEOSKILLS"], "skills").glob("*/*/SKILL.md")}
 mode, rep = d.name.rsplit("-", 1)
 exit_code = int((d / "exit-code.txt").read_text())
 skills, files, cmds, result, model = [], [], [], {}, None

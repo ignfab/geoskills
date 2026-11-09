@@ -4,23 +4,54 @@ Conventions for adding or editing a skill in this repository.
 
 ## Layout
 
-One directory per skill, under `skills/`:
+One directory per skill, inside the folder of its family under `skills/`:
 
 ```text
-skills/<skill-name>/
-├── SKILL.md      # agent-facing instructions (required)
-├── README.md     # human-facing documentation
-├── references/   # long-form documentation, loaded on demand
-│   └── *.md
-└── scripts/      # optional helper scripts, covered by tests in tests/
+skills/<family>/
+├── README.md         # family page: question, skills, related skills, gaps
+└── <skill-name>/
+    ├── SKILL.md      # agent-facing instructions (required)
+    ├── README.md     # human-facing documentation
+    ├── references/   # long-form documentation, loaded on demand
+    │   └── *.md
+    └── scripts/      # optional helper scripts, covered by tests in tests/
 ```
 
-`<skill-name>` is lowercase with hyphens, and matches the `name` in the frontmatter.
+`<skill-name>` is lowercase with hyphens, matches the `name` in the frontmatter, and is
+unique across families.
 
 Keeping skills under `skills/` matters for discovery: the
 [Vercel Skills CLI](https://github.com/vercel-labs/skills) scans the repository root only
-one level deep, whereas `skills/` is a known container walked up to three levels. It also
-keeps the root free for `docs/`, `templates/` or `examples/`.
+one level deep, whereas `skills/` is a known container walked up to three levels, so
+`skills/<family>/<skill-name>/SKILL.md` is found. It also keeps the root free for `docs/`,
+`templates/` or `examples/`.
+
+- Installs are flat: the CLI copies each skill to `<agent>/skills/<skill-name>/` and drops
+  the family folder. If two skills share a name, it keeps the first one.
+- A family folder never holds a `SKILL.md`: the CLI stops descending at the first one and
+  would hide the skills below it.
+- `npx skills add https://github.com/ignfab/geoskills/tree/main/skills/<family>` installs one
+  family.
+
+## Families
+
+Each family answers one question. A skill lives in the family whose question its main
+output answers. When it also serves another family, it is listed under `Also relevant` on
+that family's page.
+
+| Folder | Family | Question | Typical content |
+| --- | --- | --- | --- |
+| `1-discover` | Discover and select | Which data should be used for this request? | Catalog search, coverage, resolution, edition, fitness for purpose |
+| `2-access` | Access and extract | How do I retrieve the right subset? | Downloads, WFS, extraction, server-side filters, geocoding |
+| `3-prepare` | Prepare and check | Is the data usable and compatible? | Inspection, CRS, conversion, quality, harmonization |
+| `4-analyze` | Analyze and derive | What information should be computed? | Overlays, statistics, networks, terrain, change |
+| `5-publish` | Represent and publish | How do I make the result usable? | Maps, styles, QGIS projects, delivery formats, metadata |
+| `6-workflows` | Solve a business need | How do I chain the steps to reach an objective? | Territorial diagnosis, accessibility, exposure, change monitoring |
+
+- Calculation services that derive new values, such as elevations, routes or reachable
+  areas, belong to `4-analyze`, not `2-access`.
+- The folder list is the `FAMILIES` constant of
+  [.github/validate-skills.py](.github/validate-skills.py); adding a family changes both.
 
 ## SKILL.md
 
@@ -40,6 +71,9 @@ description: Downloads WFS data from the French Géoplateforme ... Use when the 
 - Keep `SKILL.md` short: the endpoint or entry command, the minimal syntax, and the two or
   three commands covering most needs. Everything longer goes to `references/` and is linked
   from a `## References` section.
+- `SKILL.md` and `references/` never link outside the skill folder, because the installed
+  copy is flat. Name other skills in backticks (`geopf-wfs-download`). Only the skill
+  `README.md` may link to other skills or to `tests/`.
 
 ## Language
 
@@ -74,11 +108,15 @@ these rules, and states them where they apply:
 
 ## Checklist for a new skill
 
-- [ ] `skills/<skill-name>/SKILL.md` with `name` + `description` in the frontmatter
+- [ ] `skills/<family>/<skill-name>/SKILL.md` with `name` + `description` in the frontmatter,
+  in the family whose question its main output answers
 - [ ] `description` says what the skill does and when to use it, in English only
 - [ ] long-form content moved to `references/` and linked from `SKILL.md`
-- [ ] `skills/<skill-name>/README.md` with requirements, install command and contents
-- [ ] entry added to the `Skills` table and to the `Résumé (FR)` section of the root `README.md`
+- [ ] `skills/<family>/<skill-name>/README.md` with requirements, install command and contents
+- [ ] row added to the table of `skills/<family>/README.md`, and `Also relevant` entries on
+  the pages of the other families it serves
+- [ ] entry added to the family table and section of `Skills` and to the `Résumé (FR)`
+  section of the root `README.md`
 - [ ] `npx skills add <path-to-this-repo>` lists the skill without a warning
 - [ ] `SKILL.md` has `## Prerequisites` and `## Validate the output` sections, and its
   prerequisites follow the agent conduct rules above
@@ -87,9 +125,11 @@ these rules, and states them where they apply:
 - [ ] scenario identifiers added to `POSITIVE` / `NEGATIVE`, to a skill section and to the
   score table of `tests/ab-testing.md`
 
-CI runs [.github/validate-skills.py](.github/validate-skills.py) to parse YAML, validate
-names and descriptions, require skill READMEs and the `## Prerequisites` and
-`## Validate the output` sections, and check local links and discoverable references. It
+CI runs [.github/validate-skills.py](.github/validate-skills.py) to check the family layout,
+parse YAML, validate names and descriptions and their uniqueness, require skill and family
+READMEs and the `## Prerequisites` and `## Validate the output` sections, check that the
+root and family READMEs link every skill, and check local links and discoverable
+references. It
 also runs the unit tests in `tests/`: helper scripts, local GDAL/PROJ, GeoPandas and
 Mapshaper workflows, the documented curl requests, and a dry run of the A/B runner. That dry
 run fails when a skill has no `tests/<skill-name>.md` or when one of its scenarios is missing

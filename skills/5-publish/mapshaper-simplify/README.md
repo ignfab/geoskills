@@ -46,8 +46,8 @@ npx skills add ignfab/geoskills --skill mapshaper-simplify
 - [SKILL.md](SKILL.md): inspection, two simplification recipes and output validation.
 - [references/simplification.md](references/simplification.md): shared topology across
   files, format choices, multipart limitations and a Python validation example.
-- [Manual scenarios](../../tests/mapshaper-simplify.md): French prompts and expected behavior.
-- [Automated tests](../../tests/test_mapshaper.py): real CLI runs on synthetic polygons.
+- [Manual scenarios](../../../tests/mapshaper-simplify.md): French prompts and expected behavior.
+- [Automated tests](../../../tests/test_mapshaper.py): real CLI runs on synthetic polygons.
 
 Simplification changes geometry and area. `keep-shapes` does not preserve every island
 or hole, and a retained percentage is not a positional accuracy guarantee.

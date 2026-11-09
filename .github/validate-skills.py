@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate skill metadata, required files and local Markdown reference targets."""
+"""Validate the skill layout, metadata, required files, indexes and local Markdown links."""
 
 import argparse
 from pathlib import Path
@@ -8,6 +8,9 @@ import sys
 from urllib.parse import unquote, urlsplit
 
 import yaml
+
+# Skills live in skills/<family>/<skill-name>/. Keep this list in sync with CLAUDE.md.
+FAMILIES = ("1-discover", "2-access", "3-prepare", "4-analyze", "5-publish", "6-workflows")
 
 
 class UniqueKeyLoader(yaml.SafeLoader):
@@ -55,6 +58,37 @@ def local_targets(path):
         yield (path.parent / unquote(parsed.path)).resolve()
 
 
+def visible_entries(directory):
+    return sorted(entry for entry in directory.iterdir() if not entry.name.startswith("."))
+
+
+def layout_errors(root, skill_root):
+    """Check skills/<family>/<skill-name>/: known families, family READMEs, no stray folders."""
+    errors = []
+    if not (root / "README.md").is_file():
+        errors.append("README.md: missing")
+    if not skill_root.is_dir():
+        return errors
+    for family in visible_entries(skill_root):
+        if not family.is_dir():
+            errors.append(f"skills/{family.name}: unexpected file; skills live in "
+                          "skills/<family>/<skill-name>/")
+            continue
+        if family.name not in FAMILIES:
+            errors.append(f"skills/{family.name}: unknown family; expected one of "
+                          + ", ".join(FAMILIES))
+            continue
+        # The Skills CLI stops descending at the first SKILL.md, which would hide the family.
+        if (family / "SKILL.md").exists():
+            errors.append(f"skills/{family.name}/SKILL.md: a family folder must not hold a SKILL.md")
+        if not (family / "README.md").is_file():
+            errors.append(f"skills/{family.name}: missing family README.md")
+        for directory in visible_entries(family):
+            if directory.is_dir() and not (directory / "SKILL.md").is_file():
+                errors.append(f"skills/{family.name}/{directory.name}: missing SKILL.md")
+    return errors
+
+
 def validate(root):
     root = Path(root).resolve()
     errors = []
@@ -62,12 +96,13 @@ def validate(root):
     skill_files = sorted(skill_root.glob("**/SKILL.md"))
     if not skill_files:
         errors.append("no skills/**/SKILL.md files found")
-    if skill_root.exists():
-        for directory in sorted(skill_root.iterdir()):
-            if directory.is_dir() and not (directory / "SKILL.md").is_file():
-                errors.append(f"skills/{directory.name}: missing SKILL.md")
+    errors.extend(layout_errors(root, skill_root))
+    names = {}
+    index_links = {}
     for path in skill_files:
         relative = path.relative_to(root)
+        if len(path.relative_to(skill_root).parts) != 3:
+            errors.append(f"{relative}: expected skills/<family>/<skill-name>/SKILL.md")
         text = path.read_text(encoding="utf-8")
         try:
             fields = frontmatter_fields(text)
@@ -84,8 +119,29 @@ def validate(root):
                 errors.append(f"{relative}: name '{name}' does not match directory")
             if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", name) or len(name) > 64:
                 errors.append(f"{relative}: invalid skill name '{name}'")
-        if not (path.parent / "README.md").is_file():
+            # Installs are flat and the Skills CLI keeps only the first skill of a given name.
+            if name in names:
+                errors.append(f"{relative}: duplicate skill name '{name}' (also {names[name]})")
+            names.setdefault(name, relative)
+        readme = path.parent / "README.md"
+        if not readme.is_file():
             errors.append(f"{relative}: missing skill README.md")
+        else:
+            # Both indexes must list every skill: the root README and the family README.
+            for index in (root / "README.md", path.parent.parent / "README.md"):
+                if index not in index_links:
+                    index_links[index] = set(local_targets(index)) if index.is_file() else None
+                if index_links[index] is not None and readme.resolve() not in index_links[index]:
+                    errors.append(f"{index.relative_to(root)}: no link to "
+                                  f"{readme.relative_to(root)}")
+        # Installed copies are flat (<agent>/skills/<name>/): what the agent reads must not
+        # link outside the skill folder. Name other skills in backticks instead.
+        skill_dir = path.parent.resolve()
+        for document in [path, *sorted((path.parent / "references").rglob("*.md"))]:
+            for target in local_targets(document):
+                if not target.is_relative_to(skill_dir):
+                    errors.append(f"{document.relative_to(root)}: link leaves the skill folder "
+                                  f"({target})")
         headings = set(re.findall(r"^## ([^\r\n]+)", without_fenced_code(text), flags=re.M))
         for heading in ("Prerequisites", "Validate the output"):
             if heading not in headings:
@@ -105,7 +161,7 @@ def validate(root):
             if reference.resolve() not in reachable:
                 errors.append(f"{relative}: unlinked reference {reference.name}")
     documents = [*root.glob("*.md"), *skill_root.rglob("*.md"), *(root / "tests").glob("*.md"),
-                 *(root / "docs").glob("*.md")]
+                 *(root / "tests" / "prompts").glob("*.md"), *(root / "docs").glob("*.md")]
     for path in sorted(set(documents)):
         for target in local_targets(path):
             if not target.exists():
@@ -121,7 +177,7 @@ def main():
     if errors:
         print("Skill validation failed:\n" + "\n".join(f"  - {error}" for error in errors))
         return 1
-    print(f"OK: {count} skill(s); YAML, required files and local links validated.")
+    print(f"OK: {count} skill(s); layout, YAML, required files, indexes and local links validated.")
     return 0
 
 
