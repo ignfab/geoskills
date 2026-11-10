@@ -5,7 +5,9 @@ from pathlib import Path
 import tempfile
 import unittest
 
-MODULE = Path(__file__).resolve().parents[1] / "skills/geopf-geocoding/scripts/split_csv.py"
+from skill_examples import skill_dir
+
+MODULE = skill_dir("geopf-geocoding") / "scripts/split_csv.py"
 spec = importlib.util.spec_from_file_location("split_csv", MODULE)
 splitter = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(splitter)

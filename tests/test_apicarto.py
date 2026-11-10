@@ -13,10 +13,9 @@ import unittest
 from unittest import mock
 from urllib.parse import parse_qs, urlsplit
 
-from skill_examples import read_example
+from skill_examples import read_example, skill_dir
 
-ROOT = Path(__file__).resolve().parents[1]
-SCRIPT = ROOT / "skills/apicarto/scripts/fetch_features.py"
+SCRIPT = skill_dir("apicarto") / "scripts/fetch_features.py"
 SPEC = importlib.util.spec_from_file_location("fetch_features", SCRIPT)
 FETCH = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(FETCH)

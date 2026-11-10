@@ -38,7 +38,7 @@ campaign; the runner denies common installation commands:
 - `python3 -m pip install -r tests/requirements-geospatial.txt` for the GPD and VDQ
   scenarios;
 - Mapshaper 0.7.83 and compatible Node.js for the MS scenarios; see
-  [Mapshaper requirements](../skills/mapshaper-simplify/README.md#requirements);
+  [Mapshaper requirements](../skills/5-publish/mapshaper-simplify/README.md#requirements);
 - network access to `data.geopf.fr` for the GEO, WFS and WMS scenarios, and to
   `apicarto.ign.fr` for the APC scenarios.
 
@@ -66,12 +66,15 @@ WFS-01 WFS-02 WFS-04 WFS-05 WFS-06 CQL-01 CQL-02 CQL-03 CQL-04 GPD-01 GPD-02 GPD
 GVB-01 GVB-02 GVB-03 GVB-04 APC-01 APC-02 APC-03"
 NEGATIVE="GSV-N1 GSV-N2 GEO-N1 CRS-N1 RAS-N1 WMS-N1 WFS-N1 CQL-N1 CQL-N2 GPD-N1 VDQ-N1 VDQ-N2 MS-N1 MS-N2 INT-N1 DLF-N1 ALT-N1 RTE-N1 GVB-N1 GVB-N2 APC-N2"
 
-# Print the French prompt of a scenario, read from tests/*.md.
+# Print the French prompt of a scenario or an experimental prompt (XP-NN), read from
+# tests/*.md, then tests/prompts/*.md.
 ab_prompt() {
-  python3 - "$1" "$GEOSKILLS"/tests/*.md <<'PY'
-import re, sys
+  python3 - "$1" "$GEOSKILLS"/tests/*.md "$GEOSKILLS"/tests/prompts/*.md <<'PY'
+import os, re, sys
 want, paths = sys.argv[1], sys.argv[2:]
 for path in paths:
+    if not os.path.isfile(path):  # unmatched glob
+        continue
     lines = open(path, encoding="utf-8").read().splitlines()
     for i, line in enumerate(lines):
         if re.match(rf"^## {re.escape(want)}\s", line):
@@ -110,7 +113,7 @@ ab_env() {
 # Run one scenario in a fresh directory: ab_run <scenario> <with|without> [rep] [after]
 ab_run() {
   : "${GEOSKILLS:?}" "${AB:?}"
-  local id=$1 mode=$2 rep=${3:-1} after=${4:-} prompt flags=$AB_EXTRA_FLAGS status=0
+  local id=$1 mode=$2 rep=${3:-1} after=${4:-} prompt flags=$AB_EXTRA_FLAGS status=0 skill
   local dir="$AB/runs/$id/$mode-$rep"
   case $mode in with|without) ;; *) echo "mode must be with or without" >&2; return 1 ;; esac
   [ -e "$dir" ] && { echo "$dir exists: use another rep or AB" >&2; return 1; }
@@ -124,7 +127,10 @@ ab_run() {
   cp -r "$GEOSKILLS/tests/data" "$dir/data" || return 1
   if [ "$mode" = with ]; then
     mkdir -p "$dir/.claude/skills" || return 1
-    cp -r "$GEOSKILLS"/skills/* "$dir/.claude/skills/" || return 1
+    # Flat copies, as the Skills CLI installs them: .claude/skills/<skill-name>/
+    for skill in "$GEOSKILLS"/skills/*/*/SKILL.md; do
+      cp -r "${skill%/SKILL.md}" "$dir/.claude/skills/" || return 1
+    done
   fi
   if [ -n "$after" ]; then
     cp -r "$AB/runs/$after/$mode-$rep/output/." "$dir/output/" || return 1
@@ -164,7 +170,7 @@ ab_summary() {
   python3 - "$1" <<'PY'
 import json, os, pathlib, re, sys
 d = pathlib.Path(sys.argv[1])
-ours = {p.name for p in pathlib.Path(os.environ["GEOSKILLS"], "skills").iterdir()}
+ours = {p.parent.name for p in pathlib.Path(os.environ["GEOSKILLS"], "skills").glob("*/*/SKILL.md")}
 mode, rep = d.name.rsplit("-", 1)
 exit_code = int((d / "exit-code.txt").read_text())
 skills, files, cmds, result, model = [], [], [], {}, None
@@ -250,7 +256,7 @@ PY
 | Function | Role |
 |----------|------|
 | `ab_env` | Records the date, model, tool versions and IGN grids in `$AB/environment.txt`. |
-| `ab_prompt <id>` | Prints the prompt of a scenario, read from `tests/*.md`. |
+| `ab_prompt <id>` | Prints the prompt of a scenario, read from `tests/*.md`, or of an experimental prompt, read from `tests/prompts/*.md`. |
 | `ab_run <id> <with\|without> [rep] [after]` | Creates `$AB/runs/<id>/<mode>-<rep>/`, copies `data/` (and the skills in A), copies the output of the `after` run, runs `claude -p` and keeps `transcript.jsonl`. |
 | `ab_campaign [rep]` | One repetition of every scenario. |
 | `ab_summary <dir>` | Writes `summary.json`, `commands.txt` (Bash commands run) and `answer.md` (final answer). Rejects detected contamination in B and installation attempts. |
@@ -549,6 +555,14 @@ Use a new `AB` directory for each variant, so that reports do not mix.
   user-level and plugin skills from the B runs.
 - **Prior knowledge only:** `AB_TOOLS="Bash Read Write Edit Glob Grep"` removes web search
   and fetch in both modes; services stay reachable through `curl`.
+
+## Experimental prompts
+
+The runner also takes the prompts of the [experimental catalog](prompts/catalog.md), which
+are not part of the campaign. `ab_run XP-05 with x1` runs one in the same isolated
+directory, with the skills, fixtures, budget and `summary.json` of a scenario run. Copy the
+skills loaded and the outcome to [prompts/runs.md](prompts/runs.md). Scenario files are
+read first, so an `XP` identifier never replaces a scenario prompt.
 
 ## Limits
 

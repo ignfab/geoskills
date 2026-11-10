@@ -9,13 +9,11 @@ import sys
 import tempfile
 import unittest
 
-from skill_examples import run_example
-
-ROOT = Path(__file__).resolve().parents[1]
+from skill_examples import run_example, skill_dir
 
 
 def helper(skill, filename):
-    path = ROOT / "skills" / skill / "scripts" / filename
+    path = skill_dir(skill) / "scripts" / filename
     spec = importlib.util.spec_from_file_location(path.stem, path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -87,7 +85,7 @@ class ExportCompletenessTests(unittest.TestCase):
 
     def test_cli_fails_an_incomplete_export(self):
         self.pages([["01"]])
-        script = ROOT / "skills/geopf-wfs-download/scripts/check_export.py"
+        script = skill_dir("geopf-wfs-download") / "scripts/check_export.py"
         result = subprocess.run([sys.executable, str(script), str(self.path), "--layer", "features",
                                  "--id-field", "source_id", "--hits-before", str(self.before),
                                  "--hits-after", str(self.after)], text=True, capture_output=True)

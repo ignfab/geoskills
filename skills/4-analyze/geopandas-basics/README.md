@@ -4,9 +4,9 @@ Process vector data in Python with [GeoPandas](https://geopandas.org/): read and
 GeoPackage, GeoParquet and Shapefile, reproject, spatial joins, overlay, clip, buffer,
 dissolve, and zonal statistics with rasterstats.
 
-The CLI counterparts: [geopf-wfs-download](../geopf-wfs-download/README.md) (WFS download),
-[gdal-raster-basics](../gdal-raster-basics/README.md) (rasters, including CLI zonal
-statistics) and [crs-reprojection-france](../crs-reprojection-france/README.md) (choosing
+The CLI counterparts: [geopf-wfs-download](../../2-access/geopf-wfs-download/README.md) (WFS download),
+[gdal-raster-basics](../../3-prepare/gdal-raster-basics/README.md) (rasters, including CLI zonal
+statistics) and [crs-reprojection-france](../../3-prepare/crs-reprojection-france/README.md) (choosing
 a CRS).
 
 ## Requirements

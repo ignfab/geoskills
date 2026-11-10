@@ -8,8 +8,8 @@ to 10 characters, GeoPackage layers lost when rewriting a file, and clip boxes g
 the wrong CRS.
 
 To download vector layers from the Géoplateforme, see
-[geopf-wfs-download](../geopf-wfs-download/README.md); for Python workflows,
-[geopandas-basics](../geopandas-basics/README.md).
+[geopf-wfs-download](../../2-access/geopf-wfs-download/README.md); for Python workflows,
+[geopandas-basics](../../4-analyze/geopandas-basics/README.md).
 
 ## Requirements
 

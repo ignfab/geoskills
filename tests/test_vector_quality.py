@@ -10,7 +10,7 @@ import unittest
 import warnings
 
 from test_workflows import GDALCase
-from skill_examples import read_example, run_example
+from skill_examples import read_example, run_example, skill_file
 
 FIXTURE = Path(__file__).resolve().parent / "data" / "coverage_synthetic.geojson"
 VALIDITY = "vector-data-quality/references/geometry-validity.md"
@@ -246,8 +246,7 @@ class VectorQualityTests(GDALCase):
         gdf = gpd.GeoDataFrame({"id": list(cases)}, geometry=geometries)
         audit, _ = run_quietly(VALIDITY, "## Classify geometry problems", {"gdf": gdf})
         self.assertEqual(audit["reason_type"].tolist(), list(cases))
-        text = (Path(__file__).resolve().parents[1] / "skills" / VALIDITY).read_text(
-            encoding="utf-8")
+        text = skill_file(VALIDITY).read_text(encoding="utf-8")
         for reason in cases:
             self.assertIn(f"| `{reason}` |", text)
 
