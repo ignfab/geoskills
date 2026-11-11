@@ -47,7 +47,7 @@
           "type": "enumeration",
           "meaning": "Architectural building type.",
           "pages": [
-            69
+            70
           ],
           "source": "ign-dc-3.5-2026-07",
           "enum_coverage": "not bundled; consult cited page"
