@@ -33,7 +33,7 @@ and lists further candidate chains that are not yet implemented.
 | [Output reports](output-reports.md) | Shared terminology and evidence to include with different artifact types. |
 | [Test guide](../tests/README.md) | Current test inventory, prerequisites, offline checks, dedicated QGIS checks and opt-in live tests. |
 | [Fixture metadata](../tests/data/README.md) | Provenance, coordinate systems and intentional traps in test inputs. |
-| [A/B protocol](../tests/ab-testing.md) | Compare agent behavior with and without skills; a protocol is not a completed campaign. |
+| [A/B protocol](../tests/ab-testing.md) | Compare agent behavior with and without skills, and across models; a protocol is not a completed campaign. |
 | [Experimental prompts](../tests/prompts/README.md) | Catalog and append-only record of exploratory agent runs. |
 
 ## Dated evidence
@@ -43,6 +43,7 @@ new checks; do not reinterpret an earlier partial run as a later success.
 
 | Document | Scope |
 | --- | --- |
+| [2026-11-12 review](../tests/review-2026-11-12.md) | Scenario and test audit: standard scenario format, fixtures tied to their tests, structure checks and model-sensitivity checks. |
 | [2026-11-12 municipal workflow review](../tests/review-municipality-building-profile-2026-11-12.md) | First workflow, independently checked building indicators and a portable QGIS forward pilot. |
 | [2026-11-11 review](../tests/review-2026-11-11.md) | Five complementary skills, issues/merged PRs, QGIS integration, discovery and actual agent pilots. |
 | [2026-10-28 review](../tests/review-2026-10-28.md) | Intake, downloads, elevation, routing and report conventions. |

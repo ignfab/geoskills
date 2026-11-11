@@ -5,6 +5,9 @@ is run twice under the same conditions: **A** with the skills of this repository
 **B** without them. A higher pass rate in A is evidence of added value on those scenarios;
 when both pass, compare effort and cost as well as output quality.
 
+A [model sweep](#model-sensitivity) runs the same scenarios with several models, to find
+skills whose effect depends on the model that reads them.
+
 The scenario files remain the reference for prompts, expected results and checklists.
 This file adds the procedure, a runner and a scoring grid.
 
@@ -56,6 +59,7 @@ then load it with `source ab.sh`.
 export GEOSKILLS="${GEOSKILLS:-$HOME/projects/geoskills}"  # the repository clone
 export AB="${AB:-$HOME/geoskills-ab/$(date +%F)}"          # outside the repository
 export AB_MODEL="${AB_MODEL:-opus}"              # same model/version in both modes
+export AB_MODELS="${AB_MODELS:-haiku sonnet opus}"  # model panel of ab_sweep
 export AB_BUDGET="2"                            # USD cap per run
 export AB_TOOLS="Bash Read Write Edit Glob Grep Skill WebFetch WebSearch"
 export AB_DENY="Bash(sudo *) Bash(pip install *) Bash(pip3 install *) Bash(python3 -m pip install *) Bash(conda install *) Bash(mamba install *) Bash(apt *) Bash(apt-get *) Bash(brew install *) Bash(npm install *)"
@@ -106,6 +110,7 @@ ab_env() {
   {
     date -Iseconds
     echo "model: $AB_MODEL"
+    echo "model panel: $AB_MODELS"
     claude --version
     node --version
     mapshaper -version
@@ -261,6 +266,121 @@ for mode in ("with", "without"):
 print(root / "report.md")
 PY
 }
+# First positive and first negative scenario of each skill: the model-sweep panel.
+ab_panel() {
+  local id
+  for id in $POSITIVE $NEGATIVE; do
+    case $id in *-01|*-N1) printf '%s\n' "$id" ;; esac
+  done
+}
+
+# Model sensitivity: run scenarios in A only, once per model of AB_MODELS, all models of a
+# scenario back to back. Each model gets its own campaign, $AB/models/<model>/.
+# ab_sweep [rep] [scenario...]; without scenarios, every scenario.
+ab_sweep() {
+  : "${AB:?}" "${AB_MODELS:?}"
+  local rep=${1:-1} root=$AB id model after
+  shift $(($# > 0 ? 1 : 0))
+  for id in ${*:-$POSITIVE WFS-03 $NEGATIVE}; do
+    after=
+    [ "$id" = WFS-03 ] && after=WFS-01
+    for model in $AB_MODELS; do
+      AB="$root/models/$model" AB_MODEL="$model" ab_run "$id" with "$rep" $after || return 1
+    done
+  done
+}
+
+# Build $AB/sensitivity.md from an ab_sweep: skill selection scored automatically for every
+# run, task results read from the hand-scored models/<model>/report.md, spread per skill.
+ab_sensitivity() {
+  python3 - "$AB" "$GEOSKILLS" "${AB_SPREAD:-1/3}" "$AB_MODELS" <<'PY'
+import json, pathlib, re, sys
+from fractions import Fraction
+root, repo, limit = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2]), Fraction(sys.argv[3])
+owner = {}  # scenario -> skill whose tests/<skill>.md defines it
+for path in repo.glob("skills/*/*/SKILL.md"):
+    scenarios = repo / "tests" / f"{path.parent.name}.md"
+    if scenarios.exists():
+        for ident in re.findall(r"^## ([A-Z]+-N?\d+)\s", scenarios.read_text(encoding="utf-8"), re.M):
+            owner[ident] = path.parent.name
+found = sorted(p.name for p in (root / "models").glob("*") if p.is_dir())
+models = [m for m in sys.argv[4].split() if m in found] + [m for m in found if m not in sys.argv[4].split()]
+
+def hand_scores(model):
+    """(scenario, rep) -> True/False from the Result column of a scored report.md."""
+    path, scores = root / "models" / model / "report.md", {}
+    if path.exists():
+        for line in path.read_text(encoding="utf-8").splitlines():
+            cells = [c.strip() for c in line.strip().strip("|").split("|")]
+            if len(cells) > 8 and cells[1] == "with" and cells[8].lower() in ("pass", "fail"):
+                scores[(cells[0], cells[2])] = cells[8].lower() == "pass"
+    return scores
+
+runs, selection, result, ids, totals = {}, {}, {}, {}, {}
+for model in models:
+    scores = hand_scores(model)
+    total = totals.setdefault(model, {"runs": 0, "invalid": 0, "cost": 0.0, "turns": 0})
+    for path in sorted((root / "models" / model / "runs").glob("*/with-*/summary.json")):
+        s = json.loads(path.read_text(encoding="utf-8"))
+        skill = owner.get(s["scenario"])
+        if skill is None:
+            continue  # experimental prompt: no expected skill
+        ids.setdefault(model, set()).add(str(s.get("model")))
+        total["runs"] += 1
+        total["cost"] += s.get("cost_usd") or 0
+        total["turns"] += s.get("turns") or 0
+        key = (s["scenario"], s["rep"])
+        if not s.get("comparable", s.get("ok")):
+            total["invalid"] += 1
+            runs.setdefault(key, {})[model] = "invalid"
+            continue
+        loaded = skill in s["skills"]
+        hit = not loaded if "-N" in s["scenario"] else loaded
+        counts = selection.setdefault(skill, {}).setdefault(model, [0, 0])
+        counts[0] += hit
+        counts[1] += 1
+        cell = ("ok" if hit else "FAIL") + ": " + (", ".join(map(str, s["skills"])) or "-")
+        if key in scores:
+            counts = result.setdefault(skill, {}).setdefault(model, [0, 0])
+            counts[0] += scores[key]
+            counts[1] += 1
+            cell += "; " + ("pass" if scores[key] else "fail")
+        runs.setdefault(key, {})[model] = cell
+
+def table(title, data, note):
+    out = [f"## {title}", "", note, "",
+           "| Skill | " + " | ".join(models) + " | Spread | Flag |",
+           "|---|" + "---|" * len(models) + "---|---|"]
+    for skill in sorted(data):
+        rates = [Fraction(*data[skill][m]) for m in models if data[skill].get(m, [0, 0])[1]]
+        spread = max(rates) - min(rates) if len(rates) > 1 else None
+        flag = "SENSITIVE" if spread is not None and spread >= limit else ""
+        cells = ["{}/{}".format(*data[skill][m]) if m in data[skill] else "—" for m in models]
+        shown = "—" if spread is None else f"{round(100 * spread)} %"
+        out.append(f"| {skill} | " + " | ".join(cells) + f" | {shown} | {flag} |")
+    return out + [""]
+
+out = ["# Model sensitivity", "",
+       "Models: " + "; ".join(f"{m} ({', '.join(sorted(ids[m]))})" if m in ids else m for m in models), "",
+       f"A skill is flagged when the best and the worst model differ by at least {limit} of their runs.", ""]
+out += table("Skill selection (automatic)", selection,
+             "Correct runs / scored runs: the expected skill loaded for a positive scenario, "
+             "the excluded skill not loaded for a negative one. Invalid runs are left out.")
+out += table("Task result (hand scores)", result,
+             "Runs written `pass` / runs written `pass` or `fail` in the Result column of "
+             "`models/<model>/report.md`.")
+out += ["## Cost and invalid runs", "", "| Model | Runs | Invalid | Cost $ | Mean turns |", "|---|---|---|---|---|"]
+for m in models:
+    t = totals[m]
+    mean = f"{t['turns'] / t['runs']:.1f}" if t["runs"] else "—"
+    out.append(f"| {m} | {t['runs']} | {t['invalid']} | {t['cost']:.2f} | {mean} |")
+out += ["", "## Runs", "", "| Scenario | Rep | " + " | ".join(models) + " |", "|---|---|" + "---|" * len(models)]
+for (ident, rep), cells in sorted(runs.items()):
+    out.append(f"| {ident} | {rep} | " + " | ".join(cells.get(m, "—") for m in models) + " |")
+(root / "sensitivity.md").write_text("\n".join(out) + "\n", encoding="utf-8")
+print(root / "sensitivity.md")
+PY
+}
 ```
 
 | Function | Role |
@@ -270,7 +390,10 @@ PY
 | `ab_run <id> <with\|without> [rep] [after]` | Creates `$AB/runs/<id>/<mode>-<rep>/`, copies `data/` (and the skills in A), copies the output of the `after` run, runs `claude -p` and keeps `transcript.jsonl`. |
 | `ab_campaign [rep]` | One repetition of every scenario. |
 | `ab_summary <dir>` | Writes `summary.json`, `commands.txt` (Bash commands run) and `answer.md` (final answer). Rejects detected contamination in B and installation attempts. |
-| `ab_report` | Writes `$AB/report.md`: the environment and one row per run, with blank columns to score. |
+| `ab_report` | Writes `$AB/report.md`: the environment and one row per run, with blank columns to score. It rewrites the file: score after the last repetition. |
+| `ab_panel` | Prints the first positive and first negative scenario of each skill, the panel of a [model sweep](#model-sensitivity). |
+| `ab_sweep [rep] [id…]` | Runs the given scenarios (all by default) in A only, once per model of `AB_MODELS`, each model in `$AB/models/<model>/`. |
+| `ab_sensitivity` | Writes `$AB/sensitivity.md`: skill selection scored for every sweep run, hand-scored results, spread between models per skill. |
 
 `claude -p` cannot ask for permission, so the allowed tools are listed in `AB_TOOLS`. The
 agent can run shell commands and reach the web. The deny list and install counter cover
@@ -566,7 +689,8 @@ All CQL scenarios use supplied metadata and require no live service.
 For each row of `report.md`, in the run directory:
 
 1. **Skill selection.** In A, `Skills loaded` contains the expected skill of the scenario;
-   for a `-N` scenario, it does not contain the excluded one. In B, it contains none of
+   for a `-N` scenario, it does not contain the excluded one. For a model sweep,
+   `ab_sensitivity` applies this rule to every run. In B, it contains none of
    the skills of this repository: a run flagged `INVALID` is excluded; a historical run
    flagged `CHECK` needs manual review before scoring.
 2. **Result.** Compare `output/` and `answer.md` with the expected result of the scenario
@@ -617,6 +741,72 @@ Summarize per skill over the three repetitions:
 | qgis-project-builder | /6 | /6 | | | |
 | municipality-building-profile | /9 | /9 | | | |
 | Negative scenarios (A only) | /96 | — | — | — | |
+
+## Model sensitivity
+
+A skill is model-sensitive when its effect depends on the model that reads it: a large
+model selects it and follows it, a smaller one misses it, loads a neighbour or skips a
+step. Skills installed with the Skills CLI are read by many agents and models, so a skill
+should not rely on what only the strongest model can infer. Two layers check this.
+
+- **Every push, no model call.** [test_skill_robustness.py](test_skill_robustness.py)
+  checks the wording that keeps selection from resting on inference: each description says
+  when to use the skill and names other skills exactly (`geopf-wfs-download`, not "the WFS
+  skill"), and each boundary tested by a negative scenario is written in the skill to
+  exclude, so that a model that loads it by mistake reads where to go instead.
+- **On demand, paid.** A sweep runs scenarios in A only, once per model of `AB_MODELS`,
+  then compares the models skill by skill. B runs are left out: without skills they
+  measure each model's prior knowledge, which is a separate question.
+
+Prepare the directories first, then run the panel in a new sweep directory:
+
+```bash
+source ab.sh
+export AB_MODELS="haiku sonnet opus"            # aliases, or pinned model IDs
+AB_DRY=1 ab_sweep 1 $(ab_panel)
+export AB=/path/to/a/new/sweep
+ab_env
+ab_sweep 1 $(ab_panel)
+for model in $AB_MODELS; do AB="$AB/models/$model" ab_report; done
+ab_sensitivity
+```
+
+`ab_panel` lists **42 scenarios**, the first positive and the first negative of each skill:
+**126 runs** per repetition with the 3 models of `AB_MODELS`, capped at $252. A full sweep
+runs all 103 scenarios: 309 runs, capped at $618 per repetition. Starting a paid sweep is a
+separate user decision; a dry run does not authorize it.
+
+`$AB/sensitivity.md` has four tables:
+
+- **Skill selection**, scored automatically for every run: correct runs out of scored runs
+  per skill and model, with the spread between the best and the worst model.
+- **Task result**, read from the `Result` column of each `models/<model>/report.md` once
+  it is scored as in [Score a run](#score-a-run); rerun `ab_sensitivity` after scoring.
+- **Cost and invalid runs** per model.
+- **Runs**: each scenario and repetition, with the skills each model loaded.
+
+A skill is flagged `SENSITIVE` when the spread reaches `AB_SPREAD` (default `1/3`).
+
+| Selection | Result | Reading | Next step |
+|-----------|--------|---------|-----------|
+| Same for all models | Same for all models | Not model-sensitive on these scenarios | — |
+| Lower for some models | — | The description relies on inference | Put the words of the request, exact skill names and a `not …` clause in the description; sweep again |
+| Same for all models | Lower for some models | The body is too implicit for some models | Bring the main command forward, make each validation step explicit, move detail to `references/`; sweep again |
+| Low for every model | — | A description problem, not model sensitivity | Rewrite the description, then run the A/B campaign |
+
+Limits:
+
+- One repetition gives one or two panel runs per skill and model: a flag is a lead, not a
+  verdict. Before changing a skill, run all its scenarios three times with the models
+  that diverge.
+- Aliases such as `haiku` move to newer versions. `sensitivity.md` records the resolved
+  model IDs; pin full IDs to compare sweeps over time.
+- The sweep reaches the models that the `claude` CLI serves. Another agent or model family
+  needs its own harness. `ab_sensitivity` only reads
+  `models/<model>/runs/<id>/with-<rep>/summary.json` (`scenario`, `rep`, `skills`,
+  `comparable`), so a harness that writes these files can reuse it.
+- A live service outage fails every model alike. `ab_sweep` runs all models of a scenario
+  back to back so that they meet the same service state.
 
 ## Variants
 

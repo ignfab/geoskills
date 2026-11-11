@@ -1,6 +1,6 @@
 ---
 name: geodata-intake
-description: Inspects unfamiliar local geospatial files or a mixed delivery to inventory formats, layers, CRSs, fields, extents and missing metadata before choosing a workflow. Use when the user asks what received GIS files contain or whether they are ready to use. For an already specified conversion, reprojection or geometry repair, use the corresponding specialized skill directly.
+description: Inspects unfamiliar local geospatial files or a mixed delivery to inventory formats, layers, CRSs, fields, extents and missing metadata before choosing a workflow. Use when the user asks what received GIS files contain or whether they are ready to use. For an already specified conversion, reprojection or geometry repair, use gdal-vector-basics, gdal-raster-basics, crs-reprojection-france or vector-data-quality directly.
 ---
 
 # Inspect a geospatial delivery

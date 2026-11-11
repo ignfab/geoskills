@@ -2,16 +2,17 @@
 
 A skill is useful only if two things hold: the commands it documents work, and an agent
 loads it when it should and follows it. No single kind of test checks both. This folder
-holds four kinds of tests, from cheap and automatic to slow and paid. A green unit-test
+holds five kinds of tests, from cheap and automatic to slow and paid. A green unit-test
 run does not prove that an agent will select the right skill.
 
-## The four kinds of tests
+## The five kinds of tests
 
 | Kind | Question it answers | Files | How it runs | Cost |
 | --- | --- | --- | --- | --- |
 | Offline tests | Do the documented commands, scripts and fixtures give the expected result? | `test_*.py`, except `test_live*` | `unittest`, on every push in CI | Free, no network |
 | Live tests | Do the public IGN services still answer as the skills say? | `test_live*.py` | Only with `GEOSKILLS_LIVE=1` | Small bounded requests to IGN services |
 | Agent scenarios | Does an agent load the right skill, and is its result correct? | `<skill-name>.md`, one per skill | By hand, or with the A/B runner of [ab-testing.md](ab-testing.md) | Paid agent calls |
+| Model sweep | Does a skill work as well with a smaller model as with a larger one? | The agent scenarios | The runner's [model sweep](ab-testing.md#model-sensitivity) | Paid agent calls, per model |
 | Experimental prompts | What does an agent do with a new or chained request? | [prompts/](prompts/README.md) | Same as scenarios, then logged in `prompts/runs.md` | Paid agent calls |
 
 The scenario prompts are in French on purpose: they check that a French request triggers
@@ -131,9 +132,10 @@ representative workflows, not every documented command.
 | [test_bdtopo_schema_guide.py](test_bdtopo_schema_guide.py) | `bdtopo-schema-guide` | `lookup.py` and the versioned snapshot: building height with its special zero, road field aliases and enum, unknown versions, revisions, fields or formats never inferred, no network or GIS needed, every entry traced to a source. |
 | [test_qgis_project_builder.py](test_qgis_project_builder.py) | `qgis-project-builder` | `build_project.py` projects reopened in PyQGIS: vector and raster layers, CRS, extent (including aligned points), layer-tree order, groups and visibility, optional QML, relative paths after moving the whole bundle with the original removed, source bytes and directory inventory unchanged, WMTS provider URI and an omitted remote basemap on failure. Needs PyQGIS ([QGIS integration](#qgis-integration)). |
 | [test_municipality_building_profile.py](test_municipality_building_profile.py) | `municipality-building-profile` | `build_profile.py` checked against independent area and count oracles: overlapping buildings counted once in the union, border-crossing and border-touching buildings, height and usage semantics, missing or partial inputs, string codes, sources unchanged and GeoPackage/CSV/JSON report round trips (GeoPandas). |
+| [test_skill_robustness.py](test_skill_robustness.py) | every skill | The wording that keeps selection from depending on the model: each description says when to use the skill, stays within 1024 characters and names other skills exactly (not "the WFS skill"); each boundary tested by a negative scenario is written in the skill to exclude. See [Model sensitivity](#model-sensitivity). |
 | [test_validation.py](test_validation.py) | the validator | [validate-skills.py](../.github/validate-skills.py): YAML, required sections, family layout, unique names, complete indexes, links that stay inside a skill. |
 | [test_scenarios.py](test_scenarios.py) | every scenario | Each scenario has a French prompt, an `**Expected skill:**` line and a checklist; numbering has no gap; fixtures named in prompts exist; the lists, matrix, score table and run count of `ab-testing.md` follow the scenario files. |
-| [test_ab_runner.py](test_ab_runner.py) | the A/B runner | The runner of `ab-testing.md` with a fake `claude`: every scenario prepared in isolation, prerequisite outputs copied, reruns refused, failures and contamination reported. No paid call. |
+| [test_ab_runner.py](test_ab_runner.py) | the A/B runner | The runner of `ab-testing.md` with a fake `claude`: every scenario prepared in isolation, prerequisite outputs copied, reruns refused, failures and contamination reported; the model sweep calls each model in its own campaign and `ab_sensitivity` scores selection, hand results and the spread threshold. No paid call. |
 | [test_prompt_log.py](test_prompt_log.py) | `prompts/` | Experimental prompt identifiers, families, expected skills, statuses and run-log rows. |
 
 ### QGIS integration
@@ -268,6 +270,22 @@ use a masked single-zone crop or `rasterstats`.
 skills, three times each, and scores the difference. Starting a paid campaign is a
 separate decision; `AB_DRY=1` prepares every directory for free.
 
+### Model sensitivity
+
+Skills installed with the Skills CLI are read by many agents and models. A skill that only
+works because a large model guesses what it leaves implicit is model-sensitive. Two
+layers check this:
+
+- [test_skill_robustness.py](test_skill_robustness.py) runs on every push. It checks the
+  text that a smaller model needs in order to choose correctly: a `Use when …` clause,
+  exact skill names, and the way out at each tested boundary. For example, RAS-N1 expects
+  `geopf-altimetry`, not `gdal-raster-basics`, for the elevation of one point, so
+  `gdal-raster-basics` must name `geopf-altimetry`.
+- The [model sweep](ab-testing.md#model-sensitivity) of the A/B runner is paid and runs on
+  demand. It runs the same scenarios with several models (by default `haiku`, `sonnet`
+  and `opus`), scores skill selection automatically and flags the skills whose score
+  differs between models.
+
 ### Clean up
 
 Offline tests remove their temporary directories. After a manual run, remove only the
@@ -338,6 +356,6 @@ above for a new run: a past pass is not a current guarantee for live services.
 | [review-2026-10-27.md](review-2026-10-27.md) | Test audit, added edge cases and remaining coverage limits |
 | [review-2026-10-28.md](review-2026-10-28.md) | Four added skills, workflow checks, live evidence and an agent pilot (not a full A/B evaluation) |
 | [review-2026-11-11.md](review-2026-11-11.md) | Five new skills: executed fixtures, QGIS integration, family discovery and agent pilots (not a full A/B evaluation) |
-| [review-2026-11-12.md](review-2026-11-12.md) | Audit of the scenarios and tests: standard scenario format, fixtures now tested, structure checks |
+| [review-2026-11-12.md](review-2026-11-12.md) | Audit of the scenarios and tests: standard scenario format, fixtures now tested, structure checks, model-sensitivity checks and sweep |
 | [review-municipality-building-profile-2026-11-12.md](review-municipality-building-profile-2026-11-12.md) | First workflow: municipal indicator regressions and an independent portable-QGIS forward pilot |
 | [reports/](reports/) | Machine-readable summaries of agent runs: the 2026-10-28 pilot, the 2026-11-11 five-skill pilots and the 2026-11-12 municipal building profile pilot, with environments and discovery checks |

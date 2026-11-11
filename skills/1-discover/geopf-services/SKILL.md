@@ -1,6 +1,6 @@
 ---
 name: geopf-services
-description: Explains the French Géoplateforme (GPF/IGN, data.geopf.fr) services and selects an API by the required output. Use for a service overview, WMS/WMTS/WFS/TMS comparisons, or choosing between dataset discovery, downloads, extraction, geocoding and geographic calculations. For an explicit download, geocoding, elevation or navigation task, use the corresponding specialized skill directly.
+description: Explains the French Géoplateforme (GPF/IGN, data.geopf.fr) services and selects an API by the required output. Use for a service overview, WMS/WMTS/WFS/TMS comparisons, or choosing between dataset discovery, downloads, extraction, geocoding and geographic calculations. For an explicit download, geocoding, elevation or navigation task, use geopf-download-files, geopf-wfs-download, geopf-geocoding, geopf-altimetry or geopf-routing directly.
 ---
 
 # Géoplateforme services overview
@@ -8,7 +8,9 @@ description: Explains the French Géoplateforme (GPF/IGN, data.geopf.fr) service
 Use this skill to choose a service, not to download every advertised dataset. Start with
 the [official service guide](https://cartes.gouv.fr/aide/fr/guides-utilisateur/utiliser-les-services-de-la-geoplateforme/).
 The endpoint host is `https://data.geopf.fr`; the paths below are discovery entry points,
-not evidence that a particular dataset is available.
+not evidence that a particular dataset is available. Work on files already on disk needs
+no service: use `crs-reprojection-france` to reproject them and `gdal-vector-basics` or
+`gdal-raster-basics` to convert them.
 
 ## Prerequisites
 

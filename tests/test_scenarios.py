@@ -137,6 +137,18 @@ class ABProtocolTests(unittest.TestCase):
         self.assertIn(f"the caps total ${budget * runs} per repetition and ${3 * budget * runs} "
                       "for three repetitions", sentence)
 
+    def test_model_sweep_cost_follows_the_scenarios(self):
+        sentence = " ".join(AB.split())
+        budget = int(re.search(r"example budget of \$(\d+) per run", sentence).group(1))
+        models = len(re.search(r'AB_MODELS="\$\{AB_MODELS:-([^}]*)\}"', AB).group(1).split())
+        panel = 2 * len(SKILLS)  # ab_panel: the -01 and -N1 of each skill
+        every = len(self.positives) + len(self.negatives)
+        self.assertIn(f"`ab_panel` lists **{panel} scenarios**, the first positive and the first "
+                      f"negative of each skill: **{models * panel} runs** per repetition with the "
+                      f"{models} models of `AB_MODELS`, capped at ${budget * models * panel}. A full "
+                      f"sweep runs all {every} scenarios: {models * every} runs, capped at "
+                      f"${budget * models * every} per repetition.", sentence)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -156,6 +156,84 @@ ab_run WFS-03 with 1 WFS-01
                 self.assertNotEqual(result.returncode, 0)
                 self.assertEqual((self.campaign / "agent-invocations.txt").read_text(), "called\n")
 
+    def test_dry_sweep_prepares_one_isolated_campaign_per_model(self):
+        result = self.run_shell('AB_MODELS="model-a model-b"; ab_sweep 1 MS-01 MS-N1 WFS-01 WFS-03',
+                                dry=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        skills = {p.parent.name for p in (ROOT / "skills").glob("*/*/SKILL.md")}
+        for model in ("model-a", "model-b"):
+            runs = self.campaign / "models" / model / "runs"
+            with self.subTest(model=model):
+                self.assertEqual({(p.parent.name, p.name) for p in runs.glob("*/*")},
+                                 {(i, "with-1") for i in ("MS-01", "MS-N1", "WFS-01", "WFS-03")})
+                self.assertEqual({p.name for p in (runs / "MS-N1/with-1/.claude/skills").glob("*")},
+                                 skills)
+        self.assertFalse((self.campaign / "runs").exists())
+        self.assertFalse(list(self.campaign.rglob("agent-invocations.txt")))
+
+    def test_panel_holds_the_first_positive_and_negative_of_each_skill(self):
+        result = self.run_shell("ab_panel")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        panel = result.stdout.split()
+        skills = {p.parent.name for p in (ROOT / "skills").glob("*/*/SKILL.md")}
+        self.assertEqual(len(panel), 2 * len(skills))
+        self.assertTrue(all(re.fullmatch(r"[A-Z]+-(01|N1)", i) for i in panel), panel)
+
+    def test_sweep_calls_each_model_and_scores_selection_per_model(self):
+        # model-a loads mapshaper-simplify for every prompt, model-b loads no skill.
+        result = self.run_shell('''
+export CALLS="$AB/calls.txt" AB_MODELS="model-a model-b"
+claude() {
+  local model=
+  while [ $# -gt 0 ]; do [ "$1" = --model ] && model=$2; shift; done
+  printf '%s\\n' "$model" >> "$CALLS"
+  printf '{"type":"system","subtype":"init","model":"%s-id"}\\n' "$model"
+  [ "$model" = model-a ] && printf '%s\\n' '{"type":"assistant","message":{"content":[{"type":"tool_use","name":"Skill","input":{"skill":"mapshaper-simplify"}}]}}'
+  printf '%s\\n' '{"type":"result","is_error":false,"result":"done","num_turns":3,"total_cost_usd":0.5}'
+}
+ab_sweep 1 MS-01 GPD-N1 || exit 1
+for model in $AB_MODELS; do AB="$AB/models/$model" ab_report >/dev/null || exit 1; done
+''')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        # All models of a scenario run back to back.
+        self.assertEqual((self.campaign / "calls.txt").read_text().split(),
+                         ["model-a", "model-b", "model-a", "model-b"])
+        for model, verdict in (("model-a", "pass"), ("model-b", "fail")):  # hand scores
+            report = self.campaign / "models" / model / "report.md"
+            lines = report.read_text().splitlines()
+            for n, line in enumerate(lines):
+                if line.startswith("| MS-01 | with | 1 |"):
+                    cells = line.strip("|").split("|")
+                    cells[8] = f" {verdict} "
+                    lines[n] = "|" + "|".join(cells) + "|"
+            report.write_text("\n".join(lines) + "\n")
+        invalid = self.campaign / "models/model-c/runs/MS-01/with-1"
+        invalid.mkdir(parents=True)
+        (invalid / "summary.json").write_text(json.dumps(dict(
+            scenario="MS-01", mode="with", rep="1", model="model-c-id", skills=["mapshaper-simplify"],
+            turns=2, cost_usd=0.25, ok=True, comparable=False)))
+        result = self.run_shell('AB_MODELS="model-a model-b"; ab_sensitivity')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        report = (self.campaign / "sensitivity.md").read_text()
+        self.assertIn("Models: model-a (model-a-id); model-b (model-b-id); model-c (model-c-id)", report)
+        selection, rest = report.split("## Skill selection (automatic)")[1].split("## Task result")
+        results, rest = rest.split("## Cost and invalid runs")
+        # MS-01 expects mapshaper-simplify; GPD-N1 must not load geopandas-basics.
+        self.assertIn("| mapshaper-simplify | 1/1 | 0/1 | — | 100 % | SENSITIVE |", selection)
+        self.assertIn("| geopandas-basics | 1/1 | 1/1 | — | 0 % |  |", selection)
+        self.assertIn("| mapshaper-simplify | 1/1 | 0/1 | — | 100 % | SENSITIVE |", results)
+        self.assertNotIn("geopandas-basics", results)  # GPD-N1 was not hand-scored
+        self.assertIn("| model-a | 2 | 0 | 1.00 | 3.0 |", rest)
+        self.assertIn("| model-c | 1 | 1 | 0.25 | 2.0 |", rest)
+        self.assertIn("| MS-01 | 1 | ok: mapshaper-simplify; pass | FAIL: -; fail | invalid |", rest)
+        self.assertIn("| GPD-N1 | 1 | ok: mapshaper-simplify | ok: - | — |", rest)
+        # A spread equal to the threshold is flagged; a higher threshold clears it.
+        for spread, flag in (("1", "SENSITIVE"), ("101/100", "")):
+            result = self.run_shell(f'AB_MODELS="model-a model-b" AB_SPREAD={spread}; ab_sensitivity')
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn(f"| mapshaper-simplify | 1/1 | 0/1 | — | 100 % | {flag} |",
+                          (self.campaign / "sensitivity.md").read_text())
+
     def test_successful_process_is_recorded(self):
         result = self.run_shell("ab_run MS-01 with 1")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)

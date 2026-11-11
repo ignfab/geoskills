@@ -1,6 +1,6 @@
 ---
 name: apicarto
-description: Queries IGN's API Carto (apicarto.ign.fr) for cadastral parcels and municipalities, urban-planning documents, zones and easements from the Géoportail de l'Urbanisme (PLU, PLUi, SUP), protected natural areas (Natura 2000, ZNIEFF, nature reserves, national and regional parks), RPG agricultural parcels and administrative units, by code or by intersecting GeoJSON geometry, with complete pagination. Use when the user asks which parcels, PLU zone, easements, protected areas or crops lie at a point or within an area in France, or wants every parcel of a municipality or cadastral section with its official area. For address geocoding, bulk national layers or map images, use the corresponding Géoplateforme skill.
+description: Queries IGN's API Carto (apicarto.ign.fr) for cadastral parcels and municipalities, urban-planning documents, zones and easements from the Géoportail de l'Urbanisme (PLU, PLUi, SUP), protected natural areas (Natura 2000, ZNIEFF, nature reserves, national and regional parks), RPG agricultural parcels and administrative units, by code or by intersecting GeoJSON geometry, with complete pagination. Use when the user asks which parcels, PLU zone, easements, protected areas or crops lie at a point or within an area in France, or wants every parcel of a municipality or cadastral section with its official area. For address geocoding use geopf-geocoding, for bulk national layers geopf-download-files or geopf-wfs-download, and for map images geopf-wms-wmts.
 ---
 
 # API Carto

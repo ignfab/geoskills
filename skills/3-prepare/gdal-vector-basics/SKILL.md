@@ -1,6 +1,6 @@
 ---
 name: gdal-vector-basics
-description: Converts, reprojects, filters, clips and merges local vector data (Shapefile, GeoPackage, GeoJSON, CSV, FlatGeobuf, GeoParquet, MapInfo, KML, GPX, EDIGÉO) with the GDAL command-line tools ogrinfo and ogr2ogr or the newer gdal vector commands. Use when the user wants to convert a vector file, add a layer to a GeoPackage, reproject, filter or clip features on the command line without Python, fix garbled accents in a Shapefile, turn a CSV of coordinates into points, export a Shapefile or RFC 7946 GeoJSON, or run SQL on a vector file. For Géoplateforme WFS downloads, Python workflows or geometry repair, use the corresponding specialized skill.
+description: Converts, reprojects, filters, clips and merges local vector data (Shapefile, GeoPackage, GeoJSON, CSV, FlatGeobuf, GeoParquet, MapInfo, KML, GPX, EDIGÉO) with the GDAL command-line tools ogrinfo and ogr2ogr or the newer gdal vector commands. Use when the user wants to convert a vector file, add a layer to a GeoPackage, reproject, filter or clip features on the command line without Python, fix garbled accents in a Shapefile, turn a CSV of coordinates into points, export a Shapefile or RFC 7946 GeoJSON, or run SQL on a vector file. For Géoplateforme WFS downloads, Python workflows or geometry repair, use geopf-wfs-download, geopandas-basics or vector-data-quality.
 ---
 
 # GDAL vector basics

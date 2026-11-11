@@ -15,6 +15,9 @@ Handle raster data with the GDAL tools that cover most needs:
 | `gdalbuildvrt` | Build a virtual mosaic from many tiles without copying them |
 | `gdal raster zonal-stats` | Statistics per polygon, e.g. mean elevation per commune (GDAL ≥ 3.12) |
 
+For the elevation of a few points, call the Elevation API with `geopf-altimetry` instead
+of downloading and sampling a DEM.
+
 ## Prerequisites
 
 - **GDAL** 3.1 or later (the COG driver was added in 3.1).
