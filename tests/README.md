@@ -10,62 +10,50 @@ whose `description` is written in English.
 ## Contents
 
 | File | Skill |
-|------|-------|
+| --- | --- |
 | [geopf-services.md](geopf-services.md) | `geopf-services` |
-| [geopf-geocoding.md](geopf-geocoding.md) | `geopf-geocoding` |
-| [crs-reprojection-france.md](crs-reprojection-france.md) | `crs-reprojection-france` |
-| [gdal-raster-basics.md](gdal-raster-basics.md) | `gdal-raster-basics` |
-| [geopf-wms-wmts.md](geopf-wms-wmts.md) | `geopf-wms-wmts` |
-| [geopf-wfs-download.md](geopf-wfs-download.md) | `geopf-wfs-download` |
-| [geoserver-cql-filter.md](geoserver-cql-filter.md) | `geoserver-cql-filter` |
-| [geopandas-basics.md](geopandas-basics.md) | `geopandas-basics` |
-| [vector-data-quality.md](vector-data-quality.md) | `vector-data-quality` |
-| [mapshaper-simplify.md](mapshaper-simplify.md) | `mapshaper-simplify` |
-| [geodata-intake.md](geodata-intake.md) | `geodata-intake` |
+| [bdtopo-schema-guide.md](bdtopo-schema-guide.md) | `bdtopo-schema-guide` |
 | [geopf-download-files.md](geopf-download-files.md) | `geopf-download-files` |
+| [geopf-wfs-download.md](geopf-wfs-download.md) | `geopf-wfs-download` |
+| [geopf-wms-wmts.md](geopf-wms-wmts.md) | `geopf-wms-wmts` |
+| [geoserver-cql-filter.md](geoserver-cql-filter.md) | `geoserver-cql-filter` |
+| [apicarto.md](apicarto.md) | `apicarto` |
+| [geopf-geocoding.md](geopf-geocoding.md) | `geopf-geocoding` |
+| [geodata-intake.md](geodata-intake.md) | `geodata-intake` |
+| [crs-reprojection-france.md](crs-reprojection-france.md) | `crs-reprojection-france` |
+| [gdal-vector-basics.md](gdal-vector-basics.md) | `gdal-vector-basics` |
+| [gdal-raster-basics.md](gdal-raster-basics.md) | `gdal-raster-basics` |
+| [vector-data-quality.md](vector-data-quality.md) | `vector-data-quality` |
+| [geopandas-basics.md](geopandas-basics.md) | `geopandas-basics` |
 | [geopf-altimetry.md](geopf-altimetry.md) | `geopf-altimetry` |
 | [geopf-routing.md](geopf-routing.md) | `geopf-routing` |
-| [gdal-vector-basics.md](gdal-vector-basics.md) | `gdal-vector-basics` |
-| [apicarto.md](apicarto.md) | `apicarto` |
 | [geospatial-descriptive-statistics.md](geospatial-descriptive-statistics.md) | `geospatial-descriptive-statistics` |
-| [qgis-layer-styling.md](qgis-layer-styling.md) | `qgis-layer-styling` |
 | [spatial-aggregation.md](spatial-aggregation.md) | `spatial-aggregation` |
-| [bdtopo-schema-guide.md](bdtopo-schema-guide.md) | `bdtopo-schema-guide` |
+| [mapshaper-simplify.md](mapshaper-simplify.md) | `mapshaper-simplify` |
+| [qgis-layer-styling.md](qgis-layer-styling.md) | `qgis-layer-styling` |
 | [qgis-project-builder.md](qgis-project-builder.md) | `qgis-project-builder` |
+
+Supporting documentation and recorded evidence:
+
+| File | Purpose |
+| --- | --- |
 | [data/README.md](data/README.md) | Fixture provenance, CRS and missing-metadata traps |
 | [ab-testing.md](ab-testing.md) | Running every scenario with and without the skills, and scoring the difference |
 | [review-2026-10-12.md](review-2026-10-12.md) | Recent-skill review, reproduced defects, fixes and validation limits |
 | [review-2026-10-27.md](review-2026-10-27.md) | Test audit, added edge cases and remaining coverage limits |
 | [review-2026-10-28.md](review-2026-10-28.md) | Four added skills, workflow checks, live evidence and an actual agent pilot |
 | [review-2026-11-11.md](review-2026-11-11.md) | Five new skills: executed fixtures, QGIS integration, family discovery and agent pilot evidence |
+| [reports/2026-11-11-five-skills.json](reports/2026-11-11-five-skills.json) | Machine-readable summaries of the executed five-skill pilots, environments and discovery checks |
 | [prompts/README.md](prompts/README.md) | Experimental prompts: a catalog of exploratory prompts and a log of their runs |
 
 The dated reviews preserve the checks and limitations observed at the time. Use the
 current test inventory and commands below for a new run; a historical pass is not a
 current live-service guarantee. The latest review's agent pilot is not a full A/B evaluation.
 
-Test data in `data/`:
-
-| File | Content |
-|------|---------|
-| `adresses.csv` | 8 addresses split across columns: valid, without postcode, overseas, unknown, empty |
-| `points.csv` | 3 points (lon, lat) to reverse-geocode |
-| `points_gps.csv` | 3 GPS points, **latitude before longitude**, one of them in Réunion |
-| `points_lambert2e.csv` | 2 points in NTF extended Lambert II (EPSG:27572) |
-| `monuments_sans_prj/` | Shapefile of 3 Paris monuments in Lambert-93, **without a `.prj`** |
-| `saint_mande.geojson` | Boundary of Saint-Mandé (INSEE 94067), EPSG:4326, from ADMIN EXPRESS |
-| `admin_units_synthetic.geojson` | Three invented EPSG:4326 polygons: two neighbors with a detailed shared border and a small island feature |
-| `coverage_synthetic.geojson` | Nine invented EPSG:2154 parcels, each valid, with an overlap, an enclosed gap, a narrow gap and a sliver |
-| `communes_sans_cpg/` | Shapefile of 3 municipality points in Lambert-93, **CP1252 text without a `.cpg`** |
-| `communes_points.geojson` | The same 3 points in EPSG:4326, with field names longer than 10 characters |
-| `mnt_dalles/` | 10 m DEM of Saint-Mandé (RGE ALTI) split into 2 ESRI ASCII tiles, **without a `.prj`** |
-| `classes_synthetic.asc` | Invented 2 × 2 categorical grid, EPSG:2154, valid classes 0/1/5 and nodata 255 |
-| `geocoded_synthetic.csv` | Seven invented geocoding results for acceptance, review and unmatched-row checks |
-| `elevation_points.csv` | Two invented input points with string identifiers |
-| `elevations_synthetic.json` | Corresponding synthetic elevations, including a missing-value sentinel and unknown vertical datum |
-
-`saint_mande.geojson` and `mnt_dalles/` are extracts of IGN data (ADMIN EXPRESS, RGE ALTI),
-distributed under the [Licence Ouverte 2.0](https://www.data.gouv.fr/pages/legal/licences/etalab-2-0).
+The [fixture catalog](data/README.md) is the authoritative inventory of test inputs,
+including provenance, CRS, licenses and deliberate missing-metadata traps. It includes
+synthetic object/zone data for aggregation and small IGN boundary/DEM extracts. Preserve
+source files and write generated artifacts only to temporary or ignored output directories.
 
 The original manual references were supplied for GDAL 3.13. The stored fixture values
 were also checked with GDAL 3.10.3 / PROJ 9.6.2 on 2026-09-30. Local fixture checks use
@@ -126,6 +114,19 @@ python3 -m unittest discover -s tests -p 'test_*.py' -v
   geometry files and protection of existing outputs.
 - `test_mapshaper.py`: percentage and metric simplification, small-feature retention,
   shared borders across layers, TopoJSON arcs, CRS and attribute preservation.
+- `test_geospatial_descriptive_statistics.py`: numeric/category summaries, valid zeroes,
+  missing/invalid/infinite values, empty inputs, string identifiers, report round trips,
+  overwrite refusal, source integrity and projected/geographic geometry measurements.
+- `test_spatial_aggregation.py`: counts/sums/means, border and overlap policies, unmatched
+  objects, empty zones, CRS alignment, null/zero denominators, GeoPackage/CSV round trips
+  and preservation of zone IDs and source data.
+- `test_bdtopo_schema_guide.py`: offline version/revision lookup, source/page provenance,
+  field aliases, special values and conservative handling of unknown fields or formats.
+- `test_qgis_layer_styling.py`: real QML save/reload, symbol units, categories/fallbacks,
+  graduated boundaries and protection of existing outputs and source data.
+- `test_qgis_project_builder.py`: real vector/raster projects, CRS, extent, layer-tree
+  state, optional QML, relocation, source integrity, WMTS URI semantics and controlled
+  remote failure. The two QGIS modules use the dedicated environment described below.
 - `test_live.py`: bounded geocoding, WFS, WMS and WMTS smoke tests plus WFS, navigation
   and download-catalogue discovery; skipped by default.
 - `test_live_enrichment.py`: advertised Atom pages, point elevations and profiles, route
@@ -158,7 +159,22 @@ those grids separately to enable them. The `LAYOUT=COG` check is not a full COG 
 the structural COG regression requires GDAL >= 3.13 with matching Python bindings and is
 skipped on older installations.
 
-To run the live tests deliberately:
+### QGIS integration
+
+The dedicated [QGIS workflow](../.github/workflows/qgis.yml) provisions its own Ubuntu 24.04
+worker and runs `test_qgis*.py` with `GEOSKILLS_REQUIRE_QGIS=1`, so a missing runtime fails
+that job. Default local tests skip the QGIS classes when PyQGIS is absent. With an existing
+QGIS/PyQGIS 3.34–3.x environment, use its Python interpreter and require the runtime
+explicitly so a missing installation cannot look like a successful integration run:
+
+```bash
+GEOSKILLS_REQUIRE_QGIS=1 QT_QPA_PLATFORM=offscreen GDAL_PAM_ENABLED=NO python3 -m unittest discover -s tests -p 'test_qgis*.py' -v
+```
+
+See the [five-skill review](review-2026-11-11.md) for actual tested versions, agent pilots
+and the distinction between deterministic tests, live checks and a full A/B campaign.
+
+### Optional live checks
 
 Use a working GDAL/PROJ environment, `curl`, `bash` and the optional Python dependencies
 listed above. In particular, the navigation and paginated WFS checks need GeoPandas.
@@ -181,18 +197,22 @@ They can also be enabled deliberately in GitHub Actions: **Validate skills → R
 Also run bounded requests to public IGN services**. The default remains off; pushes and
 pull requests never enable network tests through this option.
 
-To check CLI discovery without installing skills (Node.js required), from the repository
-root:
+### Skills CLI discovery
+
+To check discovery without installing skills (Node.js required), from the repository root:
 
 ```bash
-npx skills add . --list                 # every skill, in family order
+npx skills add . --list                # every skill
 npx skills add ./skills/2-access --list # the skills of one family only
 ```
 
 ## Manual agent setup
 
 Requirements depend on the scenario: GDAL/PROJ, `curl`, and optionally GeoPandas,
-`rasterstats` and `pyarrow`. The newer `gdal raster zonal-stats` command specifically
+`rasterstats`, `pyarrow` or PyQGIS. Statistics use Pandas; spatial aggregation also needs
+GeoPandas. The BD TOPO reference lookup can run offline with Python's standard library.
+See the selected skill's README for its supported environment. Agents must not install
+missing dependencies. The newer `gdal raster zonal-stats` command specifically
 requires GDAL ≥ 3.12; older GDAL can test a masked single-zone crop or rasterstats.
 
 Install the skills in this directory, from the local clone:
@@ -237,17 +257,3 @@ row per run to the log.
 Automated tests clean their temporary directories automatically. For manual runs, remove
 only artifacts and skill installations created for that run, from the `tests/` directory;
 avoid a broad `skills remove --all` when unrelated skills are installed.
-
-## QGIS integration
-
-The dedicated [QGIS workflow](../.github/workflows/qgis.yml) provisions its own Ubuntu 24.04
-worker and runs `test_qgis*.py` with `GEOSKILLS_REQUIRE_QGIS=1`, so a missing runtime fails
-that job. Default local tests skip the QGIS classes when PyQGIS is absent. With an existing
-QGIS Python environment, run:
-
-```bash
-QT_QPA_PLATFORM=offscreen GDAL_PAM_ENABLED=NO python3 -m unittest discover -s tests -p 'test_qgis*.py' -v
-```
-
-See the [five-skill review](review-2026-11-11.md) for actual tested versions, agent pilots
-and the distinction between deterministic tests, live checks and a full A/B campaign.
