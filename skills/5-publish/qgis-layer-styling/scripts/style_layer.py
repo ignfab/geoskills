@@ -92,6 +92,8 @@ def style_layer(source, output, spec):
         ranges = [QgsRendererRange(a, b, symbol(c), f'{a:g} – {b:g}')
                   for a, b, c in zip(breaks, breaks[1:], colors)]
         renderer = QgsGraduatedSymbolRenderer(field, ranges)
+        # QGIS reload defaults this flag to false for Custom classes. Make it explicit.
+        renderer.classificationMethod().setLabelTrimTrailingZeroes(False)
     else:
         raise ValueError('mode must be single, categorized or graduated')
     layer.setRenderer(renderer)

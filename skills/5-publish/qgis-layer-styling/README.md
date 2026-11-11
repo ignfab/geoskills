@@ -24,3 +24,6 @@ npx skills add ignfab/geoskills --skill qgis-layer-styling
 Scope is vector styles only, not labels, layouts or project composition. `qgis-project-builder`
 can consume the QML but is not needed to create it. Sources are opened read-only; existing
 outputs are refused. Missing PyQGIS is an explicit limitation, never a successful XML fallback.
+
+Functional checks ran on QGIS 3.44.9 locally; dedicated CI also checks Ubuntu 24.04’s
+QGIS 3.34 series. Custom graduated label formatting is set explicitly to survive QML reload.
