@@ -22,3 +22,5 @@ These chains are explored first with the business-need prompts of the
 Previous: [5. Represent and publish](../5-publish/README.md) · [All families](../../README.md#skills)
 
 [spatial-aggregation](../4-analyze/spatial-aggregation/README.md) supplies territorial counts and measures.
+
+[qgis-project-builder](../5-publish/qgis-project-builder/README.md) packages existing workflow outputs for QGIS reuse.

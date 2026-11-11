@@ -21,6 +21,8 @@ def qgis_app():
     if not 33400 <= Qgis.QGIS_VERSION_INT < 40000:
         raise RuntimeError(f'Unsupported test runtime: {Qgis.QGIS_VERSION}')
     if APP is None:
+        from osgeo import gdal
+        gdal.SetConfigOption('GDAL_PAM_ENABLED', 'NO')
         APP = QgsApplication([], False)
         APP.initQgis()
         print('QGIS integration runtime:', Qgis.QGIS_VERSION)

@@ -63,8 +63,8 @@ export AB_WITHOUT_FLAGS=""                      # extra claude flags, B runs onl
 POSITIVE="GSV-01 GSV-02 GSV-03 GSV-04 GSV-05 GEO-01 GEO-02 GEO-03 GEO-04 GEO-05 CRS-01 CRS-02 CRS-03 CRS-04 CRS-05
 RAS-01 RAS-02 RAS-03 RAS-04 RAS-05 WMS-01 WMS-02 WMS-03 WMS-04 WMS-05
 WFS-01 WFS-02 WFS-04 WFS-05 WFS-06 CQL-01 CQL-02 CQL-03 CQL-04 GPD-01 GPD-02 GPD-03 GPD-04 VDQ-01 VDQ-02 VDQ-03 MS-01 MS-02 MS-03 MS-04 INT-01 INT-02 DLF-01 DLF-02 ALT-01 ALT-02 RTE-01 RTE-02 GEO-06 WFS-07 RAS-06
-GVB-01 GVB-02 GVB-03 GVB-04 APC-01 APC-02 APC-03 GDS-01 GDS-02 QLS-01 QLS-02 SPA-01 SPA-02 BTS-01 BTS-02"
-NEGATIVE="GSV-N1 GSV-N2 GEO-N1 CRS-N1 RAS-N1 WMS-N1 WFS-N1 CQL-N1 CQL-N2 GPD-N1 VDQ-N1 VDQ-N2 MS-N1 MS-N2 INT-N1 DLF-N1 ALT-N1 RTE-N1 GVB-N1 GVB-N2 APC-N2 GDS-N1 GDS-N2 QLS-N1 SPA-N1 SPA-N2 BTS-N1 BTS-N2"
+GVB-01 GVB-02 GVB-03 GVB-04 APC-01 APC-02 APC-03 GDS-01 GDS-02 QLS-01 QLS-02 SPA-01 SPA-02 BTS-01 BTS-02 QPB-01 QPB-02"
+NEGATIVE="GSV-N1 GSV-N2 GEO-N1 CRS-N1 RAS-N1 WMS-N1 WFS-N1 CQL-N1 CQL-N2 GPD-N1 VDQ-N1 VDQ-N2 MS-N1 MS-N2 INT-N1 DLF-N1 ALT-N1 RTE-N1 GVB-N1 GVB-N2 APC-N2 GDS-N1 GDS-N2 QLS-N1 SPA-N1 SPA-N2 BTS-N1 BTS-N2 QPB-N1"
 
 # Print the French prompt of a scenario or an experimental prompt (XP-NN), read from
 # tests/*.md, then tests/prompts/*.md.
@@ -283,9 +283,9 @@ source ab.sh
 AB_DRY=1 ab_campaign 1
 ```
 
-Then set `export AB=/path/to/a/new/campaign` for actual agent calls. One repetition has **172 runs**:
-72 positive scenarios in both modes and 28 negatives in A. At the example budget of $2 per
-run, the caps total $344 per repetition and $1032 for three repetitions. Starting the paid
+Then set `export AB=/path/to/a/new/campaign` for actual agent calls. One repetition has **177 runs**:
+74 positive scenarios in both modes and 29 negatives in A. At the example budget of $2 per
+run, the caps total $354 per repetition and $1062 for three repetitions. Starting the paid
 campaign is a separate user decision; a dry run does not authorize it.
 
 Smoke pass, one repetition:
@@ -532,6 +532,14 @@ All CQL scenarios use supplied metadata and require no live service.
 | BTS-N1 | A | — | `geopf-wfs-download`; no semantic guide for an already identified extraction. |
 | BTS-N2 | A | — | `spatial-aggregation`; no BD TOPO schema-guide load. |
 
+### [qgis-project-builder](qgis-project-builder.md)
+
+| Scenario | Modes | Needs | Watch in B |
+| --- | --- | --- | --- |
+| QPB-01 | A + B | QGIS | `qgis-project-builder`; two valid layers, point layer above zones, relative sources resolve inside moved bundle; originals unchanged. |
+| QPB-02 | A + B | QGIS | `qgis-project-builder`; discovered WMTS metadata, explicit local/remote status, no invented identifiers or false tile-rendering claim. |
+| QPB-N1 | A | QGIS | `qgis-layer-styling`; no qgis-project-builder load or QGZ output. |
+
 ## Score a run
 
 For each row of `report.md`, in the run directory:
@@ -584,7 +592,8 @@ Summarize per skill over the three repetitions:
 | qgis-layer-styling | /6 | /6 | | | |
 | spatial-aggregation | /6 | /6 | | | |
 | bdtopo-schema-guide | /6 | /6 | | | |
-| Negative scenarios (A only) | /84 | — | — | — | |
+| qgis-project-builder | /6 | /6 | | | |
+| Negative scenarios (A only) | /87 | — | — | — | |
 
 ## Variants
 

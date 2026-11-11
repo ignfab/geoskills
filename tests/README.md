@@ -31,6 +31,7 @@ whose `description` is written in English.
 | [qgis-layer-styling.md](qgis-layer-styling.md) | `qgis-layer-styling` |
 | [spatial-aggregation.md](spatial-aggregation.md) | `spatial-aggregation` |
 | [bdtopo-schema-guide.md](bdtopo-schema-guide.md) | `bdtopo-schema-guide` |
+| [qgis-project-builder.md](qgis-project-builder.md) | `qgis-project-builder` |
 | [data/README.md](data/README.md) | Fixture provenance, CRS and missing-metadata traps |
 | [ab-testing.md](ab-testing.md) | Running every scenario with and without the skills, and scoring the difference |
 | [review-2026-10-12.md](review-2026-10-12.md) | Recent-skill review, reproduced defects, fixes and validation limits |

@@ -50,9 +50,10 @@ with few or no skills and the chains behind business needs. Runs are recorded in
 > contour rouge et sans remplissage. Enregistre le projet dans `output/`.
 
 - **Family:** `5-publish`
-- **Expected skills:** none
-- **Watch:** no skill covers QGIS projects yet. Record what the agent does without one: a
-  WMTS layer discovered or invented, a project file that opens, relative data paths.
+- **Expected skills:** `qgis-project-builder`
+- **Watch:** project reload preserves requested symbology; public WMTS metadata discovered,
+  local and remote validity distinguished, relative path scope stated, no source edits or
+  installations. `qgis-layer-styling` is optional for a separate reusable QML deliverable.
 - **Status:** open
 
 ## XP-05 — Ten-minute walk from the town hall
@@ -142,4 +143,13 @@ with few or no skills and the chains behind business needs. Runs are recorded in
 - **Family:** `1-discover`
 - **Expected skills:** `bdtopo-schema-guide`
 - **Watch:** Version/revision and source pages explicit; zero sentinel handled without inventing WFS fields.
+- **Status:** open
+
+## XP-13 — qgis-project-builder boundary check
+
+> Assemble `data/aggregation_objects.geojson` et `data/aggregation_zones.geojson` dans un projet QGIS portable sous `output/bundle/`, avec les points au-dessus des zones et des chemins relatifs. Vérifie sa réouverture après déplacement du dossier complet.
+
+- **Family:** `5-publish`
+- **Expected skills:** `qgis-project-builder`
+- **Watch:** Final and relocated projects reopen with expected sources, order and relative-path scope.
 - **Status:** open
