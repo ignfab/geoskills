@@ -26,3 +26,7 @@ Area weighting is not implemented by the helper. If explicitly requested, first 
 whether the variable is extensive (a count/total that might be apportioned) or intensive
 (a mean/rate requiring its denominator). Do not apply area fractions to a height or ratio
 as if it were a conserved total. Advanced areal interpolation is outside this skill.
+
+Before summarizing a producer-specific field, verify documented sentinel values. Declare
+any sentinel-to-null conversion in a derived in-memory column and report its count; keep
+the original field. `bdtopo-schema-guide` can clarify BD TOPO semantics but is optional.

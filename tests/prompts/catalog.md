@@ -134,3 +134,12 @@ with few or no skills and the chains behind business needs. Runs are recorded in
 - **Expected skills:** `spatial-aggregation`
 - **Watch:** Boundary exclusion is explicit; counts reconcile and all zone IDs survive output round-trip.
 - **Status:** open
+
+## XP-12 — bdtopo-schema-guide boundary check
+
+> Sans accès réseau ni téléchargement, explique pour le modèle BD TOPO 3.5 documenté en juillet 2026 quelle classe et quel champ décrivent la hauteur des bâtiments, ce que signifie zéro, et cite la source.
+
+- **Family:** `1-discover`
+- **Expected skills:** `bdtopo-schema-guide`
+- **Watch:** Version/revision and source pages explicit; zero sentinel handled without inventing WFS fields.
+- **Status:** open

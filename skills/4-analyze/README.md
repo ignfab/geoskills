@@ -17,6 +17,8 @@ not a subset of an existing dataset.
 
 ## Also relevant
 
+- [bdtopo-schema-guide](../1-discover/bdtopo-schema-guide/README.md) explains source-specific special values before BD TOPO statistics.
+
 - [gdal-raster-basics](../3-prepare/gdal-raster-basics/README.md) computes zonal
   statistics with `gdal raster zonal-stats` and terrain one-liners (hillshade, slope) with
   `gdaldem`.

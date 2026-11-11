@@ -16,3 +16,9 @@ For `[0, 10, 20, null]`: total 4, finite 3, missing 1, sum 30, mean/median 10,
 quartiles 5 and 15, sample standard deviation 10. These values form an independent check.
 Extreme magnitudes can overflow floating-point statistics: inspect any unexpected null
 statistic despite finite observations and do not report it as an ordinary missing value.
+
+A documented source-specific sentinel is not a valid zero: for example a BD TOPO height
+may use 0 for unknown/not significant. Verify the applicable model with `bdtopo-schema-guide`
+or producer metadata, declare the exclusion, preserve the original column and report
+sentinel counts separately from originally missing observations. Never replace all zeroes
+across unrelated measures. The generic helper does not guess such source-specific rules.
