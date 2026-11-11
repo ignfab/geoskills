@@ -56,3 +56,11 @@ values were supplied with the scenarios and rechecked against the stored fixture
   exceed the 10 characters of a Shapefile field.
 
 These fixtures contain no private user records and may be copied into isolated agent runs.
+
+## Vector aggregation fixtures
+
+`aggregation_objects.geojson` and `aggregation_zones.geojson` are invented planar fixtures
+with declared EPSG:2154 metre coordinates (not real locations). Points a/b lie inside zone
+001, c inside 002, edge on their common border and outside in no zone. Zone NA is empty.
+Heights are 0, 10, null, 30 and 100; denominators are 2, 0 and null. The literal ID NA
+and leading zeroes test string preservation. No external source or network is required.

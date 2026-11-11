@@ -13,6 +13,7 @@ not a subset of an existing dataset.
 | [geopf-altimetry](geopf-altimetry/README.md) | Discover terrain/surface resources, preserve missing elevations, join CSV rows and sample profiles. |
 | [geopf-routing](geopf-routing/README.md) | Discover navigation resources, choose units/direction and export route or isochrone geometry. |
 | [geospatial-descriptive-statistics](geospatial-descriptive-statistics/README.md) | Summarize numeric attributes, categories and missingness in one layer with explicit units and statistical conventions. |
+| [spatial-aggregation](spatial-aggregation/README.md) | Compute vector object-to-zone counts, sums, means and ratios with explicit border/overlap policies and audited totals. |
 
 ## Also relevant
 

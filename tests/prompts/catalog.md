@@ -125,3 +125,12 @@ with few or no skills and the chains behind business needs. Runs are recorded in
 - **Expected skills:** `qgis-layer-styling`
 - **Watch:** Real QML, independent reload and unchanged source; missing QGIS is an environment limitation.
 - **Status:** open
+
+## XP-11 — spatial-aggregation boundary check
+
+> Compte les points de `data/aggregation_objects.geojson` par zone de `data/aggregation_zones.geojson`, avec le prédicat d’inclusion stricte. Garde les zones vides, signale les points sans zone et exporte un GeoPackage et un CSV dans `output/`.
+
+- **Family:** `4-analyze`
+- **Expected skills:** `spatial-aggregation`
+- **Watch:** Boundary exclusion is explicit; counts reconcile and all zone IDs survive output round-trip.
+- **Status:** open
