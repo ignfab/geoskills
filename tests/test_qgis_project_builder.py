@@ -143,6 +143,7 @@ class ProjectTests(unittest.TestCase):
 
     def test_wmts_uri_retains_capabilities_request(self):
         from urllib.parse import parse_qs, urlsplit
+        from qgis.core import QgsCoordinateReferenceSystem
         xml = b'''<Capabilities xmlns="http://www.opengis.net/wmts/1.0" xmlns:ows="http://www.opengis.net/ows/1.1">
           <Contents><Layer><ows:Identifier>test</ows:Identifier><Style><ows:Identifier>normal</ows:Identifier></Style>
           <Format>image/png</Format><TileMatrixSetLink><TileMatrixSet>matrix</TileMatrixSet></TileMatrixSetLink></Layer>
@@ -152,8 +153,12 @@ class ProjectTests(unittest.TestCase):
                 'format': 'image/png', 'tile_matrix_set': 'matrix', 'crs': 'EPSG:3857'}
         with patch.object(self.helper, 'urlopen', return_value=io.BytesIO(xml)), patch('qgis.core.QgsRasterLayer') as provider:
             provider.return_value.isValid.return_value = True
+            provider.return_value.crs.return_value = QgsCoordinateReferenceSystem('EPSG:3857')
             self.helper.wmts_layer(item)
-        params = parse_qs(provider.call_args.args[0])
+        provider_uri = provider.call_args.args[0]
+        self.assertIn('crs=EPSG:3857', provider_uri)
+        self.assertIn('format=image/png', provider_uri)
+        params = parse_qs(provider_uri)
         service_request = parse_qs(urlsplit(params['url'][0]).query)
         self.assertEqual(service_request['SERVICE'], ['WMTS'])
         self.assertEqual(service_request['REQUEST'], ['GetCapabilities'])

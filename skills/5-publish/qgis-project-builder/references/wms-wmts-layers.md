@@ -17,7 +17,9 @@ The helper accepts public HTTPS endpoints without userinfo, query strings or fra
 It fetches capabilities with a 15-second timeout and an 8 MiB limit, checks the WMTS XML
 root, layer, style, format, linked matrix set, matrix definitions and CRS, then creates a
 QGIS raster layer with the `wms` provider. Its `url` parameter contains the **full WMTS
-GetCapabilities URL**, encoded once; a bare endpoint can be interpreted as WMS by QGIS. It places basemaps below local layers. A metadata
+GetCapabilities URL**, encoded by `QgsDataSourceUri`; a bare endpoint can be interpreted
+as WMS by QGIS. Do not apply generic `urlencode` to the entire provider URI: encoding the
+CRS/format scalars can leave an invalid provider CRS or double-encode tile parameters. It places basemaps below local layers. A metadata
 or provider failure omits the optional basemap and reports a generic warning without
 printing URLs or provider errors that might contain credentials.
 

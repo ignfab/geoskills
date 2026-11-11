@@ -12,7 +12,7 @@ import xml.etree.ElementTree as ET
 
 def wmts_layer(item):
     """Bounded capabilities discovery; credentials/custom URL queries are unsupported."""
-    from qgis.core import QgsRasterLayer, QgsCoordinateReferenceSystem
+    from qgis.core import QgsRasterLayer, QgsCoordinateReferenceSystem, QgsDataSourceUri
     url = item['url']
     parsed = urlsplit(url)
     if parsed.scheme != 'https' or not parsed.hostname or parsed.username or parsed.password or parsed.query or parsed.fragment:
@@ -44,10 +44,12 @@ def wmts_layer(item):
     if not actual_crs.isValid() or actual_crs != wanted:
         raise ValueError('Matrix-set CRS differs from requested CRS')
     # QGIS distinguishes WMTS via the full capabilities URL in the provider URI.
-    uri = urlencode({'url': request, 'layers': item['layer'], 'styles': item['style'],
-                     'format': item['format'], 'crs': item['crs'], 'tileMatrixSet': item['tile_matrix_set']})
-    result = QgsRasterLayer(uri, item['name'], 'wms')
-    if not result.isValid():
+    uri = QgsDataSourceUri()
+    for key, value in {'url': request, 'layers': item['layer'], 'styles': item['style'],
+                       'format': item['format'], 'crs': item['crs'], 'tileMatrixSet': item['tile_matrix_set']}.items():
+        uri.setParam(key, value)
+    result = QgsRasterLayer(bytes(uri.encodedUri()).decode(), item['name'], 'wms')
+    if not result.isValid() or result.crs() != wanted:
         raise ValueError('WMTS provider is unavailable')
     return result
 
