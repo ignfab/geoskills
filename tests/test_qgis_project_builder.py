@@ -131,6 +131,18 @@ class ProjectTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'WMTS capabilities'):
                 self.helper.wmts_layer(item)
 
+    def test_builder_suppresses_raster_sidecars_and_restores_gdal_setting(self):
+        from osgeo import gdal
+        before = set((self.root/'data').iterdir())
+        previous = gdal.GetConfigOption('GDAL_PAM_ENABLED')
+        gdal.SetConfigOption('GDAL_PAM_ENABLED', 'YES')
+        try:
+            self.helper.build_project(self.config, self.root/'pam.qgz')
+            self.assertEqual(gdal.GetConfigOption('GDAL_PAM_ENABLED'), 'YES')
+            self.assertEqual(set((self.root/'data').iterdir()), before)
+        finally:
+            gdal.SetConfigOption('GDAL_PAM_ENABLED', previous)
+
     def test_portability_requires_contained_sources_and_valid_extent(self):
         with self.assertRaises(ValueError):
             self.helper.build_project(self.config, self.root/'subdir/map.qgz')
