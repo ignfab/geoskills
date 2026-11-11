@@ -2,9 +2,10 @@
 
 **Question:** what information should be computed?
 
-Derive new information from prepared data: spatial joins and overlays, buffers and zonal
-statistics, elevations and profiles, routes and reachable areas. The Géoplateforme
-calculation services (elevation, routing) sit here because they produce derived values,
+Derive new information from prepared data: attribute summaries, territorial indicators,
+spatial joins and overlays, buffers and zonal statistics, elevations and profiles,
+routes and reachable areas. The Géoplateforme calculation services (elevation, routing)
+sit here because they produce derived values,
 not a subset of an existing dataset.
 
 | Skill | Use it to |
@@ -17,8 +18,8 @@ not a subset of an existing dataset.
 
 ## Also relevant
 
-- [bdtopo-schema-guide](../1-discover/bdtopo-schema-guide/README.md) explains source-specific special values before BD TOPO statistics.
-
+- [bdtopo-schema-guide](../1-discover/bdtopo-schema-guide/README.md) explains source-specific
+  special values before BD TOPO statistics.
 - [gdal-raster-basics](../3-prepare/gdal-raster-basics/README.md) computes zonal
   statistics with `gdal raster zonal-stats` and terrain one-liners (hillshade, slope) with
   `gdaldem`.

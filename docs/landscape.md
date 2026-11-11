@@ -12,6 +12,13 @@ listed below.
 See the [current skill list](../README.md#skills), [report conventions](output-reports.md)
 and [2026-10-28 implementation review](../tests/review-2026-10-28.md) for the changes and
 their validation. That review includes a small agent pilot, not a complete A/B campaign.
+
+Implementation follow-up (2026-11-11): five additional skills now cover BD TOPO schema
+interpretation, descriptive statistics, spatial aggregation, reusable QGIS vector styles
+and portable QGIS projects. The [five-skill review](../tests/review-2026-11-11.md) links
+their completed issues and merged PRs and records functional checks and representative
+agent pilots. The repository now contains 21 skills; the full A/B campaign remains pending.
+
 The comparisons, counts and proposed gaps below retain their original snapshot date.
 
 ## Scope and method
