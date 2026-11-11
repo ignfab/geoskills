@@ -28,6 +28,7 @@ whose `description` is written in English.
 | [gdal-vector-basics.md](gdal-vector-basics.md) | `gdal-vector-basics` |
 | [apicarto.md](apicarto.md) | `apicarto` |
 | [geospatial-descriptive-statistics.md](geospatial-descriptive-statistics.md) | `geospatial-descriptive-statistics` |
+| [qgis-layer-styling.md](qgis-layer-styling.md) | `qgis-layer-styling` |
 | [data/README.md](data/README.md) | Fixture provenance, CRS and missing-metadata traps |
 | [ab-testing.md](ab-testing.md) | Running every scenario with and without the skills, and scoring the difference |
 | [review-2026-10-12.md](review-2026-10-12.md) | Recent-skill review, reproduced defects, fixes and validation limits |
