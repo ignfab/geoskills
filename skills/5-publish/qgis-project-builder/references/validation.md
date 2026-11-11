@@ -22,3 +22,8 @@ no existing project was overwritten. If a requested public basemap fails, explic
 it as omitted/unverified and confirm that local layers still open. Report provider metadata
 validation separately from visible tile rendering. Do not infer a remote service outage
 from a local QGIS/Qt/PROJ initialization problem.
+
+For standalone validation runs set `GDAL_PAM_ENABLED=NO` before opening raster sources.
+This prevents GDAL from creating statistics/auxiliary sidecars beside inputs. The builder
+disables PAM during its own source reads and restores the previous GDAL setting afterward.
+Compare the source directory inventory too, since identical data hashes alone miss new sidecars.

@@ -52,6 +52,17 @@ def wmts_layer(item):
 
 
 def build_project(config, output):
+    # QGIS may compute raster statistics while opening a layer. Keep them in memory.
+    from osgeo import gdal
+    previous = gdal.GetConfigOption('GDAL_PAM_ENABLED')
+    gdal.SetConfigOption('GDAL_PAM_ENABLED', 'NO')
+    try:
+        return _build_project(config, output)
+    finally:
+        gdal.SetConfigOption('GDAL_PAM_ENABLED', previous)
+
+
+def _build_project(config, output):
     from qgis.core import (Qgis, QgsProject, QgsVectorLayer, QgsRasterLayer,
                            QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsRectangle,
                            QgsReferencedRectangle, QgsRenderContext, QgsReadWriteContext)
@@ -159,11 +170,15 @@ def build_project(config, output):
         for node in proj.layerTreeRoot().findLayers():
             layer = node.layer()
             record = {'name': layer.name(), 'visible': node.itemVisibilityChecked(),
-                      'group': node.parent().name(), 'valid': layer.isValid(), 'source': layer.source()}
+                      'group': node.parent().name(), 'valid': layer.isValid(), 'source': layer.source(),
+                      'crs': layer.crs().authid()}
             if isinstance(layer, QgsVectorLayer):
+                record['feature_count'] = layer.featureCount()
                 doc = QDomDocument()
                 doc.appendChild(layer.renderer().save(doc, QgsReadWriteContext()))
                 record['renderer'] = ET.canonicalize(doc.toString())
+            else:
+                record['raster_size'] = [layer.width(), layer.height(), layer.bandCount()]
             items.append(record)
         box = proj.viewSettings().defaultViewExtent()
         return {'layers': items, 'crs': proj.crs().authid(), 'relative': proj.filePathStorage() == Qgis.FilePathType.Relative,
