@@ -107,3 +107,12 @@ with few or no skills and the chains behind business needs. Runs are recorded in
   before the comparison; the symmetric difference area reported; no national archive
   downloaded when a filtered request is enough.
 - **Status:** open
+
+## XP-09 — geospatial-descriptive-statistics boundary check
+
+> Résume les hauteurs 0, 10, 20 et une valeur manquante dans un tableau synthétique. Donne moyenne, médiane, quartiles, somme, écart-type et taux de valeurs manquantes dans des rapports JSON, CSV et Markdown sous `output/`.
+
+- **Family:** `4-analyze`
+- **Expected skills:** `geospatial-descriptive-statistics`
+- **Watch:** Finite counts, explicit quantiles/ddof, strict JSON and unchanged inputs.
+- **Status:** open
