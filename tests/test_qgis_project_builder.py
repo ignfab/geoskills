@@ -131,6 +131,34 @@ class ProjectTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'WMTS capabilities'):
                 self.helper.wmts_layer(item)
 
+    def test_collinear_points_expand_default_extent(self):
+        path = self.root/'data/aligned.geojson'
+        path.write_text(json.dumps({'type': 'FeatureCollection', 'features': [
+            {'type': 'Feature', 'properties': {}, 'geometry': {'type': 'Point', 'coordinates': [x, 48.8]}}
+            for x in [2.4, 2.8]]}))
+        self.config['layers'].insert(0, {'source': str(path), 'name': 'Aligned', 'group': 'Study'})
+        self.config['crs'] = 'EPSG:4326'
+        report = self.helper.build_project(self.config, self.root/'aligned.qgz')
+        self.assertGreater(report['validated']['extent'][2], 2.8)
+
+    def test_wmts_uri_retains_capabilities_request(self):
+        from urllib.parse import parse_qs, urlsplit
+        xml = b'''<Capabilities xmlns="http://www.opengis.net/wmts/1.0" xmlns:ows="http://www.opengis.net/ows/1.1">
+          <Contents><Layer><ows:Identifier>test</ows:Identifier><Style><ows:Identifier>normal</ows:Identifier></Style>
+          <Format>image/png</Format><TileMatrixSetLink><TileMatrixSet>matrix</TileMatrixSet></TileMatrixSetLink></Layer>
+          <TileMatrixSet><ows:Identifier>matrix</ows:Identifier><ows:SupportedCRS>EPSG:3857</ows:SupportedCRS>
+          <TileMatrix><ows:Identifier>0</ows:Identifier></TileMatrix></TileMatrixSet></Contents></Capabilities>'''
+        item = {'url': 'https://example.invalid/wmts', 'name': 'Test', 'layer': 'test', 'style': 'normal',
+                'format': 'image/png', 'tile_matrix_set': 'matrix', 'crs': 'EPSG:3857'}
+        with patch.object(self.helper, 'urlopen', return_value=io.BytesIO(xml)), patch('qgis.core.QgsRasterLayer') as provider:
+            provider.return_value.isValid.return_value = True
+            self.helper.wmts_layer(item)
+        params = parse_qs(provider.call_args.args[0])
+        service_request = parse_qs(urlsplit(params['url'][0]).query)
+        self.assertEqual(service_request['SERVICE'], ['WMTS'])
+        self.assertEqual(service_request['REQUEST'], ['GetCapabilities'])
+        self.assertEqual(params['tileMatrixSet'], ['matrix'])
+
     def test_builder_suppresses_raster_sidecars_and_restores_gdal_setting(self):
         from osgeo import gdal
         before = set((self.root/'data').iterdir())

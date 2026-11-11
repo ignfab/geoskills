@@ -43,7 +43,8 @@ def wmts_layer(item):
     wanted = QgsCoordinateReferenceSystem(item['crs'])
     if not actual_crs.isValid() or actual_crs != wanted:
         raise ValueError('Matrix-set CRS differs from requested CRS')
-    uri = urlencode({'url': url, 'layers': item['layer'], 'styles': item['style'],
+    # QGIS distinguishes WMTS via the full capabilities URL in the provider URI.
+    uri = urlencode({'url': request, 'layers': item['layer'], 'styles': item['style'],
                      'format': item['format'], 'crs': item['crs'], 'tileMatrixSet': item['tile_matrix_set']})
     result = QgsRasterLayer(uri, item['name'], 'wms')
     if not result.isValid():
@@ -65,7 +66,7 @@ def build_project(config, output):
 def _build_project(config, output):
     from qgis.core import (Qgis, QgsProject, QgsVectorLayer, QgsRasterLayer,
                            QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsRectangle,
-                           QgsReferencedRectangle, QgsRenderContext, QgsReadWriteContext)
+                           QgsReferencedRectangle, QgsRenderContext, QgsReadWriteContext, QgsPointXY)
     from qgis.PyQt.QtXml import QDomDocument
     if not 33400 <= Qgis.QGIS_VERSION_INT < 40000:
         raise ValueError('This helper supports QGIS 3.34–3.x')
@@ -81,7 +82,7 @@ def _build_project(config, output):
     local = config.get('layers', [])
     if not local:
         raise ValueError('At least one existing local vector/raster layer is required')
-    extent = QgsRectangle()
+    extent = None
     groups = {}
     previous_group = None
     local_paths = []
@@ -132,9 +133,23 @@ def _build_project(config, output):
         node = parent.addLayer(layer)
         node.setItemVisibilityChecked(item.get('visible', True))
         previous_group = group
-        if not layer.extent().isEmpty():
-            transformed = QgsCoordinateTransform(layer.crs(), crs, project).transformBoundingBox(layer.extent())
-            extent.combineExtentWith(transformed)
+        if kind == 'raster' or layer.featureCount() > 0:
+            bounds = layer.extent()
+            transform = QgsCoordinateTransform(layer.crs(), crs, project)
+            if bounds.isEmpty():
+                # A point or aligned points have zero width/height but still affect the union.
+                a = transform.transform(QgsPointXY(bounds.xMinimum(), bounds.yMinimum()))
+                b = transform.transform(QgsPointXY(bounds.xMaximum(), bounds.yMaximum()))
+                transformed = QgsRectangle(a, b)
+            else:
+                transformed = transform.transformBoundingBox(bounds)
+            if extent is None:
+                extent = QgsRectangle(transformed)
+            else:
+                extent = QgsRectangle(min(extent.xMinimum(), transformed.xMinimum()),
+                                      min(extent.yMinimum(), transformed.yMinimum()),
+                                      max(extent.xMaximum(), transformed.xMaximum()),
+                                      max(extent.yMaximum(), transformed.yMaximum()))
     portable = all(p.is_relative_to(output.parent) for p in local_paths)
     if config.get('require_portable', False) and not portable:
         raise ValueError('Portable bundle requires every local source under the project directory')
@@ -159,7 +174,7 @@ def _build_project(config, output):
         if len(box) != 4 or not all(math.isfinite(v) for v in box) or box[0] >= box[2] or box[1] >= box[3]:
             raise ValueError('Extent must be xmin,ymin,xmax,ymax in project CRS with positive width/height')
         extent = QgsRectangle(*box)
-    elif extent.isEmpty():
+    elif extent is None or extent.isEmpty():
         raise ValueError('Supply a nonempty initial extent in the project CRS')
     else:
         extent.scale(1.05)

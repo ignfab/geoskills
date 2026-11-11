@@ -50,9 +50,10 @@ with few or no skills and the chains behind business needs. Runs are recorded in
 > contour rouge et sans remplissage. Enregistre le projet dans `output/`.
 
 - **Family:** `5-publish`
-- **Expected skills:** `qgis-layer-styling`, then `qgis-project-builder`
-- **Watch:** real QML and project reload; public WMTS metadata discovered, local and remote
-  validity distinguished, relative path scope stated, no source edits or installations.
+- **Expected skills:** `qgis-project-builder`
+- **Watch:** project reload preserves requested symbology; public WMTS metadata discovered,
+  local and remote validity distinguished, relative path scope stated, no source edits or
+  installations. `qgis-layer-styling` is optional for a separate reusable QML deliverable.
 - **Status:** open
 
 ## XP-05 — Ten-minute walk from the town hall
