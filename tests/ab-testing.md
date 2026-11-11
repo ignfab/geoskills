@@ -39,6 +39,8 @@ campaign; the runner denies common installation commands:
   scenarios;
 - Mapshaper 0.7.83 and compatible Node.js for the MS scenarios; see
   [Mapshaper requirements](../skills/5-publish/mapshaper-simplify/README.md#requirements);
+- QGIS/PyQGIS 3.34–3.x for QLS/QPB; record `Qgis.QGIS_VERSION` and use
+  `QT_QPA_PLATFORM=offscreen` for headless runs, with `GDAL_PAM_ENABLED=NO` for raster reads;
 - network access to `data.geopf.fr` for the GEO, WFS and WMS scenarios, and to
   `apicarto.ign.fr` for the APC scenarios.
 
@@ -323,7 +325,7 @@ cd "$(AB_DRY=1 ab_run GEO-04 with live)" && cat prompt.txt && claude --model "$A
 ## Scenario matrix
 
 Needs: **NET** public IGN services, **GDAL**, **PROJ** with the named grid, **PY**
-GeoPandas stack. *Watch in B* is the trap the skill is meant to prevent: if the skill is
+GeoPandas stack; **QGIS** installed PyQGIS 3.34–3.x with compatible Qt. *Watch in B* is the trap the skill is meant to prevent: if the skill is
 useful, B fails there. *Control* scenarios are expected to pass in both modes; a skill
 whose scenarios are all controls adds nothing measurable.
 

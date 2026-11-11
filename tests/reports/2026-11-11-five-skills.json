@@ -1,0 +1,361 @@
+{
+  "date": "2026-11-11",
+  "scope": "one paired pilot per new skill, negative-routing probes and project reruns; not a full three-repetition campaign",
+  "harness": "Claude Code 2.1.287",
+  "model": "claude-opus-5-5",
+  "limitations": [
+    "Existing user profile applies to both modes; explicit contamination checks passed, but do not prove absence of inherited knowledge.",
+    "Paired pilots are controls except the sourced offline BD TOPO answer; no general success-rate claim.",
+    "Live WMTS availability is a dated observation, not an offline CI requirement."
+  ],
+  "functional_tests": {
+    "geospatial_descriptive_statistics": 6,
+    "spatial_aggregation": 8,
+    "bdtopo_schema_guide": 5,
+    "qgis_layer_styling": 5,
+    "qgis_project_builder": 10
+  },
+  "local_versions": {
+    "qgis": "3.44.9",
+    "geopandas": "1.2.0",
+    "pandas": "3.0.6",
+    "shapely": "2.1.2",
+    "skills_cli": "1.7.6"
+  },
+  "qgis_ci_version": "3.34.4",
+  "family_installs": [
+    {
+      "family": "1-discover",
+      "exit_code": 0,
+      "skills": [
+        "bdtopo-schema-guide",
+        "geopf-services"
+      ]
+    },
+    {
+      "family": "4-analyze",
+      "exit_code": 0,
+      "skills": [
+        "geopandas-basics",
+        "geopf-altimetry",
+        "geopf-routing",
+        "geospatial-descriptive-statistics",
+        "spatial-aggregation"
+      ]
+    },
+    {
+      "family": "5-publish",
+      "exit_code": 0,
+      "skills": [
+        "mapshaper-simplify",
+        "qgis-layer-styling",
+        "qgis-project-builder"
+      ]
+    }
+  ],
+  "live_wmts": {
+    "provider_crs": "EPSG:2154",
+    "basemap_render_nonwhite_samples": 6396,
+    "sample_total": 6400,
+    "render_errors": 0,
+    "final_helper_commit": "28fba63",
+    "visual_inspection": "Plan IGN visible with red unfilled Saint-Mand\u00e9 boundary"
+  },
+  "runs": [
+    {
+      "scenario": "XP-09",
+      "mode": "with",
+      "rep": "1",
+      "model": "claude-opus-5-5",
+      "skills": [
+        "geospatial-descriptive-statistics"
+      ],
+      "skill_file_reads": 3,
+      "install_attempts": 0,
+      "turns": 10,
+      "cost_usd": 0.3094568000000001,
+      "exit_code": 0,
+      "ok": true,
+      "contaminated": false,
+      "comparable": true
+    },
+    {
+      "scenario": "XP-09",
+      "mode": "without",
+      "rep": "1",
+      "model": "claude-opus-5-5",
+      "skills": [],
+      "skill_file_reads": 0,
+      "install_attempts": 0,
+      "turns": 9,
+      "cost_usd": 0.258552,
+      "exit_code": 0,
+      "ok": true,
+      "contaminated": false,
+      "comparable": true
+    },
+    {
+      "scenario": "GDS-N1",
+      "mode": "with",
+      "rep": "1",
+      "model": "claude-opus-5-5",
+      "skills": [
+        "gdal-raster-basics"
+      ],
+      "skill_file_reads": 1,
+      "install_attempts": 0,
+      "turns": 12,
+      "cost_usd": 0.3598574,
+      "exit_code": 0,
+      "ok": true,
+      "contaminated": false,
+      "comparable": true
+    },
+    {
+      "scenario": "XP-10",
+      "mode": "with",
+      "rep": "1",
+      "model": "claude-opus-5-5",
+      "skills": [
+        "qgis-layer-styling"
+      ],
+      "skill_file_reads": 5,
+      "install_attempts": 0,
+      "turns": 17,
+      "cost_usd": 0.4349736,
+      "exit_code": 0,
+      "ok": true,
+      "contaminated": false,
+      "comparable": true
+    },
+    {
+      "scenario": "XP-10",
+      "mode": "without",
+      "rep": "1",
+      "model": "claude-opus-5-5",
+      "skills": [],
+      "skill_file_reads": 0,
+      "install_attempts": 0,
+      "turns": 9,
+      "cost_usd": 0.308437,
+      "exit_code": 0,
+      "ok": true,
+      "contaminated": false,
+      "comparable": true
+    },
+    {
+      "scenario": "QLS-N1",
+      "mode": "with",
+      "rep": "1",
+      "model": "claude-opus-5-5",
+      "skills": [],
+      "skill_file_reads": 0,
+      "install_attempts": 0,
+      "turns": 11,
+      "cost_usd": 0.40270859999999997,
+      "exit_code": 0,
+      "ok": true,
+      "contaminated": false,
+      "comparable": true
+    },
+    {
+      "scenario": "XP-11",
+      "mode": "with",
+      "rep": "1",
+      "model": "claude-opus-5-5",
+      "skills": [
+        "spatial-aggregation"
+      ],
+      "skill_file_reads": 6,
+      "install_attempts": 0,
+      "turns": 12,
+      "cost_usd": 0.333667,
+      "exit_code": 0,
+      "ok": true,
+      "contaminated": false,
+      "comparable": true
+    },
+    {
+      "scenario": "XP-11",
+      "mode": "without",
+      "rep": "1",
+      "model": "claude-opus-5-5",
+      "skills": [],
+      "skill_file_reads": 0,
+      "install_attempts": 0,
+      "turns": 9,
+      "cost_usd": 0.3138386,
+      "exit_code": 0,
+      "ok": true,
+      "contaminated": false,
+      "comparable": true
+    },
+    {
+      "scenario": "SPA-N1",
+      "mode": "with",
+      "rep": "1",
+      "model": "claude-opus-5-5",
+      "skills": [
+        "geospatial-descriptive-statistics"
+      ],
+      "skill_file_reads": 3,
+      "install_attempts": 0,
+      "turns": 9,
+      "cost_usd": 0.26127639999999996,
+      "exit_code": 0,
+      "ok": true,
+      "contaminated": false,
+      "comparable": true
+    },
+    {
+      "scenario": "XP-12",
+      "mode": "with",
+      "rep": "1",
+      "model": "claude-opus-5-5",
+      "skills": [
+        "bdtopo-schema-guide"
+      ],
+      "skill_file_reads": 4,
+      "install_attempts": 0,
+      "turns": 7,
+      "cost_usd": 0.20023680000000002,
+      "exit_code": 0,
+      "ok": true,
+      "contaminated": false,
+      "comparable": true
+    },
+    {
+      "scenario": "XP-12",
+      "mode": "without",
+      "rep": "1",
+      "model": "claude-opus-5-5",
+      "skills": [],
+      "skill_file_reads": 0,
+      "install_attempts": 0,
+      "turns": 5,
+      "cost_usd": 0.2187084,
+      "exit_code": 0,
+      "ok": true,
+      "contaminated": false,
+      "comparable": true
+    },
+    {
+      "scenario": "BTS-N2",
+      "mode": "with",
+      "rep": "1",
+      "model": "claude-opus-5-5",
+      "skills": [
+        "spatial-aggregation"
+      ],
+      "skill_file_reads": 3,
+      "install_attempts": 0,
+      "turns": 10,
+      "cost_usd": 0.33185339999999997,
+      "exit_code": 0,
+      "ok": true,
+      "contaminated": false,
+      "comparable": true
+    },
+    {
+      "scenario": "XP-13",
+      "mode": "with",
+      "rep": "1",
+      "model": "claude-opus-5-5",
+      "skills": [
+        "qgis-project-builder"
+      ],
+      "skill_file_reads": 7,
+      "install_attempts": 0,
+      "turns": 14,
+      "cost_usd": 0.4615338000000001,
+      "exit_code": 0,
+      "ok": true,
+      "contaminated": false,
+      "comparable": true
+    },
+    {
+      "scenario": "XP-13",
+      "mode": "with",
+      "rep": "2",
+      "model": "claude-opus-5-5",
+      "skills": [
+        "qgis-project-builder"
+      ],
+      "skill_file_reads": 5,
+      "install_attempts": 0,
+      "turns": 13,
+      "cost_usd": 0.41837040000000003,
+      "exit_code": 0,
+      "ok": true,
+      "contaminated": false,
+      "comparable": true
+    },
+    {
+      "scenario": "XP-13",
+      "mode": "without",
+      "rep": "1",
+      "model": "claude-opus-5-5",
+      "skills": [],
+      "skill_file_reads": 0,
+      "install_attempts": 0,
+      "turns": 8,
+      "cost_usd": 0.3173132,
+      "exit_code": 0,
+      "ok": true,
+      "contaminated": false,
+      "comparable": true
+    },
+    {
+      "scenario": "QPB-N1",
+      "mode": "with",
+      "rep": "1",
+      "model": "claude-opus-5-5",
+      "skills": [
+        "qgis-layer-styling"
+      ],
+      "skill_file_reads": 5,
+      "install_attempts": 0,
+      "turns": 14,
+      "cost_usd": 0.46200080000000004,
+      "exit_code": 0,
+      "ok": true,
+      "contaminated": false,
+      "comparable": true
+    },
+    {
+      "scenario": "XP-04",
+      "mode": "with",
+      "rep": "1",
+      "model": "claude-opus-5-5",
+      "skills": [
+        "qgis-project-builder"
+      ],
+      "skill_file_reads": 8,
+      "install_attempts": 0,
+      "turns": 15,
+      "cost_usd": 0.5553744,
+      "exit_code": 0,
+      "ok": true,
+      "contaminated": false,
+      "comparable": true
+    },
+    {
+      "scenario": "XP-04",
+      "mode": "with",
+      "rep": "2",
+      "model": "claude-opus-5-5",
+      "skills": [
+        "qgis-project-builder"
+      ],
+      "skill_file_reads": 6,
+      "install_attempts": 0,
+      "turns": 19,
+      "cost_usd": 0.7431401999999999,
+      "exit_code": 0,
+      "ok": true,
+      "contaminated": false,
+      "comparable": true
+    }
+  ],
+  "total_pilot_cost_usd": 6.691299
+}
