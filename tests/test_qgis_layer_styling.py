@@ -71,8 +71,8 @@ class QMLTests(unittest.TestCase):
         renderer = layer.renderer()
         self.assertEqual(renderer.classAttribute(), 'value')
         self.assertEqual([(r.lowerValue(), r.upperValue()) for r in renderer.ranges()], [(0, 10), (10, 20)])
-        self.assertEqual(renderer.symbolForValue(10).color().name(), '#ffffff')
-        self.assertEqual(renderer.symbolForValue(20).color().name(), '#000000')
+        self.assertEqual(renderer.rangeForValue(10).symbol().color().name(), '#ffffff')
+        self.assertEqual(renderer.rangeForValue(20).symbol().color().name(), '#000000')
         self.assertEqual(report['null_policy'], 'not rendered')
 
     def test_reject_unknown_fields_types_breaks_and_existing_output(self):
