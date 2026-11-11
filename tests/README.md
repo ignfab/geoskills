@@ -37,6 +37,7 @@ whose `description` is written in English.
 | [review-2026-10-12.md](review-2026-10-12.md) | Recent-skill review, reproduced defects, fixes and validation limits |
 | [review-2026-10-27.md](review-2026-10-27.md) | Test audit, added edge cases and remaining coverage limits |
 | [review-2026-10-28.md](review-2026-10-28.md) | Four added skills, workflow checks, live evidence and an actual agent pilot |
+| [review-2026-11-11.md](review-2026-11-11.md) | Five new skills: executed fixtures, QGIS integration, family discovery and agent pilot evidence |
 | [prompts/README.md](prompts/README.md) | Experimental prompts: a catalog of exploratory prompts and a log of their runs |
 
 The dated reviews preserve the checks and limitations observed at the time. Use the
@@ -236,3 +237,17 @@ row per run to the log.
 Automated tests clean their temporary directories automatically. For manual runs, remove
 only artifacts and skill installations created for that run, from the `tests/` directory;
 avoid a broad `skills remove --all` when unrelated skills are installed.
+
+## QGIS integration
+
+The dedicated [QGIS workflow](../.github/workflows/qgis.yml) provisions its own Ubuntu 24.04
+worker and runs `test_qgis*.py` with `GEOSKILLS_REQUIRE_QGIS=1`, so a missing runtime fails
+that job. Default local tests skip the QGIS classes when PyQGIS is absent. With an existing
+QGIS Python environment, run:
+
+```bash
+QT_QPA_PLATFORM=offscreen GDAL_PAM_ENABLED=NO python3 -m unittest discover -s tests -p 'test_qgis*.py' -v
+```
+
+See the [five-skill review](review-2026-11-11.md) for actual tested versions, agent pilots
+and the distinction between deterministic tests, live checks and a full A/B campaign.
