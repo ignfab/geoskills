@@ -43,6 +43,11 @@ scenarios below separately check agent selection and judgment.
 **Expected result:** explains the largest-original-bounding-box limitation for multipart
 features, recommends comparing parts/holes, and does not promise complete preservation.
 
+- [ ] says that `keep-shapes` keeps each feature from disappearing, not every part of it
+- [ ] explains that, for a multipart feature, only the part with the largest original
+  bounding box is protected
+- [ ] recommends counting parts and holes before and after simplification
+
 ## MS-04 — Compare delivery variants
 
 > Compare des versions conservant 50 %, 20 % et 5 % des sommets supprimables de
@@ -63,10 +68,16 @@ features, recommends comparing parts/holes, and does not promise complete preser
 
 > Répare les auto-intersections de mes polygones sans réduire le détail des limites.
 
-**Expected skill:** `vector-data-quality`; no simplification or unconditional `-clean`.
+**Expected skill:** `vector-data-quality`, not `mapshaper-simplify`.
+
+- [ ] repairs the geometries without simplifying them
+- [ ] does not run an unconditional Mapshaper `-clean`
 
 ## MS-N2 — Negative: raster resampling
 
 > Réduis la résolution de mon modèle numérique de terrain de 1 mètre à 10 mètres.
 
 **Expected skill:** `gdal-raster-basics`, not `mapshaper-simplify`.
+
+- [ ] resamples the raster with `gdalwarp -tr 10 10` and an aggregating method such as
+  `average`

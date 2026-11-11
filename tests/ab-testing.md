@@ -62,11 +62,19 @@ export AB_DENY="Bash(sudo *) Bash(pip install *) Bash(pip3 install *) Bash(pytho
 export AB_EXTRA_FLAGS=""                        # extra claude flags, both modes
 export AB_WITHOUT_FLAGS=""                      # extra claude flags, B runs only
 
-POSITIVE="GSV-01 GSV-02 GSV-03 GSV-04 GSV-05 GEO-01 GEO-02 GEO-03 GEO-04 GEO-05 CRS-01 CRS-02 CRS-03 CRS-04 CRS-05
-RAS-01 RAS-02 RAS-03 RAS-04 RAS-05 WMS-01 WMS-02 WMS-03 WMS-04 WMS-05
-WFS-01 WFS-02 WFS-04 WFS-05 WFS-06 CQL-01 CQL-02 CQL-03 CQL-04 GPD-01 GPD-02 GPD-03 GPD-04 VDQ-01 VDQ-02 VDQ-03 MS-01 MS-02 MS-03 MS-04 INT-01 INT-02 DLF-01 DLF-02 ALT-01 ALT-02 RTE-01 RTE-02 GEO-06 WFS-07 RAS-06
-GVB-01 GVB-02 GVB-03 GVB-04 APC-01 APC-02 APC-03 GDS-01 GDS-02 QLS-01 QLS-02 SPA-01 SPA-02 BTS-01 BTS-02 QPB-01 QPB-02 MBP-01 MBP-02 MBP-03"
-NEGATIVE="GSV-N1 GSV-N2 GEO-N1 CRS-N1 RAS-N1 WMS-N1 WFS-N1 CQL-N1 CQL-N2 GPD-N1 VDQ-N1 VDQ-N2 MS-N1 MS-N2 INT-N1 DLF-N1 ALT-N1 RTE-N1 GVB-N1 GVB-N2 APC-N2 GDS-N1 GDS-N2 QLS-N1 SPA-N1 SPA-N2 BTS-N1 BTS-N2 QPB-N1 MBP-N1 MBP-N2 MBP-N3"
+# Positive scenarios run in A and B; WFS-03 is missing on purpose: ab_campaign runs it
+# after WFS-01, whose output it extends. Negative scenarios run in A only.
+POSITIVE="GSV-01 GSV-02 GSV-03 GSV-04 GSV-05
+GEO-01 GEO-02 GEO-03 GEO-04 GEO-05 GEO-06 CRS-01 CRS-02 CRS-03 CRS-04 CRS-05
+RAS-01 RAS-02 RAS-03 RAS-04 RAS-05 RAS-06 WMS-01 WMS-02 WMS-03 WMS-04 WMS-05
+WFS-01 WFS-02 WFS-04 WFS-05 WFS-06 WFS-07 CQL-01 CQL-02 CQL-03 CQL-04
+GPD-01 GPD-02 GPD-03 GPD-04 VDQ-01 VDQ-02 VDQ-03 MS-01 MS-02 MS-03 MS-04
+INT-01 INT-02 DLF-01 DLF-02 ALT-01 ALT-02 RTE-01 RTE-02
+GVB-01 GVB-02 GVB-03 GVB-04 APC-01 APC-02 APC-03 GDS-01 GDS-02
+QLS-01 QLS-02 SPA-01 SPA-02 BTS-01 BTS-02 QPB-01 QPB-02 MBP-01 MBP-02 MBP-03"
+NEGATIVE="GSV-N1 GSV-N2 GEO-N1 CRS-N1 RAS-N1 WMS-N1 WFS-N1 CQL-N1 CQL-N2 GPD-N1 VDQ-N1 VDQ-N2
+MS-N1 MS-N2 INT-N1 DLF-N1 ALT-N1 RTE-N1 GVB-N1 GVB-N2 APC-N1 GDS-N1 GDS-N2
+QLS-N1 SPA-N1 SPA-N2 BTS-N1 BTS-N2 QPB-N1 MBP-N1 MBP-N2 MBP-N3"
 
 # Print the French prompt of a scenario or an experimental prompt (XP-NN), read from
 # tests/*.md, then tests/prompts/*.md.
@@ -497,50 +505,50 @@ All CQL scenarios use supplied metadata and require no live service.
 | APC-01 | A + B | NET | all pages up to `numberMatched`; `localhost` links not followed |
 | APC-02 | A + B | NET | both Natura 2000 networks; longitude, latitude order |
 | APC-03 | A + B | NET | zone with document and date; outage reported, no invented zone |
-| APC-N2 | A | NET | download or WFS skill loaded; no paging of a whole department |
+| APC-N1 | A | NET | download or WFS skill loaded; no paging of a whole department |
 
 ### [geospatial-descriptive-statistics](geospatial-descriptive-statistics.md)
 
 | Scenario | Modes | Needs | Watch in B |
 | --- | --- | --- | --- |
-| GDS-01 | A + B | PY | `geospatial-descriptive-statistics`; mean/median 10, sum 30, sample std 10, quartiles 5/15, missing 25%; strict JSON. |
-| GDS-02 | A + B | PY | `geospatial-descriptive-statistics`; string IDs, counts 2/1/1 and frequencies .5/.25/.25. |
-| GDS-N1 | A | PY | `gdal-raster-basics` or `geopandas-basics`; no descriptive-statistics skill. |
-| GDS-N2 | A | PY | Spatial aggregation workflow; no single-layer descriptive summary. |
+| GDS-01 | A + B | PY | mean/median 10, sum 30, sample std 10, quartiles 5/15, missing 25 %; strict JSON |
+| GDS-02 | A + B | PY | string IDs kept, counts 2/1/1 and frequencies 0.5/0.25/0.25 |
+| GDS-N1 | A | PY | `gdal-raster-basics` or `geopandas-basics` loaded; no single-layer summary |
+| GDS-N2 | A | PY | `spatial-aggregation` loaded; no single-layer summary |
 
 ### [qgis-layer-styling](qgis-layer-styling.md)
 
 | Scenario | Modes | Needs | Watch in B |
 | --- | --- | --- | --- |
-| QLS-01 | A + B | QGIS | `qgis-layer-styling`; red polygon stroke, no fill, fresh-layer reload; missing PyQGIS reported without installation. |
-| QLS-02 | A + B | QGIS | `qgis-layer-styling`; numeric field, breaks 0/10/20/30, one unrendered null, checked renderer. |
-| QLS-N1 | A | QGIS | Project workflow; no QML generation or qgis-layer-styling load. |
+| QLS-01 | A + B | QGIS | red stroke, no fill, fresh-layer reload; missing PyQGIS reported, not installed |
+| QLS-02 | A + B | QGIS | numeric field, breaks 0/10/20/30, one unrendered null, checked renderer |
+| QLS-N1 | A | QGIS | `qgis-project-builder` loaded; no QML written, no `qgis-layer-styling` load |
 
 ### [spatial-aggregation](spatial-aggregation.md)
 
 | Scenario | Modes | Needs | Watch in B |
 | --- | --- | --- | --- |
-| SPA-01 | A + B | PY | `spatial-aggregation`; counts 2/1/0 for 001/002/NA; edge and outside unmatched; string IDs preserved. |
-| SPA-02 | A + B | PY | `spatial-aggregation`; intersects/all; edge counted twice, counts 3/2/0, sums 40/30/0, means 40/3 and 30, empty mean null. |
-| SPA-N1 | A | PY | `geospatial-descriptive-statistics`; no spatial-aggregation load. |
-| SPA-N2 | A | PY | `gdal-raster-basics` or `geopandas-basics`; no vector aggregation skill. |
+| SPA-01 | A + B | PY | `within`; counts 2/1/0 for 001/002/NA; `edge` and `outside` unmatched; string IDs |
+| SPA-02 | A + B | PY | `intersects` + `all`; `edge` counted twice; counts 3/2/0, sums 40/30/0, means 13.33/30, empty mean null |
+| SPA-N1 | A | PY | `geospatial-descriptive-statistics` loaded; no zone join |
+| SPA-N2 | A | PY | `gdal-raster-basics` or `geopandas-basics` loaded; no vector aggregation |
 
 ### [bdtopo-schema-guide](bdtopo-schema-guide.md)
 
 | Scenario | Modes | Needs | Watch in B |
 | --- | --- | --- | --- |
-| BTS-01 | A + B | — | `bdtopo-schema-guide`; batiment/hauteur (HAUTEUR in Shapefile), metres to eaves, zero unknown/not significant, IGN revision and pp. 76–77. |
-| BTS-02 | A + B | — | `bdtopo-schema-guide`; troncon_de_route, importance/IMPORTANCE and nombre_de_voies/NB_VOIES; no unsupported equivalence to 3.3. |
-| BTS-N1 | A | — | `geopf-wfs-download`; no semantic guide for an already identified extraction. |
-| BTS-N2 | A | — | `spatial-aggregation`; no BD TOPO schema-guide load. |
+| BTS-01 | A + B | — | `batiment`/`hauteur` (`HAUTEUR`), metres to the eaves, 0 unknown, revision and pp. 76–77; no network |
+| BTS-02 | A + B | — | `troncon_de_route`, `importance`/`IMPORTANCE`, `nombre_de_voies`/`NB_VOIES`; no claimed 3.3 equivalence |
+| BTS-N1 | A | NET | `geopf-wfs-download` loaded; no schema guide |
+| BTS-N2 | A | PY | `spatial-aggregation` loaded; no schema guide |
 
 ### [qgis-project-builder](qgis-project-builder.md)
 
 | Scenario | Modes | Needs | Watch in B |
 | --- | --- | --- | --- |
-| QPB-01 | A + B | QGIS | `qgis-project-builder`; two valid layers, point layer above zones, relative sources resolve inside moved bundle; originals unchanged. |
-| QPB-02 | A + B | QGIS | `qgis-project-builder`; discovered WMTS metadata, explicit local/remote status, no invented identifiers or false tile-rendering claim. |
-| QPB-N1 | A | QGIS | `qgis-layer-styling`; no qgis-project-builder load or QGZ output. |
+| QPB-01 | A + B | QGIS | points above zones, extent reaching `outside` at x = 20, relative sources resolved inside the moved bundle; originals unchanged |
+| QPB-02 | A + B | QGIS, NET | WMTS identifiers read from capabilities, extent on Saint-Mandé, local and remote status reported apart; no rendering claimed from a valid provider |
+| QPB-N1 | A | QGIS | `qgis-layer-styling` loaded; no `qgis-project-builder` load, no `.qgz` or `.qgs` written |
 
 ### [municipality-building-profile](municipality-building-profile.md)
 
@@ -563,8 +571,9 @@ For each row of `report.md`, in the run directory:
    flagged `CHECK` needs manual review before scoring.
 2. **Result.** Compare `output/` and `answer.md` with the expected result of the scenario
    file. Write `pass` or `fail`.
-3. **Checklist.** Count the checklist items met, for example `4/5`. `commands.txt` shows
-   the commands actually run.
+3. **Checklist.** Count the checklist items met, for example `4/5`. Every scenario has
+   at least one item; `test_scenarios.py` enforces it. `commands.txt` shows the commands
+   actually run.
 4. **Conduct.** A non-zero `Installs`, a download piped through `head` or `tail`, or an
    invented layer or field name fails the run, whatever the result.
 
@@ -633,8 +642,8 @@ read first, so an `XP` identifier never replaces a scenario prompt.
   geospatial skills for a paired comparison; the no-skill variant is a separate experiment.
   The transcript check detects explicit reads and invocations, not every form of inherited
   context. Absence of a warning does not prove that B was uncontaminated.
-- VDQ-01 and VDQ-02 have no fixture: the agent builds its own data, so compare the
-  procedure, not the values.
+- VDQ-01, VDQ-02 and GPD-04 have no fixture: the agent builds its own data, so compare
+  the procedure, not the values.
 - VDQ-03 uses `data/coverage_synthetic.geojson`, whose defects are known. With
   GeoPandas < 1.1 and GDAL < 3.12, only the overlap-pair and enclosed-gap recipes remain,
   in both modes.

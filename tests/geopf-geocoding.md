@@ -4,7 +4,7 @@
 
 > Donne-moi les coordonnées GPS du 73 avenue de Paris à Saint-Mandé.
 
-**Expected skill:** `geopf-geocoding`, not `apicarto`
+**Expected skill:** `geopf-geocoding`, not `apicarto`.
 
 **Reference result (live data may change):** lon `2.424573`, lat `48.845726`, label
 `73 Avenue de Paris 94160 Saint-Mandé`, score ≈ 0.97, type `housenumber`.
@@ -106,14 +106,6 @@ correct)
 
 - [ ] if the API is used: `type=municipality`
 
-## GEO-N1 — Negative: no geocoding needed
-
-> Convertis data/adresses.csv en fichier Excel dans output/adresses.xlsx.
-
-**Expected skill:** not `geopf-geocoding`.
-
-- [ ] no call to `data.geopf.fr`
-
 ## GEO-06 — Explicit review policy
 
 > Classe les lignes de `data/geocoded_synthetic.csv` dans `output/adresses_controlees.csv`.
@@ -122,5 +114,27 @@ correct)
 > communal que la colonne `expected_citycode`. Préserve toutes les lignes et leurs
 > colonnes et explique les motifs de révision. Aucun appel réseau n'est nécessaire.
 
-Expected: 1 accepted, 5 review, 1 unmatched; unchanged input columns and string IDs.
-Report thresholds and reasons; accepted does not mean independently verified.
+**Expected skill:** `geopf-geocoding`.
+
+**Expected result:** seven rows in `output/adresses_controlees.csv`: `001` accepted;
+`002` (second candidate too close), `003` (other municipality), `004` (street match),
+`005` (service error) and `006` (invalid longitude) to review; `007` unmatched. The input
+columns and the string IDs are unchanged. `test_enrichment.py` runs the bundled
+classification helper on this fixture.
+
+- [ ] applies the stated policy: score ≥ 0.7, margin ≥ 0.1, `housenumber` only, valid
+  coordinates and the expected municipality code
+- [ ] finds 1 accepted, 5 to review and 1 unmatched
+- [ ] keeps all seven rows and every input column, with IDs such as `001` kept as strings
+- [ ] gives a reason for each row to review and for the unmatched row
+- [ ] states that `accepted` means the row passes the policy, not that it was verified
+  independently
+- [ ] makes no network call and leaves `data/geocoded_synthetic.csv` unchanged
+
+## GEO-N1 — Negative: no geocoding needed
+
+> Convertis data/adresses.csv en fichier Excel dans output/adresses.xlsx.
+
+**Expected skill:** not `geopf-geocoding`.
+
+- [ ] no call to `data.geopf.fr`

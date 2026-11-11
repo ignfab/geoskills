@@ -49,6 +49,12 @@ Lambert-93. Notre-Dame de Paris ≈ (2.3499, 48.8530).
 > d’origine, dont deux identiques (par exemple 42 et 42), puis rattache les résultats aux
 > bons polygones sans multiplier les lignes.
 
+**Expected skill:** `geopandas-basics`.
+
+**Expected result:** a procedure and its check. The prompt names no file: the agent may
+build its own zones or reuse `data/saint_mande.geojson` and `data/mnt_dalles/`, so compare
+the procedure, not values.
+
 - [ ] attaches statistics by position in the unchanged zone order, or uses a unique row key
 - [ ] preserves the original index and IDs, including repeated index labels
 - [ ] checks that row counts and statistics remain correct and source attributes are not overwritten
@@ -60,5 +66,9 @@ Automated tests cover Saint-Mandé at index 42 and two distinct raster cells sha
 
 > Télécharge les bâtiments de Saint-Mandé depuis le WFS de la Géoplateforme en GeoPackage.
 
-**Expected skill:** `geopf-wfs-download` (a one-shot download does not need Python).
-`geopandas-basics` may appear only if the user then asks to process the result.
+**Expected skill:** `geopf-wfs-download`, not `geopandas-basics`: a one-shot download does
+not need Python. `geopandas-basics` may appear only if the user then asks to process the
+result.
+
+- [ ] downloads with `ogr2ogr` from the WFS, without a Python script
+- [ ] takes the layer name from the WFS capabilities

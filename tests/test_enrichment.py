@@ -11,6 +11,7 @@ import unittest
 
 from skill_examples import run_example, skill_dir
 
+DATA = Path(__file__).resolve().parent / "data"
 
 def helper(skill, filename):
     path = skill_dir(skill) / "scripts" / filename
@@ -150,6 +151,29 @@ class GeocodingPolicyTests(unittest.TestCase):
                     CLASSIFY.classify_file(source, target, **self.policy)
                 self.assertFalse(target.exists())
 
+    def test_scenario_geo06_fixture(self):
+        # Same policy as the GEO-06 prompt, applied to its fixture.
+        source = DATA / "geocoded_synthetic.csv"
+        original = source.read_bytes()
+        with source.open(newline="", encoding="utf-8") as handle:
+            inputs = list(csv.DictReader(handle))
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / "adresses_controlees.csv"
+            report = CLASSIFY.classify_file(source, target, **self.policy)
+            with target.open(newline="", encoding="utf-8") as handle:
+                rows = list(csv.DictReader(handle))
+        self.assertEqual(report["counts"], dict(accepted=1, review=5, unmatched=1))
+        self.assertEqual({row["id"]: (row["review_status"], row["review_reason"]) for row in rows}, {
+            "001": ("accepted", "policy_pass"),
+            "002": ("review", "ambiguous_candidates"),
+            "003": ("review", "city_mismatch"),
+            "004": ("review", "unexpected_match_type"),
+            "005": ("review", "service_error"),
+            "006": ("review", "invalid_longitude"),
+            "007": ("unmatched", "not_found")})
+        self.assertEqual([{k: row[k] for k in inputs[0]} for row in rows], inputs)
+        self.assertEqual(source.read_bytes(), original)
+
 
 class CatalogueTests(unittest.TestCase):
     def inspect(self, *, total=3, page=1, ids=("a", "b"), size=2):
@@ -189,6 +213,20 @@ class GeographicAPIRecipeTests(unittest.TestCase):
         self.assertEqual(result[1]["elevation_m"], "")
         self.assertEqual(result[1]["elevation_status"], "nodata")
         self.assertTrue(all(r["vertical_reference"] == "unknown" for r in result))
+
+    def test_scenario_alt02_fixtures(self):
+        with (DATA / "elevation_points.csv").open(newline="", encoding="utf-8") as handle:
+            rows = list(csv.DictReader(handle))  # Strings: the IDs keep their leading zeros.
+        response = json.loads((DATA / "elevations_synthetic.json").read_text(encoding="utf-8"))
+        result = run_example("geopf-altimetry/references/points-and-profiles.md",
+                             "## Attach point elevations",
+                             dict(rows=rows, response=response, resource="synthetic-terrain",
+                                  vertical_reference="unknown"))["result"]
+        self.assertEqual([r["id"] for r in result], ["001", "002"])
+        self.assertEqual([r["elevation_m"] for r in result], [42, ""])
+        self.assertEqual([r["elevation_status"] for r in result], ["ok", "nodata"])
+        self.assertEqual({r["elevation_resource"] for r in result}, {"synthetic-terrain"})
+        self.assertEqual({r["vertical_reference"] for r in result}, {"unknown"})
 
     def test_missing_reordered_and_nonfinite_elevations_are_rejected(self):
         for points in ([], [dict(lon=0, lat=0, z=0), dict(lon=2.35, lat=48.85, z=42)],

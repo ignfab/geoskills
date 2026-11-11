@@ -19,7 +19,7 @@
 - [ ] passes lon/lat in the order the tool expects (`gdaltransform` lon lat, `cs2cs` lat lon
   or `-r`, pyproj `always_xy=True`)
 - [ ] flags Lambert-93 as unsuitable for the Réunion point (the projected result would
-  be about 10179785, 546780) and proposes EPSG:2975 with clearly labelled coordinates
+  be about 10180452, 546433) and proposes EPSG:2975 with clearly labelled coordinates
 - [ ] mainland reference coordinates agree within 0.1 m; overseas datum assumptions are stated
 
 ## CRS-02 — Legacy extended Lambert II

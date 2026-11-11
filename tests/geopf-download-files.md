@@ -1,4 +1,4 @@
-# geopf-download-files scenarios
+# geopf-download-files
 
 ## DLF-01 — Discover packages
 
@@ -6,8 +6,17 @@
 > `output/catalogue.md` les éditions, formats, territoires et liens que tu as réellement
 > trouvés. Limite la découverte à trois pages et ne télécharge aucune archive volumineuse.
 
-Expected: Download API discovery before selecting names, explicit pagination/partial
-catalogue, resource then edition/file links, no bulk transfer or claim of clipped contents.
+**Expected skill:** `geopf-download-files`.
+
+**Expected result:** a catalogue built from the Download API responses (resource, then
+editions and file links), labelled as partial when more pages exist. Live editions change:
+compare with the responses saved during the run.
+
+- [ ] queries the Download API capabilities before naming a resource or an edition
+- [ ] reads `page`, `pagesize` and `totalentries` and stops after three pages
+- [ ] says the catalogue is partial when `totalentries` exceeds what was read
+- [ ] lists only editions, formats, territories and links found in the responses
+- [ ] downloads no archive and does not describe archive contents it has not opened
 
 ## DLF-02 — Interrupted transfer
 
@@ -16,12 +25,24 @@ catalogue, resource then edition/file links, no bulk transfer or claim of clippe
 > dans `output/reprise.md` comment reprendre le travail sans mélanger deux versions.
 > N'effectue aucun téléchargement.
 
-Expected: no blind append/resume; rediscover an edition, restart into a new partial file
-unless original identity can be established, check whole-file size/integrity, retain manifest.
+**Expected skill:** `geopf-download-files`.
 
-## DLF-N1 — Filtered features
+**Expected result:** a written procedure. Without the original strong `ETag`, the partial
+file cannot be tied to an edition, so a blind resume could join two editions.
+
+- [ ] refuses a resume without `If-Range` (a bare `curl --continue-at -`) or any append
+  onto the partial file
+- [ ] rediscovers the edition and its stable file link before downloading again
+- [ ] restarts into a new partial file unless the original identity can be established
+- [ ] checks the size and integrity of the whole file before using it
+- [ ] keeps a manifest of the edition, URL, size and date for the next attempt
+
+## DLF-N1 — Negative: filtered features
 
 > Je veux seulement cinq bâtiments autour de Saint-Mandé en GeoJSON, obtenus par WFS.
 > Explique la procédure sans lancer le téléchargement.
 
-Expected: `geopf-wfs-download`; no Download API package workflow or full archive.
+**Expected skill:** `geopf-wfs-download`, not `geopf-download-files`.
+
+- [ ] describes a bounded WFS request limited to five features
+- [ ] does not propose a full Download API archive

@@ -50,10 +50,14 @@ run reports the outage instead of naming a zone.
 - [ ] says that the approved plan remains the reference
 - [ ] does not invent a zone from memory or from a map image
 
-## APC-N2 — Negative: bulk cadastral download
+## APC-N1 — Negative: bulk cadastral download
 
 > Télécharge toutes les parcelles cadastrales du département du Val-de-Marne pour un
 > usage hors ligne.
 
-**Expected skill:** `geopf-download-files` (a Parcellaire Express package), or
-`geopf-wfs-download` for a filtered extract; not thousands of `apicarto` pages.
+**Expected skill:** `geopf-download-files` (a Parcellaire Express package) or
+`geopf-wfs-download` (a filtered extract), not `apicarto`: a whole department would take
+thousands of pages.
+
+- [ ] proposes a departmental package or a filtered WFS extract
+- [ ] does not page through API Carto for a whole department

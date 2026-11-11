@@ -74,12 +74,19 @@ test known inside/outside features and compare with a query in the layer's CRS.
 > Écris une requête SQL PostGIS qui sélectionne les parcelles à moins de 100 mètres
 > des écoles. Les deux tables sont déjà dans ma base locale, en EPSG:2154.
 
-**Expected result:** no `geoserver-cql-filter`; use PostGIS SQL, not `cql_filter` or ECQL.
+**Expected skill:** not `geoserver-cql-filter`; no skill of this repository covers PostGIS SQL.
+
+- [ ] writes PostGIS SQL with a metric distance predicate in EPSG:2154, such as `ST_DWithin`
+- [ ] does not produce a `cql_filter` parameter or ECQL
 
 ## CQL-N2 — Negative: OGC API CQL2
 
 > Mon service OGC API Features annonce CQL2-JSON. Prépare un filtre JSON sur la propriété
 > population pour garder les valeurs supérieures à 1000, sans utiliser WFS ni WMS.
 
-**Expected result:** no GeoServer ECQL substitution; follow the service's CQL2 conformance
-and request format instead of inventing a `cql_filter` parameter.
+**Expected skill:** not `geoserver-cql-filter`; no skill of this repository covers OGC API
+CQL2.
+
+- [ ] writes a CQL2-JSON filter that follows the conformance and request format advertised
+  by the service
+- [ ] does not substitute GeoServer ECQL or invent a `cql_filter` parameter

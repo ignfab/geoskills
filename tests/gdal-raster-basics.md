@@ -90,15 +90,6 @@ all-touched inclusion gives different valid statistics and must be labelled expl
 - [ ] does not compute statistics on the raster in EPSG:4326 (reprojecting the DEM instead
   of the zones changes the values)
 
-## RAS-N1 — Negative: elevation of one point
-
-> Quelle est l'altitude du terrain au point de longitude 2,424573 et de latitude
-> 48,845726 ?
-
-**Expected skill:** `geopf-altimetry`, not `gdal-raster-basics`: one point needs a call to
-the Elevation API, not a DEM tile to download and sample. On 2026-11-09 the API returned
-51.99 m (`ign_rge_alti_wld`).
-
 ## RAS-06 — Categorical raster quality
 
 > Le raster `data/classes_synthetic.asc` contient des classes en EPSG:2154 confirmé.
@@ -106,6 +97,29 @@ the Elevation API, not a DEM tile to download and sample. On 2026-11-09 the API 
 > et 255 représente l'absence de données. Vérifie les classes obtenues, la couverture
 > valide et la structure du COG si les outils disponibles le permettent.
 
-Expected: 4×4 output; values 0, 1, 5 and nodata 255, each repeated four times; valid
-coverage 75%; nearest resampling/overviews. Structural validation reported separately
-from the layout marker, and unavailable validators are not installed.
+**Expected skill:** `gdal-raster-basics`.
+
+**Expected result:** a 4 × 4 COG with 5 m pixels in EPSG:2154; classes 0, 1 and 5 and
+nodata 255, four pixels each; 75 % valid coverage. `test_raster_quality.py` runs the
+documented recipe on this fixture.
+
+- [ ] uses `near` resampling and nearest overviews; no interpolation of class codes
+- [ ] keeps class 0 as valid data and declares 255 as nodata
+- [ ] checks that output values belong to {0, 1, 5, 255} and reports the valid coverage
+- [ ] reports a full structural COG validation separately from the `LAYOUT=COG` marker, or
+  says that no validator is available
+- [ ] installs no validator and leaves `data/classes_synthetic.asc` unchanged
+
+## RAS-N1 — Negative: elevation of one point
+
+> Quelle est l'altitude du terrain au point de longitude 2,424573 et de latitude
+> 48,845726 ?
+
+**Expected skill:** `geopf-altimetry`, not `gdal-raster-basics`: one point needs a call to
+the Elevation API, not a DEM tile to download and sample.
+
+**Reference result (live data may change):** 51.99 m from `ign_rge_alti_wld` on 2026-11-09.
+
+- [ ] calls the elevation API for this point, in longitude, latitude order
+- [ ] downloads no DEM tile
+- [ ] reports the resource used with the altitude
