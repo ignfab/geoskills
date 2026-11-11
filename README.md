@@ -25,7 +25,7 @@ them to meet a business need.
 
 | Family | Question | Skills |
 | --- | --- | --- |
-| [1. Discover and select](skills/1-discover/README.md) | Which data should be used for this request? | [geopf-services](skills/1-discover/geopf-services/README.md) |
+| [1. Discover and select](skills/1-discover/README.md) | Which data should be used for this request? | [geopf-services](skills/1-discover/geopf-services/README.md), [bdtopo-schema-guide](skills/1-discover/bdtopo-schema-guide/README.md) |
 | [2. Access and extract](skills/2-access/README.md) | How do I retrieve the right subset? | [geopf-download-files](skills/2-access/geopf-download-files/README.md), [geopf-wfs-download](skills/2-access/geopf-wfs-download/README.md), [geopf-wms-wmts](skills/2-access/geopf-wms-wmts/README.md), [geoserver-cql-filter](skills/2-access/geoserver-cql-filter/README.md), [apicarto](skills/2-access/apicarto/README.md), [geopf-geocoding](skills/2-access/geopf-geocoding/README.md) |
 | [3. Prepare and check](skills/3-prepare/README.md) | Is the data usable and compatible? | [geodata-intake](skills/3-prepare/geodata-intake/README.md), [crs-reprojection-france](skills/3-prepare/crs-reprojection-france/README.md), [gdal-vector-basics](skills/3-prepare/gdal-vector-basics/README.md), [gdal-raster-basics](skills/3-prepare/gdal-raster-basics/README.md), [vector-data-quality](skills/3-prepare/vector-data-quality/README.md) |
 | [4. Analyze and derive](skills/4-analyze/README.md) | What information should be computed? | [geopandas-basics](skills/4-analyze/geopandas-basics/README.md), [geopf-altimetry](skills/4-analyze/geopf-altimetry/README.md), [geopf-routing](skills/4-analyze/geopf-routing/README.md), [geospatial-descriptive-statistics](skills/4-analyze/geospatial-descriptive-statistics/README.md), [spatial-aggregation](skills/4-analyze/spatial-aggregation/README.md) |
@@ -91,6 +91,8 @@ Ce projet est en phase exploratoire. La stabilité des compétences n’est pas 
 travailler la donnée géographique. Elles sont regroupées en six familles, une par question.
 
 **Découvrir et sélectionner** : quelles données utiliser pour cette demande ?
+
+- lecture du modèle BD TOPO, de ses classes et attributs selon la version documentée ;
 
 - choix des services de la Géoplateforme selon le besoin : découverte de données, diffusion,
   téléchargement, extraction et calculs.

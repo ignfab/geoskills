@@ -3,11 +3,13 @@
 **Question:** which data should be used for this request?
 
 Find the candidate datasets and services, then select one by coverage, resolution, edition
-and fitness for the request, before anything is downloaded.
+and fitness for the request, before anything is downloaded. Understand versioned data
+models and attribute meanings before choosing fields.
 
 | Skill | Use it to |
 | --- | --- |
 | [geopf-services](geopf-services/README.md) | Choose a Géoplateforme API for dataset discovery, maps, vector features, downloads, geocoding and geographic calculations. |
+| [bdtopo-schema-guide](bdtopo-schema-guide/README.md) | Understand versioned BD TOPO building/road classes, field meanings and format mappings using sourced offline references. |
 
 ## Also relevant
 

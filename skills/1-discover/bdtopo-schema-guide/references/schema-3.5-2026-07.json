@@ -1,0 +1,133 @@
+{
+  "coverage": "curated subset, not an exhaustive schema",
+  "sources": {
+    "ign-dc-3.5-2026-07": {
+      "title": "BD TOPO 3.5 — Content specification (English translation of title)",
+      "filename": "DC_BDTOPO_3-5.pdf",
+      "url": "https://data.geopf.fr/annexes/ressources/documentation/DC_BDTOPO_3-5.pdf",
+      "publisher": "IGN",
+      "model_version": "3.5",
+      "document_revision": "2026-07",
+      "checked_on": "2026-11-11",
+      "sha256": "0542356dcf921bff5263043fe2af288a018d61d8e0f4d750005142f09cdb7331"
+    }
+  },
+  "classes": {
+    "batiment": {
+      "theme": "Buildings",
+      "postgresql_name": "batiment",
+      "geometry": "MultiPolygon Z",
+      "pages": [
+        65
+      ],
+      "source": "ign-dc-3.5-2026-07",
+      "fields": {
+        "hauteur": {
+          "names": {
+            "postgresql": "hauteur",
+            "shapefile": "HAUTEUR"
+          },
+          "type": "decimal(6,2)",
+          "meaning": "Height from lowest adjacent ground to highest eaves edge, not roof ridge.",
+          "pages": [
+            76,
+            77
+          ],
+          "source": "ign-dc-3.5-2026-07",
+          "unit": "m",
+          "sentinels": {
+            "0": "unknown or not significant"
+          }
+        },
+        "nature": {
+          "names": {
+            "postgresql": "nature",
+            "shapefile": "NATURE"
+          },
+          "type": "enumeration",
+          "meaning": "Architectural building type.",
+          "pages": [
+            70
+          ],
+          "source": "ign-dc-3.5-2026-07",
+          "enum_coverage": "not bundled; consult cited page"
+        },
+        "usage_1": {
+          "names": {
+            "postgresql": "usage_1",
+            "shapefile": "USAGE1"
+          },
+          "type": "enumeration",
+          "meaning": "Building or building-part use; does not take precedence over usage_2.",
+          "pages": [
+            72
+          ],
+          "source": "ign-dc-3.5-2026-07",
+          "enum_coverage": "not bundled; consult cited page"
+        }
+      }
+    },
+    "troncon_de_route": {
+      "theme": "Transport",
+      "postgresql_name": "troncon_de_route",
+      "geometry": "LineString Z",
+      "pages": [
+        354
+      ],
+      "source": "ign-dc-3.5-2026-07",
+      "fields": {
+        "nature": {
+          "names": {
+            "postgresql": "nature",
+            "shapefile": "NATURE"
+          },
+          "type": "enumeration",
+          "meaning": "Physical road/path category.",
+          "pages": [
+            354
+          ],
+          "source": "ign-dc-3.5-2026-07",
+          "enum_coverage": "not bundled; consult cited page"
+        },
+        "importance": {
+          "names": {
+            "postgresql": "importance",
+            "shapefile": "IMPORTANCE"
+          },
+          "type": "enumeration",
+          "meaning": "Traffic-network hierarchy, not administrative road status.",
+          "pages": [
+            365,
+            366
+          ],
+          "source": "ign-dc-3.5-2026-07",
+          "enum_values": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ],
+          "enum_coverage": "complete for this field and revision"
+        },
+        "nombre_de_voies": {
+          "names": {
+            "postgresql": "nombre_de_voies",
+            "shapefile": "NB_VOIES"
+          },
+          "type": "integer enumeration",
+          "meaning": "Motor-vehicle lane count; inspect special values before arithmetic.",
+          "pages": [
+            371
+          ],
+          "source": "ign-dc-3.5-2026-07",
+          "sentinels": {
+            "0": "unknown for specified road types or fictitious segments; ferry rules need source review"
+          },
+          "enum_coverage": "partial; non-applicable value and nature-specific rules require source review"
+        }
+      }
+    }
+  }
+}
