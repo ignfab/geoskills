@@ -8,6 +8,7 @@ delivery formats, maps, styles and metadata.
 | Skill | Use it to |
 | --- | --- |
 | [mapshaper-simplify](mapshaper-simplify/README.md) | Simplify polygon boundaries with Mapshaper, preserve shared borders and export lighter GeoJSON or TopoJSON. |
+| [qgis-layer-styling](qgis-layer-styling/README.md) | Create and reload reusable vector QML: single symbols, categorized fields and graduated numeric classes. |
 
 ## Also relevant
 
@@ -20,7 +21,7 @@ delivery formats, maps, styles and metadata.
 
 ## Not covered yet
 
-- Styles (QGIS QML, SLD).
+- Styles outside vector QML (for example SLD).
 - QGIS projects and map layouts.
 - Metadata for a delivery.
 

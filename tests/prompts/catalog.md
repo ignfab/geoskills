@@ -116,3 +116,12 @@ with few or no skills and the chains behind business needs. Runs are recorded in
 - **Expected skills:** `geospatial-descriptive-statistics`
 - **Watch:** Finite counts, explicit quantiles/ddof, strict JSON and unchanged inputs.
 - **Status:** open
+
+## XP-10 — qgis-layer-styling boundary check
+
+> Applique un contour rouge sans remplissage à `data/saint_mande.geojson` et enregistre un style QGIS QML réutilisable sous `output/`. Vérifie le rechargement sans modifier la source.
+
+- **Family:** `5-publish`
+- **Expected skills:** `qgis-layer-styling`
+- **Watch:** Real QML, independent reload and unchanged source; missing QGIS is an environment limitation.
+- **Status:** open
