@@ -15,7 +15,7 @@ reliably with the skills it depends on.
 
 These chains are explored first with the business-need prompts of the
 [experimental prompt catalog](../../tests/prompts/catalog.md); their runs are logged in
-[runs.md](../../tests/prompts/runs.md). The only chain documented so far is in
+[runs.md](../../tests/prompts/runs.md). One documented chain is in
 [mapshaper-simplify](../5-publish/mapshaper-simplify/README.md): download boundaries with
 `geopf-wfs-download`, audit them with `vector-data-quality`, then simplify them.
 

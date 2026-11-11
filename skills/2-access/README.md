@@ -18,8 +18,8 @@ areas) are in [4. Analyze and derive](../4-analyze/README.md).
 
 ## Also relevant
 
-- [bdtopo-schema-guide](../1-discover/bdtopo-schema-guide/README.md) clarifies model meanings before extraction; service identifiers still come from live metadata.
-
+- [bdtopo-schema-guide](../1-discover/bdtopo-schema-guide/README.md) clarifies model meanings
+  before extraction; service identifiers still come from live metadata.
 - [geopf-services](../1-discover/geopf-services/README.md) chooses the access route before
   any of these skills runs.
 - [gdal-vector-basics](../3-prepare/gdal-vector-basics/README.md) filters, clips and queries

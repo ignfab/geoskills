@@ -19,3 +19,23 @@ when metadata does not establish it. Do not expose credentials in service URLs o
 An advice-only task needs the recommended service and its rationale, not a fabricated
 file report. A small operation can be reported in a few sentences; use JSON/CSV when the
 user needs a reusable manifest or the workflow already produces one.
+
+## Evidence by output type
+
+Keep the shared fields above, then add the checks that make the specific output usable.
+The linked skill guides define the full workflows and supported formats.
+
+| Output | Additional evidence |
+| --- | --- |
+| [Descriptive statistics](../skills/4-analyze/geospatial-descriptive-statistics/README.md) | Selected fields and units, row/valid/missing counts, invalid or infinite values, standard-deviation and quantile conventions. Preserve valid zeroes; identify source-specific sentinels explicitly. |
+| [Territorial indicators](../skills/4-analyze/spatial-aggregation/README.md) | Stable zone IDs, spatial predicate, multiple-match policy, unmatched objects, empty zones and reconciliation of counts. Explain denominator and null rules for ratios. |
+| [QGIS vector style](../skills/5-publish/qgis-layer-styling/README.md) | QML path, source layer, renderer, fields, symbol units, categories or class breaks, null/fallback handling and successful reload into a fresh layer. |
+| [QGIS project](../skills/5-publish/qgis-project-builder/README.md) | Project path, source inventory, project CRS/extent, order/groups/visibility, relative-path scope and reopening result. Record relocation checks and remote-layer availability separately. |
+| [BD TOPO schema advice](../skills/1-discover/bdtopo-schema-guide/README.md) | Model version, document revision, class/field, format, official source and pages. State the limits of the bundled subset and any unverified mapping. |
+
+A saved QGZ does not embed its source data. Relative paths alone do not establish that a
+project can be moved; the declared bundle and relocation check determine that claim.
+A valid remote-layer provider does not prove that tiles were rendered. Report whether
+rendering was checked, failed or not performed.
+
+Return to the [documentation guide](README.md).

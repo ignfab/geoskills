@@ -2,26 +2,30 @@
 
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-Compatible-blue)](https://agentskills.io/)
 
-Some experimental [skills](https://cursor.com/fr/docs/context/skills) for working with
-spatial data.
+Agent skills for discovering, retrieving, preparing, analyzing and publishing geospatial
+data, with a focus on the IGN Géoplateforme, French coordinate systems and open-source GIS.
 
-This project is in an exploratory phase. The stability of the skills is not yet guaranteed.
+The repository contains **21 independently installable skills**. It remains experimental:
+automated checks and agent pilots are available, but a full comparative evaluation has not
+yet established the stability of every skill.
 
-## Motivation
+## Scope
 
-- Experiment VibeCoding with spatial data within Cursor
-- [LangGraph also supports skills](https://docs.langchain.com/oss/python/langchain/multi-agent/skills)
-  (and skills could provide detailed documentation for MCP in
-  [ignfab/demo-geocontext](https://github.com/ignfab/demo-geocontext))
+Skills give coding agents instructions, local reference material and, where useful,
+tested helper scripts. They cover service selection, data extraction, GDAL/PROJ and
+GeoPandas processing, BD TOPO semantics, statistics, vector styling and QGIS projects.
+Each skill states its prerequisites, limits and output checks. Agents use existing tools,
+discover schemas before querying and validate results before reporting success.
 
-See [docs/landscape.md](docs/landscape.md) for the dated comparison with other geospatial
-skill collections and its implementation follow-up. The section below lists the current skills.
+Start with the [documentation guide](docs/README.md) to choose between related skills or
+find validation evidence. The [landscape study](docs/landscape.md) preserves the dated
+comparison with other collections and links to subsequent implementation reviews.
 
 ## Skills
 
 Skills are grouped into six families, one folder each under [skills/](skills/). Each family
-answers one question. A task usually goes through the first five in order; the sixth chains
-them to meet a business need.
+answers one question. Use the stages needed for the task; the sixth family tracks business
+workflows and does not yet contain an installable skill.
 
 | Family | Question | Skills |
 | --- | --- | --- |
@@ -39,6 +43,12 @@ it, and names the gaps.
 
 Skills are installed with the [Vercel Skills CLI](https://github.com/vercel-labs/skills),
 which reads them directly from this repository.
+
+List available skills before selecting them:
+
+```bash
+npx skills add ignfab/geoskills --list
+```
 
 Install all skills:
 
@@ -70,6 +80,10 @@ npx skills add ignfab/geoskills -a claude-code
 Skills are installed in the current project by default; add `-g` to install them for the
 whole user account.
 
+Installing a skill copies its instructions and supporting files. It does not install
+GDAL, GeoPandas, QGIS or other GIS software. Check the selected skill's README for runtime
+requirements and commands the user can run if a dependency is missing.
+
 ## Contributing
 
 New skills go in `skills/<family>/<skill-name>/`, in the family whose question their main
@@ -83,6 +97,10 @@ manual skill-selection scenarios. Exploratory prompts and their runs are traced 
 [tests/prompts/](tests/prompts/README.md). Report conventions are described in
 [docs/output-reports.md](docs/output-reports.md).
 
+The [2026-11-11 review](tests/review-2026-11-11.md) records the five latest additions,
+their merged PRs, functional checks and actual agent pilots. Historical results describe
+the tested versions and fixtures; they are not a guarantee of current live-service behavior.
+
 ## Résumé (FR)
 
 Ce projet est en phase exploratoire. La stabilité des compétences n’est pas encore garantie.
@@ -93,7 +111,6 @@ travailler la donnée géographique. Elles sont regroupées en six familles, une
 **Découvrir et sélectionner** : quelles données utiliser pour cette demande ?
 
 - lecture du modèle BD TOPO, de ses classes et attributs selon la version documentée ;
-
 - choix des services de la Géoplateforme selon le besoin : découverte de données, diffusion,
   téléchargement, extraction et calculs.
 
@@ -123,9 +140,7 @@ travailler la donnée géographique. Elles sont regroupées en six familles, une
 **Analyser et dériver** : quelle information calculer ?
 
 - agrégation des objets par territoire, avec contrôle des limites, doublons et totaux ;
-
 - statistiques descriptives des attributs, catégories et valeurs manquantes d’une couche ;
-
 - traitement vecteur en Python avec GeoPandas (jointures spatiales, croisements, tampons,
   statistiques zonales) ;
 - altitudes ponctuelles et profils altimétriques, avec gestion des valeurs manquantes ;
@@ -134,9 +149,7 @@ travailler la donnée géographique. Elles sont regroupées en six familles, une
 **Représenter et diffuser** : comment rendre le résultat utilisable ?
 
 - projets QGIS portables, avec contrôle des chemins, couches, styles et fonds distants ;
-
 - styles QGIS réutilisables, avec contrôle des symboles, catégories et classes numériques ;
-
 - simplification de limites administratives avec Mapshaper, en conservant les frontières communes.
 
 **Résoudre un besoin métier** : comment assembler les étapes pour répondre à un objectif ?
@@ -152,6 +165,8 @@ Installation d'une seule famille, par exemple « Accéder et extraire » :
 
 Les prompts expérimentaux qui servent à tester et à valider les compétences sont tracés
 dans `tests/prompts/` : un catalogue des prompts et un journal de leurs exécutions.
+Les tests automatisés et les essais d’agents sont documentés ; la campagne comparative
+complète reste à mener. L’installation des compétences n’installe pas les logiciels SIG.
 
 Le contenu des compétences est rédigé en anglais — les outils couverts (GDAL, PROJ, WFS)
 sont internationaux, même si les données le sont moins.
