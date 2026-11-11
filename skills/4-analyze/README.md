@@ -12,6 +12,7 @@ not a subset of an existing dataset.
 | [geopandas-basics](geopandas-basics/README.md) | Process vector data in Python with GeoPandas: I/O, reprojection, spatial joins, overlay, buffers, zonal statistics. |
 | [geopf-altimetry](geopf-altimetry/README.md) | Discover terrain/surface resources, preserve missing elevations, join CSV rows and sample profiles. |
 | [geopf-routing](geopf-routing/README.md) | Discover navigation resources, choose units/direction and export route or isochrone geometry. |
+| [geospatial-descriptive-statistics](geospatial-descriptive-statistics/README.md) | Summarize numeric attributes, categories and missingness in one layer with explicit units and statistical conventions. |
 
 ## Also relevant
 
