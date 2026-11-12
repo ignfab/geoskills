@@ -5,7 +5,7 @@
 Agent skills for discovering, retrieving, preparing, analyzing and publishing geospatial
 data, with a focus on the IGN Géoplateforme, French coordinate systems and open-source GIS.
 
-The repository contains **21 independently installable skills**. It remains experimental:
+The repository contains **22 independently installable skills**. It remains experimental:
 automated checks and agent pilots are available, but a full comparative evaluation has not
 yet established the stability of every skill.
 
@@ -24,8 +24,8 @@ comparison with other collections and links to subsequent implementation reviews
 ## Skills
 
 Skills are grouped into six families, one folder each under [skills/](skills/). Each family
-answers one question. Use the stages needed for the task; the sixth family tracks business
-workflows and does not yet contain an installable skill.
+answers one question. Use the stages needed for the task; the sixth family combines them
+into business workflows.
 
 | Family | Question | Skills |
 | --- | --- | --- |
@@ -34,7 +34,7 @@ workflows and does not yet contain an installable skill.
 | [3. Prepare and check](skills/3-prepare/README.md) | Is the data usable and compatible? | [geodata-intake](skills/3-prepare/geodata-intake/README.md), [crs-reprojection-france](skills/3-prepare/crs-reprojection-france/README.md), [gdal-vector-basics](skills/3-prepare/gdal-vector-basics/README.md), [gdal-raster-basics](skills/3-prepare/gdal-raster-basics/README.md), [vector-data-quality](skills/3-prepare/vector-data-quality/README.md) |
 | [4. Analyze and derive](skills/4-analyze/README.md) | What information should be computed? | [geopandas-basics](skills/4-analyze/geopandas-basics/README.md), [geopf-altimetry](skills/4-analyze/geopf-altimetry/README.md), [geopf-routing](skills/4-analyze/geopf-routing/README.md), [geospatial-descriptive-statistics](skills/4-analyze/geospatial-descriptive-statistics/README.md), [spatial-aggregation](skills/4-analyze/spatial-aggregation/README.md) |
 | [5. Represent and publish](skills/5-publish/README.md) | How do I make the result usable? | [mapshaper-simplify](skills/5-publish/mapshaper-simplify/README.md), [qgis-layer-styling](skills/5-publish/qgis-layer-styling/README.md), [qgis-project-builder](skills/5-publish/qgis-project-builder/README.md) |
-| [6. Solve a business need](skills/6-workflows/README.md) | How do I chain the steps to reach an objective? | None yet |
+| [6. Solve a business need](skills/6-workflows/README.md) | How do I chain the steps to reach an objective? | [municipality-building-profile](skills/6-workflows/municipality-building-profile/README.md) |
 
 Each family page describes its skills, lists the skills of other families that also serve
 it, and names the gaps.
@@ -97,8 +97,10 @@ manual skill-selection scenarios. Exploratory prompts and their runs are traced 
 [tests/prompts/](tests/prompts/README.md). Report conventions are described in
 [docs/output-reports.md](docs/output-reports.md).
 
-The [2026-11-11 review](tests/review-2026-11-11.md) records the five latest additions,
-their merged PRs, functional checks and actual agent pilots. Historical results describe
+The [2026-11-11 review](tests/review-2026-11-11.md) records five complementary skills,
+their merged PRs, functional checks and actual agent pilots. The
+[municipal workflow review](tests/review-municipality-building-profile-2026-11-12.md)
+records the first business workflow and its portable-QGIS forward pilot. Historical results describe
 the tested versions and fixtures; they are not a guarantee of current live-service behavior.
 
 ## Résumé (FR)
@@ -154,9 +156,9 @@ travailler la donnée géographique. Elles sont regroupées en six familles, une
 
 **Résoudre un besoin métier** : comment assembler les étapes pour répondre à un objectif ?
 
-- pas encore de compétence : la page de la famille liste les cas d'usage (diagnostic
-  territorial, accessibilité, exposition, suivi d'évolution) et les briques disponibles ;
-  ces enchaînements sont d'abord explorés avec des prompts expérimentaux.
+- portrait du bâti d’une commune : nombre d’objets, surface bâtie sans doubles comptes,
+  hauteurs et usages documentés, avec livraison QGIS facultative ;
+- d’autres cas d’usage (accessibilité, exposition, suivi d’évolution) restent à explorer.
 
 Installation de toutes les compétences : `npx skills add ignfab/geoskills`
 

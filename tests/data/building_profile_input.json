@@ -1,0 +1,37 @@
+{
+  "municipality": {
+    "path": "building_profile_municipalities.geojson",
+    "id_field": "code",
+    "id": "00001",
+    "source": "Invented test polygons; not administrative boundaries",
+    "edition": null,
+    "accessed_on": null
+  },
+  "buildings": {
+    "path": "building_profile_buildings.geojson",
+    "id_field": "id",
+    "geometry_scope": "whole_objects",
+    "source": "Invented rectangle buildings",
+    "edition": null,
+    "accessed_on": null,
+    "completeness": {
+      "status": "complete",
+      "evidence": "Six specified synthetic objects; complete fixture inventory"
+    }
+  },
+  "analysis_crs": "EPSG:2154",
+  "height": {
+    "field": "height",
+    "unit": "m",
+    "missing_values": [
+      0
+    ],
+    "semantics": "Synthetic height in metres; zero is unknown",
+    "source": "Synthetic fixture contract in tests/data/README.md"
+  },
+  "usage": {
+    "field": "usage",
+    "semantics": "One invented category per object",
+    "source": "Synthetic fixture contract in tests/data/README.md"
+  }
+}

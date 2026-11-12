@@ -32,6 +32,7 @@ whose `description` is written in English.
 | [mapshaper-simplify.md](mapshaper-simplify.md) | `mapshaper-simplify` |
 | [qgis-layer-styling.md](qgis-layer-styling.md) | `qgis-layer-styling` |
 | [qgis-project-builder.md](qgis-project-builder.md) | `qgis-project-builder` |
+| [municipality-building-profile.md](municipality-building-profile.md) | `municipality-building-profile` |
 
 Supporting documentation and recorded evidence:
 
@@ -43,6 +44,7 @@ Supporting documentation and recorded evidence:
 | [review-2026-10-27.md](review-2026-10-27.md) | Test audit, added edge cases and remaining coverage limits |
 | [review-2026-10-28.md](review-2026-10-28.md) | Four added skills, workflow checks, live evidence and an actual agent pilot |
 | [review-2026-11-11.md](review-2026-11-11.md) | Five new skills: executed fixtures, QGIS integration, family discovery and agent pilot evidence |
+| [review-municipality-building-profile-2026-11-12.md](review-municipality-building-profile-2026-11-12.md) | First workflow: municipal indicator regressions and an independent portable-QGIS forward pilot |
 | [reports/2026-11-11-five-skills.json](reports/2026-11-11-five-skills.json) | Machine-readable summaries of the executed five-skill pilots, environments and discovery checks |
 | [prompts/README.md](prompts/README.md) | Experimental prompts: a catalog of exploratory prompts and a log of their runs |
 
@@ -127,6 +129,9 @@ python3 -m unittest discover -s tests -p 'test_*.py' -v
 - `test_qgis_project_builder.py`: real vector/raster projects, CRS, extent, layer-tree
   state, optional QML, relocation, source integrity, WMTS URI semantics and controlled
   remote failure. The two QGIS modules use the dedicated environment described below.
+- `test_municipality_building_profile.py`: independent municipal area/count oracles, union
+  overlaps, boundary contacts, height semantics, missing/partial inputs, string IDs, source
+  integrity and actual GeoPackage/CSV/JSON report round trips.
 - `test_live.py`: bounded geocoding, WFS, WMS and WMTS smoke tests plus WFS, navigation
   and download-catalogue discovery; skipped by default.
 - `test_live_enrichment.py`: advertised Atom pages, point elevations and profiles, route

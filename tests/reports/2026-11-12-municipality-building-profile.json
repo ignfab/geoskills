@@ -1,0 +1,120 @@
+{
+  "date": "2026-11-12",
+  "prompt": "XP-14",
+  "harness": "Codex independent subagent; fresh context and isolated copied skills/data",
+  "model": "Inherited Codex model; identifier not exposed by the harness",
+  "skill_commit": "7f967ab",
+  "outcome": "pass",
+  "scope": "One offline forward pilot, not an A/B campaign or an automatic-discovery benchmark",
+  "versions": {
+    "python_analytics": "3.12.14",
+    "geopandas": "1.2.0",
+    "pandas": "3.0.6",
+    "shapely": "2.1.2",
+    "pyogrio": "0.13.0",
+    "gdal": "3.13.3",
+    "pyproj": "3.8.0",
+    "python_qgis": "3.14.5",
+    "qgis": "3.44.9-Solothurn"
+  },
+  "skills_read": [
+    "municipality-building-profile",
+    "qgis-layer-styling",
+    "qgis-project-builder"
+  ],
+  "fixture_sha256": {
+    "building_profile_buildings.geojson": "0980e8b30207ba20054668b201438ae0ff4dc1f72a2ff9408d605a39fa6c3755",
+    "building_profile_input.json": "9b5b60af499c7ee946275bf76aff9ac12baa94b49f2fe2589ac697f283484bdd",
+    "building_profile_municipalities.geojson": "c71333b1b40a2b99f3bc37d7e8630e801aa7f6b2cc9afc7dd2bff515d9fca0b5"
+  },
+  "metrics": {
+    "municipality_area_m2": 10000.0,
+    "building_count": 4,
+    "footprint_area_m2": 850.0,
+    "observed_footprint_share_pct": 8.5,
+    "sum_clipped_building_area_m2": 950.0,
+    "overlap_excess_m2": 100.0
+  },
+  "height": {
+    "total": 4,
+    "valid": 2,
+    "missing": 1,
+    "sentinel": 1,
+    "invalid": 0,
+    "min_m": 10.0,
+    "q25_m": 12.5,
+    "median_m": 15.0,
+    "q75_m": 17.5,
+    "max_m": 20.0,
+    "mean_m": 15.0,
+    "unusable_pct": 50.0
+  },
+  "usage": [
+    {
+      "value": "housing",
+      "count": 2,
+      "share_pct": 50.0
+    },
+    {
+      "value": "NA",
+      "count": 1,
+      "share_pct": 25.0
+    },
+    {
+      "value": null,
+      "count": 1,
+      "share_pct": 25.0
+    }
+  ],
+  "checks": {
+    "source_sha256_unchanged": true,
+    "source_inventory_unchanged": true,
+    "geopackage_unchanged_after_qgis": true,
+    "qgis_reopened_original": true,
+    "qgis_reopened_relocated": true,
+    "original_unavailable_during_relocation_check": true,
+    "map_rendered_both_locations": true,
+    "map_preview_visually_inspected": true,
+    "original_and_relocated_qgz_identical": true,
+    "no_network_installation_or_git_mutation": true,
+    "installed_skills_edited": false
+  },
+  "qgis": {
+    "relative_path_storage": true,
+    "stored_sources": [
+      "./profile.gpkg|layername=buildings",
+      "./profile.gpkg|layername=footprint",
+      "./profile.gpkg|layername=municipality"
+    ],
+    "layers": [
+      {
+        "name": "Buildings",
+        "count": 4,
+        "valid": true,
+        "visible": true
+      },
+      {
+        "name": "Footprint",
+        "count": 1,
+        "valid": true,
+        "visible": false
+      },
+      {
+        "name": "Municipality",
+        "count": 1,
+        "valid": true,
+        "visible": true
+      }
+    ],
+    "render_errors": []
+  },
+  "handoff_observation": "Analytical audit/report retain qgis_project=not_created when the external QGIS helpers are run. Generated report/audit were explicitly updated after successful validation; unmodified helper output retained in provenance.",
+  "follow_up": "Workflow instructions now explicitly require reconciling audit/report with the completed optional QGIS verification. Analytic CSV now also identifies the municipality and CRS; its regression was rerun separately.",
+  "limitations": [
+    "Invented source objects and municipality, not real administrative data.",
+    "Edition and access date unspecified.",
+    "Field semantics accepted from user-supplied manifest; cited tests/data/README.md was not present in isolated inputs and was not accessed.",
+    "Cross-boundary counts are not additive. Counts are source objects, not dwellings.",
+    "Existing environments were identified to the evaluator. No live acquisition or paired baseline was run."
+  ]
+}

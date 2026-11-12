@@ -11,6 +11,7 @@ contains details loaded only when needed.
 | --- | --- | --- |
 | Choose a Géoplateforme service | [geopf-services](../skills/1-discover/geopf-services/README.md) | Route to the relevant extraction or calculation skill once the service is known. |
 | Understand a BD TOPO class or attribute | [bdtopo-schema-guide](../skills/1-discover/bdtopo-schema-guide/README.md) | The bundled guide covers a sourced building/road subset; unknown versions and mappings remain unverified. |
+| Produce a municipal building portrait | [municipality-building-profile](../skills/6-workflows/municipality-building-profile/README.md) | One municipality, shared building population, union footprint area and optional QGIS; no population or dwelling estimates. |
 | Inspect an unfamiliar delivery | [geodata-intake](../skills/3-prepare/geodata-intake/README.md) | Identify files, layers and missing metadata before converting or analyzing them. |
 | Summarize one layer's values | [geospatial-descriptive-statistics](../skills/4-analyze/geospatial-descriptive-statistics/README.md) | Numeric and categorical distributions; no spatial assignment. |
 | Count or summarize objects by polygon zone | [spatial-aggregation](../skills/4-analyze/spatial-aggregation/README.md) | Declare border/overlap policies and reconcile unmatched or multiply matched objects. |
@@ -21,8 +22,8 @@ contains details loaded only when needed.
 
 The skills are independently installable. Related skills can complement one another;
 installing a whole family is not a prerequisite for using one skill. The
-[workflow family](../skills/6-workflows/README.md) lists candidate chains and their
-building blocks; these are not additional implemented workflow skills.
+[workflow family](../skills/6-workflows/README.md) contains the municipal building portrait
+and lists further candidate chains that are not yet implemented.
 
 ## Contributor and validation guides
 
@@ -42,6 +43,7 @@ new checks; do not reinterpret an earlier partial run as a later success.
 
 | Document | Scope |
 | --- | --- |
+| [2026-11-12 municipal workflow review](../tests/review-municipality-building-profile-2026-11-12.md) | First workflow, independently checked building indicators and a portable QGIS forward pilot. |
 | [2026-11-11 review](../tests/review-2026-11-11.md) | Five complementary skills, issues/merged PRs, QGIS integration, discovery and actual agent pilots. |
 | [2026-10-28 review](../tests/review-2026-10-28.md) | Intake, downloads, elevation, routing and report conventions. |
 | [2026-10-27 review](../tests/review-2026-10-27.md) | Test coverage audit, edge cases and limits. |

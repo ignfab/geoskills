@@ -64,3 +64,20 @@ with declared EPSG:2154 metre coordinates (not real locations). Points a/b lie i
 001, c inside 002, edge on their common border and outside in no zone. Zone NA is empty.
 Heights are 0, 10, null, 30 and 100; denominators are 2, 0 and null. The literal ID NA
 and leading zeroes test string preservation. No external source or network is required.
+
+## Municipal building profile fixtures
+
+`building_profile_municipalities.geojson`, `building_profile_buildings.geojson` and
+`building_profile_input.json` are invented planar data and a manifest (repository MIT
+license). They are not IGN data or real administrative boundaries. EPSG:2154 coordinates
+are near 650000 E, 6860000 N; each of the two municipalities is a 100 × 100 m square.
+Codes `00001`/`00002` deliberately test string preservation.
+
+For `00001`, buildings `001` and `002` each occupy 400 m² and overlap over 100 m²;
+`003` crosses the eastern border (100 m² original, 50 m² inside), `004` occupies 100 m²,
+`touch` touches only the border and `outside` is disjoint. Four objects are selected;
+the union covers 850 m² (8.5%), while clipped individual areas sum to 950 m².
+Heights for the six source records are 10, 20, 0, 500, 1000 and null; zero is an explicit
+**synthetic fixture** sentinel. Selected heights have mean/median 15 m and linear quartiles
+12.5/17.5 m. Selected usage counts are housing 2, literal NA 1 and missing 1. Do not apply
+that synthetic height policy to production data without verifying its own specification.

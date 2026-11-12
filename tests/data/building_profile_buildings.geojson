@@ -1,0 +1,221 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "EPSG:2154"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "001",
+        "height": 10,
+        "usage": "housing"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              650010,
+              6860010
+            ],
+            [
+              650030,
+              6860010
+            ],
+            [
+              650030,
+              6860030
+            ],
+            [
+              650010,
+              6860030
+            ],
+            [
+              650010,
+              6860010
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "002",
+        "height": 20,
+        "usage": "housing"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              650020,
+              6860020
+            ],
+            [
+              650040,
+              6860020
+            ],
+            [
+              650040,
+              6860040
+            ],
+            [
+              650020,
+              6860040
+            ],
+            [
+              650020,
+              6860020
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "003",
+        "height": 0,
+        "usage": "NA"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              650095,
+              6860010
+            ],
+            [
+              650105,
+              6860010
+            ],
+            [
+              650105,
+              6860020
+            ],
+            [
+              650095,
+              6860020
+            ],
+            [
+              650095,
+              6860010
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "touch",
+        "height": 500,
+        "usage": "excluded"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              650100,
+              6860030
+            ],
+            [
+              650110,
+              6860030
+            ],
+            [
+              650110,
+              6860040
+            ],
+            [
+              650100,
+              6860040
+            ],
+            [
+              650100,
+              6860030
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "outside",
+        "height": 1000,
+        "usage": "excluded"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              650120,
+              6860010
+            ],
+            [
+              650130,
+              6860010
+            ],
+            [
+              650130,
+              6860020
+            ],
+            [
+              650120,
+              6860020
+            ],
+            [
+              650120,
+              6860010
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "004",
+        "height": null,
+        "usage": null
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              650050,
+              6860050
+            ],
+            [
+              650060,
+              6860050
+            ],
+            [
+              650060,
+              6860060
+            ],
+            [
+              650050,
+              6860060
+            ],
+            [
+              650050,
+              6860050
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

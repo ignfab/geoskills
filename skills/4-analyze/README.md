@@ -18,6 +18,8 @@ not a subset of an existing dataset.
 
 ## Also relevant
 
+- [municipality-building-profile](../6-workflows/municipality-building-profile/README.md)
+  combines source interpretation, analysis and optional QGIS delivery for one municipality.
 - [bdtopo-schema-guide](../1-discover/bdtopo-schema-guide/README.md) explains source-specific
   special values before BD TOPO statistics.
 - [gdal-raster-basics](../3-prepare/gdal-raster-basics/README.md) computes zonal
