@@ -97,8 +97,10 @@ manual skill-selection scenarios. Exploratory prompts and their runs are traced 
 [tests/prompts/](tests/prompts/README.md). Report conventions are described in
 [docs/output-reports.md](docs/output-reports.md).
 
-The [2026-11-11 review](tests/review-2026-11-11.md) records the five latest additions,
-their merged PRs, functional checks and actual agent pilots. Historical results describe
+The [2026-11-11 review](tests/review-2026-11-11.md) records five complementary skills,
+their merged PRs, functional checks and actual agent pilots. The
+[municipal workflow review](tests/review-municipality-building-profile-2026-11-12.md)
+records the first business workflow and its portable-QGIS forward pilot. Historical results describe
 the tested versions and fixtures; they are not a guarantee of current live-service behavior.
 
 ## Résumé (FR)

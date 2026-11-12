@@ -37,7 +37,12 @@ GeoPackage layers using discovered names, set the analysis CRS and municipal ext
 and use `Qgis.FilePathType.Relative`. Check each `QgsVectorLayer.isValid()`, save to a new
 path and independently reopen it. For a portable delivery, move a copy of the complete
 bundle to a fresh location and verify its sources resolve there while the original is
-unavailable. Include the actual QGIS version and verification result in the final report.
+unavailable. After this optional stage, update this run's `audit.json` and `report.md`
+with the project path, QGIS version, style checks, reopening and relocation outcomes.
+Replace the initial `validation.qgis_project: "not_created"` with those observed results;
+preserve the analytic checks, source hashes and coverage limitations. If QGIS is absent
+or fails, retain the analytic bundle and record that limitation instead of marking the
+project verified. Include the same status in the final response.
 Do not install QGIS to obtain this optional deliverable, and do not claim a JSON manifest
 is a QGZ. No live basemap is necessary; a requested remote layer needs its own discovery
 and availability checks.

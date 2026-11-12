@@ -66,6 +66,8 @@ Report source editions, completeness status, field semantics, cross-boundary IDs
 excess, duplicate geometries and missing measures. A partial extract stays partial after
 successful file validation. For QGIS, reopen the actual project and relocate the full
 bundle before claiming portability. Never report an uncreated project as validated.
+After that optional stage, enrich the audit/report with the actual project checks so the
+initial analytic-only status does not contradict the final delivery.
 
 ## References
 

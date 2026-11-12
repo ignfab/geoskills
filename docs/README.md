@@ -43,6 +43,7 @@ new checks; do not reinterpret an earlier partial run as a later success.
 
 | Document | Scope |
 | --- | --- |
+| [2026-11-12 municipal workflow review](../tests/review-municipality-building-profile-2026-11-12.md) | First workflow, independently checked building indicators and a portable QGIS forward pilot. |
 | [2026-11-11 review](../tests/review-2026-11-11.md) | Five complementary skills, issues/merged PRs, QGIS integration, discovery and actual agent pilots. |
 | [2026-10-28 review](../tests/review-2026-10-28.md) | Intake, downloads, elevation, routing and report conventions. |
 | [2026-10-27 review](../tests/review-2026-10-27.md) | Test coverage audit, edge cases and limits. |
