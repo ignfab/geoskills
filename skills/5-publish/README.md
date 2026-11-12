@@ -13,6 +13,8 @@ delivery formats, maps, styles and metadata.
 
 ## Also relevant
 
+- [municipality-building-profile](../6-workflows/municipality-building-profile/README.md)
+  combines source interpretation, analysis and optional QGIS delivery for one municipality.
 - [gdal-raster-basics](../3-prepare/gdal-raster-basics/README.md) writes Cloud Optimized
   GeoTIFFs (COG) with overviews for delivery.
 - [gdal-vector-basics](../3-prepare/gdal-vector-basics/README.md) exports RFC 7946 GeoJSON

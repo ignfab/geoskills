@@ -153,3 +153,16 @@ with few or no skills and the chains behind business needs. Runs are recorded in
 - **Expected skills:** `qgis-project-builder`
 - **Watch:** Final and relocated projects reopen with expected sources, order and relative-path scope.
 - **Status:** open
+
+## XP-14 — Municipal building profile with portable delivery
+
+> Avec les données locales et les conventions de `data/building_profile_input.json`, fais
+> un portrait du bâti de la commune fictive 00001. Fournis les indicateurs, les rapports
+> et un projet QGIS portable avec les bâtiments au-dessus d’une limite rouge sans
+> remplissage dans `output/portrait/`. Vérifie les fichiers et la réouverture après
+> déplacement. Ne télécharge rien et ne modifie pas les sources.
+
+- **Family:** `6-workflows`
+- **Expected skills:** `municipality-building-profile`
+- **Watch:** A common population for counts/height/usage, union footprint rather than summed overlaps, explicit boundary and sentinel policy, real reopened/moved QGIS project when PyQGIS exists, unchanged sources. Specialized styling/project skills are optional.
+- **Status:** open

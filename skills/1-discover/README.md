@@ -13,6 +13,8 @@ models and attribute meanings before choosing fields.
 
 ## Also relevant
 
+- [municipality-building-profile](../6-workflows/municipality-building-profile/README.md)
+  combines source interpretation, analysis and optional QGIS delivery for one municipality.
 - [geopf-download-files](../2-access/geopf-download-files/README.md) selects a territory,
   edition, format and CRS from the Download API metadata.
 - [geopf-altimetry](../4-analyze/geopf-altimetry/README.md) selects an elevation resource by

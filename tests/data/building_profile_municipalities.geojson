@@ -1,0 +1,77 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "EPSG:2154"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "code": "00001"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              650000,
+              6860000
+            ],
+            [
+              650100,
+              6860000
+            ],
+            [
+              650100,
+              6860100
+            ],
+            [
+              650000,
+              6860100
+            ],
+            [
+              650000,
+              6860000
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "code": "00002"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              650200,
+              6860000
+            ],
+            [
+              650300,
+              6860000
+            ],
+            [
+              650300,
+              6860100
+            ],
+            [
+              650200,
+              6860100
+            ],
+            [
+              650200,
+              6860000
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

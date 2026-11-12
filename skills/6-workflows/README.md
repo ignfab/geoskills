@@ -2,9 +2,15 @@
 
 **Question:** how do I chain the steps to reach an objective?
 
-A skill in this family will chain skills from the other families to answer a business
-question end to end. None exists yet. A workflow skill is written only once its chain works
-reliably with the skills it depends on.
+A skill in this family chains acquisition, preparation, analysis and delivery to answer a
+business question. It defines the shared method and checks across those stages; specialized
+skills remain independently useful for narrower requests.
+
+| Skill | Use it to |
+| --- | --- |
+| [municipality-building-profile](municipality-building-profile/README.md) | Produce one municipality's building counts, union footprint coverage, height/usage summaries and optional portable QGIS delivery, with explicit source and boundary rules. |
+
+## Further workflow candidates
 
 | Use case | Building blocks available today |
 | --- | --- |
@@ -13,7 +19,7 @@ reliably with the skills it depends on.
 | Exposure | `geopf-geocoding`, `apicarto` (zones, easements, protected areas), `geopandas-basics` (spatial joins) |
 | Change monitoring | `geopf-download-files` (editions), `vector-data-quality`, `geopandas-basics` (comparison) |
 
-These chains are explored first with the business-need prompts of the
+These broader chains are explored with the business-need prompts of the
 [experimental prompt catalog](../../tests/prompts/catalog.md); their runs are logged in
 [runs.md](../../tests/prompts/runs.md). One documented chain is in
 [mapshaper-simplify](../5-publish/mapshaper-simplify/README.md): download boundaries with
@@ -30,5 +36,11 @@ These chains are explored first with the business-need prompts of the
 - [qgis-layer-styling](../5-publish/qgis-layer-styling/README.md) creates reusable QML;
   [qgis-project-builder](../5-publish/qgis-project-builder/README.md) packages existing
   results into a verified QGIS project.
+
+## Install this family
+
+```bash
+npx skills add https://github.com/ignfab/geoskills/tree/main/skills/6-workflows
+```
 
 Previous: [5. Represent and publish](../5-publish/README.md) · [All families](../../README.md#skills)

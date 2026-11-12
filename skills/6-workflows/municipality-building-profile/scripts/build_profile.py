@@ -222,7 +222,8 @@ def export(layers, audit, directory):
             expected, actual = frame[field].reset_index(drop=True), saved[field].reset_index(drop=True)
             same = expected.eq(actual) | (expected.isna() & actual.isna())
             require(same.fillna(False).all(), f'{name}.{field}: attribute round-trip failed')
-    records = [('metrics', k, v) for k, v in audit['metrics'].items()]
+    records = [('identity', k, audit[k]) for k in ('municipality_id', 'analysis_crs')]
+    records += [('metrics', k, v) for k, v in audit['metrics'].items()]
     for section in ('height', 'usage', 'completeness'):
         records.append((section, 'summary', audit[section]))
     csv_path = directory / 'indicators.csv'
