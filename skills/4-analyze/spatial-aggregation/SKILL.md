@@ -6,7 +6,7 @@ description: Aggregate vector objects into polygon zones to produce territorial 
 # Spatial aggregation
 
 Produce one row per zone, including empty zones. Use `geospatial-descriptive-statistics`
-for one-table summaries and `gdal-raster-basics` or `geopandas-basics` for raster zonal
+for one-table summaries and `gdal-raster-processing` or `geopandas-vector-analysis` for raster zonal
 statistics. This skill does not redistribute populations or repair input geometry.
 
 ## Prerequisites

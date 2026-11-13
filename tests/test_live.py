@@ -49,7 +49,7 @@ class LiveDiscoveryTests(unittest.TestCase):
         self.output = Path(temporary.name)
 
     def discover(self, example, filename):
-        recipe = read_example("geopf-services/SKILL.md", "## Minimal discovery commands",
+        recipe = read_example("geopf-service-selection/SKILL.md", "## Minimal discovery commands",
                               language="bash", example=example)
         result = subprocess.run(["bash", "-eu", "-c", recipe], cwd=self.output,
                                 text=True, capture_output=True, timeout=70)

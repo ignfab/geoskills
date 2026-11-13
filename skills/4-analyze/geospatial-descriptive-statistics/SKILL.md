@@ -6,8 +6,8 @@ description: Produce reproducible numeric and categorical attribute summaries fo
 # Geospatial descriptive statistics
 
 Summarize **one** table without modifying it. Cross-layer territorial indicators belong to
-`spatial-aggregation`; vector operations and raster zonal statistics to `geopandas-basics`
-or `gdal-raster-basics`. No imputation, causal conclusions or automatic charts.
+`spatial-aggregation`; vector operations and raster zonal statistics to `geopandas-vector-analysis`
+or `gdal-raster-processing`. No imputation, causal conclusions or automatic charts.
 
 ## Prerequisites
 

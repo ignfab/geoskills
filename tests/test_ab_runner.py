@@ -218,11 +218,11 @@ for model in $AB_MODELS; do AB="$AB/models/$model" ab_report >/dev/null || exit 
         self.assertIn("Models: model-a (model-a-id); model-b (model-b-id); model-c (model-c-id)", report)
         selection, rest = report.split("## Skill selection (automatic)")[1].split("## Task result")
         results, rest = rest.split("## Cost and invalid runs")
-        # MS-01 expects mapshaper-simplify; GPD-N1 must not load geopandas-basics.
+        # MS-01 expects mapshaper-simplify; GPD-N1 must not load geopandas-vector-analysis.
         self.assertIn("| mapshaper-simplify | 1/1 | 0/1 | — | 100 % | SENSITIVE |", selection)
-        self.assertIn("| geopandas-basics | 1/1 | 1/1 | — | 0 % |  |", selection)
+        self.assertIn("| geopandas-vector-analysis | 1/1 | 1/1 | — | 0 % |  |", selection)
         self.assertIn("| mapshaper-simplify | 1/1 | 0/1 | — | 100 % | SENSITIVE |", results)
-        self.assertNotIn("geopandas-basics", results)  # GPD-N1 was not hand-scored
+        self.assertNotIn("geopandas-vector-analysis", results)  # GPD-N1 was not hand-scored
         self.assertIn("| model-a | 2 | 0 | 1.00 | 3.0 |", rest)
         self.assertIn("| model-c | 1 | 1 | 0.25 | 2.0 |", rest)
         self.assertIn("| MS-01 | 1 | ok: mapshaper-simplify; pass | FAIL: -; fail | invalid |", rest)

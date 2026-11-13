@@ -1,5 +1,7 @@
 # geopf-geocoding
 
+**Family:** [2. Access and extract](../README.md).
+
 Geocode French addresses, points of interest and cadastral parcels with the
 [Géoplateforme geocoding API](https://cartes.gouv.fr/aide/fr/guides-utilisateur/utiliser-les-services-de-la-geoplateforme/geocodage/)
 (`data.geopf.fr/geocodage`). You can send one query at a time or a whole CSV file, and you

@@ -15,7 +15,7 @@ from urllib.parse import parse_qs, urlsplit
 
 from skill_examples import read_example, skill_dir
 
-SCRIPT = skill_dir("apicarto") / "scripts/fetch_features.py"
+SCRIPT = skill_dir("apicarto-query") / "scripts/fetch_features.py"
 SPEC = importlib.util.spec_from_file_location("fetch_features", SCRIPT)
 FETCH = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(FETCH)
@@ -195,7 +195,7 @@ class DocumentedRequestTests(LoopbackCase):
 
     def test_skill_point_query_keeps_the_geometry_parameter(self):
         self.server.respond = lambda path, params: (200, collection([feature("natura.1")], 1))
-        self.recipe("apicarto/SKILL.md", "## Query", 0)
+        self.recipe("apicarto-query/SKILL.md", "## Query", 0)
         paths = [(r[0], r[1]) for r in self.server.requests]
         self.assertEqual(paths, [("GET", "/api/doc/nature.yml"), ("GET", "/api/nature/natura-habitat")])
         self.assertEqual(json.loads(self.server.requests[1][2]["geom"]),
@@ -205,21 +205,21 @@ class DocumentedRequestTests(LoopbackCase):
     def test_skill_and_reference_script_commands(self):
         (self.directory / "zone.geojson").write_text(json.dumps(POINT))
         self.server.respond = pages([feature(f"parcelle.{i}", code_insee="94067") for i in range(3)])
-        self.recipe("apicarto/SKILL.md", "## Query", 1)
+        self.recipe("apicarto-query/SKILL.md", "## Query", 1)
         self.assertEqual(self.server.requests[0][:2], ("GET", "/api/cadastre/parcelle"))
         self.assertEqual(self.server.requests[-1][:2], ("POST", "/api/gpu/zone-urba"))
         self.assertEqual(len(json.loads((self.directory / "parcelles.geojson").read_text())["features"]), 3)
         self.server.requests.clear()
-        self.recipe("apicarto/references/cadastre.md", "## Find parcels", 1)
+        self.recipe("apicarto-query/references/cadastre.md", "## Find parcels", 1)
         self.assertEqual(self.server.requests[0][2]["_limit"], "500")
         self.assertTrue((self.directory / "parcelles_94067.geojson").is_file())
 
     def test_reference_lookups_send_padded_codes(self):
         self.server.respond = lambda path, params: (200, collection([feature("parcelle.1")], 1))
-        self.recipe("apicarto/references/cadastre.md", "## Find parcels", 0)
+        self.recipe("apicarto-query/references/cadastre.md", "## Find parcels", 0)
         self.assertEqual(self.server.requests[-1][2],
                          {"code_insee": "94067", "section": "0J", "numero": "0182"})
-        self.recipe("apicarto/references/cadastre.md", "## Find parcels", 2)
+        self.recipe("apicarto-query/references/cadastre.md", "## Find parcels", 2)
         self.assertEqual(self.server.requests[-1][1], "/api/cadastre/feuille")
 
 

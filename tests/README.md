@@ -5,6 +5,10 @@ loads it when it should and follows it. No single kind of test checks both. This
 holds five kinds of tests, from cheap and automatic to slow and paid. A green unit-test
 run does not prove that an agent will select the right skill.
 
+Current scenarios and helper paths use the [current skill names](../docs/skill-naming.md).
+Dated reviews and recorded runs retain the names actually tested. Scenario identifiers
+remain stable across renames so historical results can still be matched to the same task.
+
 ## The five kinds of tests
 
 | Kind | Question it answers | Files | How it runs | Cost |
@@ -79,22 +83,22 @@ that file: `-01`, `-02`… for positive scenarios and `-N1`, `-N2`… for negati
 
 | Skill | Scenarios | Offline tests | Live tests |
 | --- | --- | --- | --- |
-| `geopf-services` | [GSV](geopf-services.md): 5 + 2 negative | — (advice only) | `test_live.py` (discovery commands) |
+| `geopf-service-selection` | [GSV](geopf-service-selection.md): 5 + 2 negative | — (advice only) | `test_live.py` (discovery commands) |
 | `geopf-geocoding` | [GEO](geopf-geocoding.md): 6 + 1 | `test_enrichment.py` (review policy), `test_split_csv.py` | `test_live.py` (address, CSV, reverse, parcel) |
 | `crs-reprojection-france` | [CRS](crs-reprojection-france.md): 5 + 1 | `test_workflows.py` | — |
-| `gdal-raster-basics` | [RAS](gdal-raster-basics.md): 6 + 1 | `test_workflows.py`, `test_raster_quality.py` | — |
-| `geopf-wms-wmts` | [WMS](geopf-wms-wmts.md): 5 + 1 | — | `test_live.py` (WMTS, WMS-R) |
+| `gdal-raster-processing` | [RAS](gdal-raster-processing.md): 6 + 1 | `test_workflows.py`, `test_raster_quality.py` | — |
+| `geopf-raster-download` | [WMS](geopf-raster-download.md): 5 + 1 | — | `test_live.py` (WMTS, WMS-R) |
 | `geopf-wfs-download` | [WFS](geopf-wfs-download.md): 7 + 1 | `test_enrichment.py` (export completeness) | `test_live.py`, `test_live_enrichment.py` (paging) |
 | `geoserver-cql-filter` | [CQL](geoserver-cql-filter.md): 4 + 2 | `test_cql_requests.py` | `test_live_enrichment.py` (real ECQL) |
-| `geopandas-basics` | [GPD](geopandas-basics.md): 4 + 1 | `test_geopandas.py` | — |
+| `geopandas-vector-analysis` | [GPD](geopandas-vector-analysis.md): 4 + 1 | `test_geopandas.py` | — |
 | `vector-data-quality` | [VDQ](vector-data-quality.md): 3 + 2 | `test_vector_quality.py` | — |
 | `mapshaper-simplify` | [MS](mapshaper-simplify.md): 4 + 2 | `test_mapshaper.py` | — |
 | `geodata-intake` | [INT](geodata-intake.md): 2 + 1 | `test_raster_quality.py` (intake recipes) | — |
-| `geopf-download-files` | [DLF](geopf-download-files.md): 2 + 1 | `test_enrichment.py` (catalogue pages), `test_download_transfers.py` | `test_live.py`, `test_live_enrichment.py` |
+| `geopf-file-download` | [DLF](geopf-file-download.md): 2 + 1 | `test_enrichment.py` (catalogue pages), `test_download_transfers.py` | `test_live.py`, `test_live_enrichment.py` |
 | `geopf-altimetry` | [ALT](geopf-altimetry.md): 2 + 2 | `test_enrichment.py` (joins, missing values) | `test_live_enrichment.py` |
 | `geopf-routing` | [RTE](geopf-routing.md): 2 + 1 | `test_enrichment.py` (GeoJSON export) | `test_live.py`, `test_live_enrichment.py` |
-| `gdal-vector-basics` | [GVB](gdal-vector-basics.md): 4 + 2 | `test_gdal_vector.py` | — |
-| `apicarto` | [APC](apicarto.md): 3 + 1 | `test_apicarto.py` | `test_live_apicarto.py` |
+| `gdal-vector-processing` | [GVB](gdal-vector-processing.md): 4 + 2 | `test_gdal_vector.py` | — |
+| `apicarto-query` | [APC](apicarto-query.md): 3 + 1 | `test_apicarto.py` | `test_live_apicarto.py` |
 | `geospatial-descriptive-statistics` | [GDS](geospatial-descriptive-statistics.md): 2 + 2 | `test_geospatial_descriptive_statistics.py` | — |
 | `qgis-layer-styling` | [QLS](qgis-layer-styling.md): 2 + 1 | `test_qgis_layer_styling.py` (needs PyQGIS) | — |
 | `spatial-aggregation` | [SPA](spatial-aggregation.md): 2 + 2 | `test_spatial_aggregation.py` | — |
@@ -104,7 +108,7 @@ that file: `-01`, `-02`… for positive scenarios and `-N1`, `-N2`… for negati
 | `terrain-elevation-screening` | [TES](terrain-elevation-screening.md): 3 + 2 | `test_terrain_elevation_screening.py` (GDAL recipes) | — |
 | `map-illustration` | [MAP](map-illustration.md): 4 + 3 | `test_map_illustration.py`, `test_qgis_map_illustration.py` | — |
 
-`geopf-services` and `geopf-wms-wmts` have no offline test: their value is advice and
+`geopf-service-selection` and `geopf-raster-download` have no offline test: their value is advice and
 remote requests, so only the live tests and the agent scenarios exercise them.
 
 ## Offline tests
@@ -129,17 +133,17 @@ representative workflows, not every documented command.
 
 | File | Skill | What it proves |
 | --- | --- | --- |
-| [test_workflows.py](test_workflows.py) | `crs-reprojection-france`, `gdal-raster-basics` | GDAL/PROJ recipes on the fixtures: axis order, overseas CRS, missing `.prj`, area, mosaic, clip and COG, weighted averaging, hillshade, zonal statistics (GDAL ≥ 3.12), nodata conversion that keeps valid zeros, NTF and vertical transformations (IGN grids). |
-| [test_raster_quality.py](test_raster_quality.py) | `gdal-raster-basics`, `geodata-intake` | Categorical resampling on the RAS-06 fixture (values, grid, nodata, 75 % coverage), full COG validation (GDAL ≥ 3.13), read-only intake that keeps a missing CRS unknown and writes no sidecar. |
-| [test_gdal_vector.py](test_gdal_vector.py) | `gdal-vector-basics` | `ogr2ogr` recipes on a CP1252 Shapefile without `.cpg` (encoding detection, suspicious characters), GeoPackage layer addition and silent replacement, field selection, clipping in a stated CRS, CSV points, RFC 7946, Shapefile field laundering, SQL, dissolve, merge and split; `gdal vector` examples on GDAL ≥ 3.12. With GDAL 3.13.0 to 3.13.3, `-where` with `-select` on a GeoPackage keeps every field. |
-| [test_geopandas.py](test_geopandas.py) | `geopandas-basics` | Spatial joins (boundaries, unmatched and multiple matches), metric nearest joins and buffers, overlay areas, CRS and format round trips with nullable fields and string IDs, zonal statistics attached by position with filtered or repeated indices. |
+| [test_workflows.py](test_workflows.py) | `crs-reprojection-france`, `gdal-raster-processing` | GDAL/PROJ recipes on the fixtures: axis order, overseas CRS, missing `.prj`, area, mosaic, clip and COG, weighted averaging, hillshade, zonal statistics (GDAL ≥ 3.12), nodata conversion that keeps valid zeros, NTF and vertical transformations (IGN grids). |
+| [test_raster_quality.py](test_raster_quality.py) | `gdal-raster-processing`, `geodata-intake` | Categorical resampling on the RAS-06 fixture (values, grid, nodata, 75 % coverage), full COG validation (GDAL ≥ 3.13), read-only intake that keeps a missing CRS unknown and writes no sidecar. |
+| [test_gdal_vector.py](test_gdal_vector.py) | `gdal-vector-processing` | `ogr2ogr` recipes on a CP1252 Shapefile without `.cpg` (encoding detection, suspicious characters), GeoPackage layer addition and silent replacement, field selection, clipping in a stated CRS, CSV points, RFC 7946, Shapefile field laundering, SQL, dissolve, merge and split; `gdal vector` examples on GDAL ≥ 3.12. With GDAL 3.13.0 to 3.13.3, `-where` with `-select` on a GeoPackage keeps every field. |
+| [test_geopandas.py](test_geopandas.py) | `geopandas-vector-analysis` | Spatial joins (boundaries, unmatched and multiple matches), metric nearest joins and buffers, overlay areas, CRS and format round trips with nullable fields and string IDs, zonal statistics attached by position with filtered or repeated indices. |
 | [test_vector_quality.py](test_vector_quality.py) | `vector-data-quality` | Null, empty and invalid geometries kept apart, repair methods, quarantine, duplicates, suspicious valid geometries, severity report, coverage overlaps and gaps on the VDQ-03 fixture; `gdal vector check-geometry`/`check-coverage` on GDAL ≥ 3.12. |
 | [test_mapshaper.py](test_mapshaper.py) | `mapshaper-simplify` | Percentage and metric simplification, small-feature retention, shared borders across layers, TopoJSON arcs, CRS and attributes kept. |
-| [test_enrichment.py](test_enrichment.py) | `geopf-wfs-download`, `geopf-geocoding`, `geopf-download-files`, `geopf-altimetry`, `geopf-routing` | The bundled scripts and recipes: WFS export completeness (missing or repeated pages, duplicate IDs), geocoding review policy (including the GEO-06 fixture), Atom catalogue pages, elevation joins (including the ALT-02 fixtures), route and isochrone export. |
+| [test_enrichment.py](test_enrichment.py) | `geopf-wfs-download`, `geopf-geocoding`, `geopf-file-download`, `geopf-altimetry`, `geopf-routing` | The bundled scripts and recipes: WFS export completeness (missing or repeated pages, duplicate IDs), geocoding review policy (including the GEO-06 fixture), Atom catalogue pages, elevation joins (including the ALT-02 fixtures), route and isochrone export. |
 | [test_split_csv.py](test_split_csv.py) | `geopf-geocoding` | `split_csv.py`: record and byte limits, BOM, multiline and quoted fields, leading zeros, malformed input, existing files kept. |
-| [test_download_transfers.py](test_download_transfers.py) | `geopf-download-files` | Real `curl` downloads against a loopback archive server: integrity, byte-exact resume, refusal to append a changed edition. |
+| [test_download_transfers.py](test_download_transfers.py) | `geopf-file-download` | Real `curl` downloads against a loopback archive server: integrity, byte-exact resume, refusal to append a changed edition. |
 | [test_cql_requests.py](test_cql_requests.py) | `geoserver-cql-filter` | The documented `curl` commands against a local recorder: parameter encoding, EWKT kept, WFS sampling, WMS layer order. Does not validate ECQL parsing on a real GeoServer. |
-| [test_apicarto.py](test_apicarto.py) | `apicarto` | The paging script and documented requests against a loopback server: `_start` paging, POSTed geometries, repeated IDs, changing or incomplete counts, errors with HTTP 200, 400 or 500, existing outputs kept. |
+| [test_apicarto.py](test_apicarto.py) | `apicarto-query` | The paging script and documented requests against a loopback server: `_start` paging, POSTed geometries, repeated IDs, changing or incomplete counts, errors with HTTP 200, 400 or 500, existing outputs kept. |
 | [test_geospatial_descriptive_statistics.py](test_geospatial_descriptive_statistics.py) | `geospatial-descriptive-statistics` | `summarize.py` on known values: missing, infinite and invalid numbers, empty and single-value columns, string categories with leading zeros, bad column selection, CLI round trip without overwrite, geometry areas in a metric CRS with a geographic CRS refused (GeoPandas). |
 | [test_qgis_layer_styling.py](test_qgis_layer_styling.py) | `qgis-layer-styling` | `style_layer.py` QML files reloaded on independent PyQGIS layers: red outline without fill and source unchanged, point and line units, categories with the null/other fallback, graduated ranges and shared breaks, unknown fields, bad breaks and existing outputs refused. Needs PyQGIS ([QGIS integration](#qgis-integration)). |
 | [test_spatial_aggregation.py](test_spatial_aggregation.py) | `spatial-aggregation` | `aggregate.py`: empty zones, null measures and reconciliation, border predicates and policies, overlapping zones, mixed known CRSs, bad IDs, missing CRS, invalid geometry, ratios with zero denominators, round trip without touching the sources; the SPA-01 and SPA-02 references on their fixtures (GeoPandas). |
@@ -293,8 +297,8 @@ layers check this:
 - [test_skill_robustness.py](test_skill_robustness.py) runs on every push. It checks the
   text that a smaller model needs in order to choose correctly: a `Use when …` clause,
   exact skill names, and the way out at each tested boundary. For example, RAS-N1 expects
-  `geopf-altimetry`, not `gdal-raster-basics`, for the elevation of one point, so
-  `gdal-raster-basics` must name `geopf-altimetry`.
+  `geopf-altimetry`, not `gdal-raster-processing`, for the elevation of one point, so
+  `gdal-raster-processing` must name `geopf-altimetry`.
 - The [model sweep](ab-testing.md#model-sensitivity) of the A/B runner is paid and runs on
   demand. It runs the same scenarios with several models (by default `haiku`, `sonnet`
   and `opus`), scores skill selection automatically and flags the skills whose score

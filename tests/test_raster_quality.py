@@ -19,7 +19,7 @@ class RasterQualityTests(GDALCase):
 
     def test_documented_class_resampling_preserves_codes_and_valid_zero(self):
         self.classes()
-        recipe = read_example("gdal-raster-basics/references/quality-checks.md",
+        recipe = read_example("gdal-raster-processing/references/quality-checks.md",
                               "## Categorical resampling", language="bash")
         self.run_tool("bash", "-eu", "-c", recipe)
         target = self.output / "classes_cog.tif"
@@ -40,7 +40,7 @@ class RasterQualityTests(GDALCase):
             self.skipTest("Full COG validation requires GDAL >= 3.13 and Python bindings")
         source = self.classes()
         self.run_tool("gdal_translate", "-of", "COG", source, "output_cog.tif")
-        recipe = read_example("gdal-raster-basics/references/quality-checks.md",
+        recipe = read_example("gdal-raster-processing/references/quality-checks.md",
                               "## Structural COG validation", language="bash")
         self.run_tool("bash", "-eu", "-c", recipe)
         # Add overviews after image data to a conventional TIFF: invalid COG IFD ordering.

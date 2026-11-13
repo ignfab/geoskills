@@ -59,6 +59,8 @@ prompts can become scenarios.
   repository; summarize them in the Notes.
 - Add rows; never rewrite past runs. A rerun after a skill change is a new row with its own
   commit.
+- Run rows retain the skill names used at that commit. Current catalog expectations use
+  current names; [the naming guide](../../docs/skill-naming.md) maps renamed skills.
 - [test_prompt_log.py](../test_prompt_log.py) checks identifiers, families, skill names,
   statuses and rows.
 

@@ -1,5 +1,7 @@
 # Inspect an unfamiliar geospatial delivery
 
+**Family:** [3. Prepare and check](../README.md).
+
 Read-only inventory of formats, layers, metadata and missing CRS evidence.
 
 ## Requirements

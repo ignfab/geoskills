@@ -10,7 +10,7 @@ not a subset of an existing dataset.
 
 | Skill | Use it to |
 | --- | --- |
-| [geopandas-basics](geopandas-basics/README.md) | Process vector data in Python with GeoPandas: I/O, reprojection, spatial joins, overlay, buffers, zonal statistics. |
+| [geopandas-vector-analysis](geopandas-vector-analysis/README.md) | Process vector data in Python with GeoPandas: I/O, reprojection, spatial joins, overlay, buffers, zonal statistics. |
 | [geopf-altimetry](geopf-altimetry/README.md) | Discover terrain/surface resources, preserve missing elevations, join CSV rows and sample profiles. |
 | [geopf-routing](geopf-routing/README.md) | Discover navigation resources, choose units/direction and export route or isochrone geometry. |
 | [geospatial-descriptive-statistics](geospatial-descriptive-statistics/README.md) | Summarize numeric attributes, categories and missingness in one layer with explicit units and statistical conventions. |
@@ -24,12 +24,12 @@ not a subset of an existing dataset.
   combines source interpretation, analysis and optional QGIS delivery for one municipality.
 - [bdtopo-schema-guide](../1-discover/bdtopo-schema-guide/README.md) explains source-specific
   special values before BD TOPO statistics.
-- [gdal-raster-basics](../3-prepare/gdal-raster-basics/README.md) computes zonal
+- [gdal-raster-processing](../3-prepare/gdal-raster-processing/README.md) computes zonal
   statistics with `gdal raster zonal-stats` and terrain one-liners (hillshade, slope) with
   `gdaldem`.
-- [apicarto](../2-access/apicarto/README.md) intersects a point or an area with parcels,
+- [apicarto-query](../2-access/apicarto-query/README.md) intersects a point or an area with parcels,
   urban-planning zones, easements and protected areas on the server.
-- [gdal-vector-basics](../3-prepare/gdal-vector-basics/README.md) dissolves features and
+- [gdal-vector-processing](../3-prepare/gdal-vector-processing/README.md) dissolves features and
   computes areas with SQL on the command line.
 
 ## Not covered yet

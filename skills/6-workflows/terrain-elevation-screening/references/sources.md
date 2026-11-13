@@ -26,13 +26,13 @@ curl --fail --show-error --location --max-time 60 \
   --output download-capabilities.xml
 ```
 
-Follow advertised resource/folder/file links and pagination with `geopf-download-files`
+Follow advertised resource/folder/file links and pagination with `geopf-file-download`
 when available. Select intersecting tiles, recording product, edition, acquisition date
 if known, resolution, horizontal/vertical references, accuracy and licence. A catalogue
 bounding box is not evidence of complete valid coverage. Run downloads in the foreground
 with visible progress, bounded retries and transfer checks; do not truncate their output.
 
-For a small AOI, `geopf-wms-wmts` can obtain a numeric elevation extract if the service
+For a small AOI, `geopf-raster-download` can obtain a numeric elevation extract if the service
 advertises it. Inspect GetCapabilities for the layer, format, CRS and request limits;
 verify the resulting band actually contains elevations. Colour relief, hillshade and
 ordinary image tiles are not numeric terrain models. Split oversized requests on one

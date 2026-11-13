@@ -1,5 +1,7 @@
 # geospatial-descriptive-statistics
 
+**Family:** [4. Analyze and derive](../README.md).
+
 Reproducible attribute distributions for one table; no spatial joins or raster statistics.
 
 ## Requirements
@@ -24,4 +26,4 @@ npx skills add ignfab/geoskills --skill geospatial-descriptive-statistics
 The helper refuses an existing output directory. CSV contains `field,metric,value_json`:
 parse the last cell as JSON to retain nested categories, nulls and leading-zero strings.
 For territorial grouping use `spatial-aggregation`; for spatial primitives use
-[geopandas-basics](../geopandas-basics/README.md).
+[geopandas-vector-analysis](../geopandas-vector-analysis/README.md).

@@ -1,6 +1,6 @@
 ---
 name: geodata-intake
-description: Inspects unfamiliar local geospatial files or a mixed delivery to inventory formats, layers, CRSs, fields, extents and missing metadata before choosing a workflow. Use when the user asks what received GIS files contain or whether they are ready to use. For an already specified conversion, reprojection or geometry repair, use gdal-vector-basics, gdal-raster-basics, crs-reprojection-france or vector-data-quality directly.
+description: Inspects unfamiliar local geospatial files or a mixed delivery to inventory formats, layers, CRSs, fields, extents and missing metadata before choosing a workflow. Use when the user asks what received GIS files contain or whether they are ready to use. For an already specified conversion, reprojection or geometry repair, use gdal-vector-processing, gdal-raster-processing, crs-reprojection-france or vector-data-quality directly.
 ---
 
 # Inspect a geospatial delivery
@@ -43,8 +43,8 @@ inventory local files without checking their location and the requested scope.
   one. Coordinate ranges alone do not establish an EPSG code.
 - Vector repair/coverage audit: use `vector-data-quality` if available.
 - Confirmed reprojection: use `crs-reprojection-france` for French CRSs if available.
-- Raster processing: use `gdal-raster-basics`; vector conversion, encoding or clipping on
-  the command line: `gdal-vector-basics`; vector joins/overlay: `geopandas-basics`.
+- Raster processing: use `gdal-raster-processing`; vector conversion, encoding or clipping on
+  the command line: `gdal-vector-processing`; vector joins/overlay: `geopandas-vector-analysis`.
 - Known online service task: use its specialized skill directly. Do not install skills.
 
 Read [inspection details](references/inspection.md) for CSVs, sidecars and large inputs.

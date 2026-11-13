@@ -55,7 +55,7 @@ class TransferTests(unittest.TestCase):
     def run_recipe(self, resume=False):
         reference, heading = (("references/transfers.md", "## Resume an interrupted transfer") if resume
                               else ("SKILL.md", "## Download a selected file"))
-        recipe = read_example("geopf-download-files/" + reference, heading, language="bash")
+        recipe = read_example("geopf-file-download/" + reference, heading, language="bash")
         env = dict(os.environ, FILE_URL=f"http://127.0.0.1:{self.server.server_port}/archive.zip",
                    ETAG='"edition-1"', NO_PROXY="127.0.0.1", no_proxy="127.0.0.1")
         return subprocess.run(["bash", "-eu", "-c", recipe], cwd=self.output, env=env,

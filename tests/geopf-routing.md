@@ -41,7 +41,7 @@ in the arrival direction for 300 seconds.
 > Explique comment créer un tampon géométrique de 500 mètres autour de points locaux
 > déjà en EPSG:2154, sans utiliser un réseau routier ou un service distant.
 
-**Expected skill:** `geopandas-basics` or local vector tools, not `geopf-routing`.
+**Expected skill:** `geopandas-vector-analysis` or local vector tools, not `geopf-routing`.
 
 - [ ] uses a metric buffer in EPSG:2154
 - [ ] makes no Navigation API request

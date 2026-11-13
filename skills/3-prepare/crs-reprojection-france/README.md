@@ -1,5 +1,7 @@
 # crs-reprojection-france
 
+**Family:** [3. Prepare and check](../README.md).
+
 Choose the right coordinate reference system for French data (Lambert-93, CC zones, NTF,
 the overseas UTM systems) and reproject vectors, rasters and points with GDAL, PROJ and
 pyproj, without the usual pitfalls.

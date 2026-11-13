@@ -40,7 +40,7 @@ declare no CRS, and the report keeps that absence explicit.
 > Convertis `data/saint_mande.geojson` en `output/commune.gpkg`, en conservant son système
 > de coordonnées et ses attributs.
 
-**Expected skill:** `gdal-vector-basics` (or `geopandas-basics`), not `geodata-intake`: the
+**Expected skill:** `gdal-vector-processing` (or `geopandas-vector-analysis`), not `geodata-intake`: the
 user asks for one direct conversion, not an inventory of a delivery.
 
 - [ ] converts directly, keeping EPSG:4326 and the attributes

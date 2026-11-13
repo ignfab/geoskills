@@ -9,8 +9,8 @@ Download WFS layers from the French Géoplateforme (data.geopf.fr) and convert t
 vector formats using **ogr2ogr**.
 
 To process the downloaded layers in Python (joins, buffers, overlays), see the
-`geopandas-basics` skill. The WFS serves vector features only: for orthophotos and other map
-images, use `geopf-wms-wmts`.
+`geopandas-vector-analysis` skill. The WFS serves vector features only: for orthophotos and other map
+images, use `geopf-raster-download`.
 
 ## Prerequisites
 

@@ -68,7 +68,7 @@ curl -fsS --max-time 30 "https://data.geopf.fr/geocodage/search?index=parcel&dep
 The filters accept both short and zero-padded values (`section=D` or `0D`, `number=50` or
 `0050`). The parcel `id` always uses the padded form: a two-character section and a
 four-digit number. The response carries no official area: for the `contenance`, every
-parcel of a municipality or section, or the parcels in an area, use the `apicarto` skill.
+parcel of a municipality or section, or the parcels in an area, use the `apicarto-query` skill.
 
 Find a POI and get its real geometry as well:
 

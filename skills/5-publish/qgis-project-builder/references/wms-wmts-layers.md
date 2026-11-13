@@ -1,7 +1,7 @@
 # Optional public basemaps
 
 Discover advertised names from capabilities; a historical Plan IGN identifier is not
-proof of present availability. Use `geopf-wms-wmts` if installed, or inspect the public
+proof of present availability. Use `geopf-raster-download` if installed, or inspect the public
 service metadata directly. Never add passwords, tokens, API keys or QGIS authcfg references
 to a deliverable intended to be public. Interactive authentication is outside this skill.
 

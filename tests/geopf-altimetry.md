@@ -42,7 +42,7 @@ documented join on these two fixtures.
 > Explique comment assembler les deux dalles de `data/mnt_dalles/` en un raster local.
 > Leur projection source confirmée est EPSG:2154. Aucun appel réseau n'est nécessaire.
 
-**Expected skill:** `gdal-raster-basics`, not `geopf-altimetry`.
+**Expected skill:** `gdal-raster-processing`, not `geopf-altimetry`.
 
 - [ ] builds a local mosaic (`gdalbuildvrt` with `-a_srs EPSG:2154`)
 - [ ] makes no elevation API request

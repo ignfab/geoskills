@@ -1,5 +1,7 @@
 # bdtopo-schema-guide
 
+**Family:** [1. Discover and select](../README.md).
+
 Version-aware BD TOPO semantics for buildings and roads, with traceable IGN sources.
 
 ## Requirements

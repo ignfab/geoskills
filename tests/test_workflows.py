@@ -166,7 +166,7 @@ class LocalWorkflowTests(GDALCase):
         self.run_tool("gdal_translate", "-a_srs", "EPSG:2154", "-a_nodata", "none",
                       source, input_path)
         self.assertNotIn("noDataValue", self.info(input_path)["bands"][0])
-        recipe = read_example("gdal-raster-basics/references/gdalwarp-options.md",
+        recipe = read_example("gdal-raster-processing/references/gdalwarp-options.md",
                               "## Nodata", language="bash")
         self.run_tool("bash", "-eu", "-c", recipe)
         target = self.output / "output.tif"

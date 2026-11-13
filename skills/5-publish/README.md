@@ -16,11 +16,11 @@ delivery formats, maps, styles and metadata.
 
 - [municipality-building-profile](../6-workflows/municipality-building-profile/README.md)
   combines source interpretation, analysis and optional QGIS delivery for one municipality.
-- [gdal-raster-basics](../3-prepare/gdal-raster-basics/README.md) writes Cloud Optimized
+- [gdal-raster-processing](../3-prepare/gdal-raster-processing/README.md) writes Cloud Optimized
   GeoTIFFs (COG) with overviews for delivery.
-- [gdal-vector-basics](../3-prepare/gdal-vector-basics/README.md) exports RFC 7946 GeoJSON
+- [gdal-vector-processing](../3-prepare/gdal-vector-processing/README.md) exports RFC 7946 GeoJSON
   for the web, Shapefiles and GeoPackages.
-- [geopf-services](../1-discover/geopf-services/README.md) covers the Géoplateforme display
+- [geopf-service-selection](../1-discover/geopf-service-selection/README.md) covers the Géoplateforme display
   services (WMS, WMTS, vector tiles), which show data without downloading it.
 
 ## Not covered yet

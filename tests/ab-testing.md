@@ -460,7 +460,7 @@ GeoPandas stack; **QGIS** installed PyQGIS 3.34–3.x with compatible Qt. *Watch
 useful, B fails there. *Control* scenarios are expected to pass in both modes; a skill
 whose scenarios are all controls adds nothing measurable.
 
-### [geopf-services](geopf-services.md)
+### [geopf-service-selection](geopf-service-selection.md)
 
 These scenarios ask for advice only. No data download, upload, calculation or account is
 needed. Web access can check official guides; distinguish advice from live availability.
@@ -479,10 +479,10 @@ needed. Web access can check official guides; distinguish advice from live avail
 
 | Scenario | Modes | Needs | Watch in B |
 |----------|-------|-------|------------|
-| GEO-01 | A + B | NET | `data.geopf.fr/geocodage` rather than another geocoder or an API key; `apicarto` not loaded in A |
+| GEO-01 | A + B | NET | `data.geopf.fr/geocodage` rather than another geocoder or an API key; `apicarto-query` not loaded in A |
 | GEO-02 | A + B | NET | one `POST /search/csv`; `postcode=` given a column name; encoding trap on row 1; rows 6–8 flagged |
 | GEO-03 | A + B | NET | lon/lat order (point 3 is in Réunion) |
-| GEO-04 | A + B | NET | `index=parcel` and `truegeometry` promoted, or `apicarto` `cadastre/parcelle`: a `Point` output fails |
+| GEO-04 | A + B | NET | `index=parcel` and `truegeometry` promoted, or `apicarto-query` `cadastre/parcelle`: a `Point` output fails |
 | GEO-05 | A + B | — | control |
 | GEO-06 | A + B | — | explicit policy, ambiguity, row conservation and reasons |
 | GEO-N1 | A | — | `geopf-geocoding` not loaded, no call to `data.geopf.fr` |
@@ -498,7 +498,7 @@ needed. Web access can check official guides; distinguish advice from live avail
 | CRS-05 | A + B | GDAL or PY | control: area in EPSG:2154, not EPSG:3857 |
 | CRS-N1 | A | — | `crs-reprojection-france` not loaded; coordinates unchanged |
 
-### [gdal-raster-basics](gdal-raster-basics.md)
+### [gdal-raster-processing](gdal-raster-processing.md)
 
 | Scenario | Modes | Needs | Watch in B |
 |----------|-------|-------|------------|
@@ -510,7 +510,7 @@ needed. Web access can check official guides; distinguish advice from live avail
 | RAS-06 | A + B | GDAL | class zero remains valid; no interpolation; full COG check distinguished |
 | RAS-N1 | A | NET | `geopf-altimetry` loaded, no DEM tile downloaded |
 
-### [geopf-wms-wmts](geopf-wms-wmts.md)
+### [geopf-raster-download](geopf-raster-download.md)
 
 | Scenario | Modes | Needs | Watch in B |
 |----------|-------|-------|------------|
@@ -532,7 +532,7 @@ needed. Web access can check official guides; distinguish advice from live avail
 | WFS-05 | A + B | — | missing CLI: user-run installation choices, no silent Python substitution |
 | WFS-06 | A + B | — | Python proposed only as an agreed last resort, without installing software |
 | WFS-07 | A + B | — | equal counts with duplicated source IDs remain unverified |
-| WFS-N1 | A | NET | `geopf-wms-wmts` loaded |
+| WFS-N1 | A | NET | `geopf-raster-download` loaded |
 
 ### [geoserver-cql-filter](geoserver-cql-filter.md)
 
@@ -547,7 +547,7 @@ All CQL scenarios use supplied metadata and require no live service.
 | CQL-N1 | A | — | PostGIS SQL kept separate from ECQL |
 | CQL-N2 | A | — | OGC API CQL2 kept separate from GeoServer vendor syntax |
 
-### [geopandas-basics](geopandas-basics.md)
+### [geopandas-vector-analysis](geopandas-vector-analysis.md)
 
 | Scenario | Modes | Needs | Watch in B |
 |----------|-------|-------|------------|
@@ -564,7 +564,7 @@ All CQL scenarios use supplied metadata and require no live service.
 | VDQ-01 | A + B | PY | null, empty and invalid separated; `make_valid()`; new file re-audited |
 | VDQ-02 | A + B | PY | `normalize()` before `duplicated()`; null and empty excluded |
 | VDQ-03 | A + B | PY or GDAL ≥ 3.12 | coverage checked, not only `is_valid`; overlap, enclosed gap and narrow gap found; sliver not called a gap |
-| VDQ-N1 | A | PY | `geopandas-basics` loaded, not `vector-data-quality` |
+| VDQ-N1 | A | PY | `geopandas-vector-analysis` loaded, not `vector-data-quality` |
 | VDQ-N2 | A | PY | `crs-reprojection-france` loaded, not `vector-data-quality`; no geometry repair |
 
 ### [mapshaper-simplify](mapshaper-simplify.md)
@@ -576,7 +576,7 @@ All CQL scenarios use supplied metadata and require no live service.
 | MS-03 | A + B | — | `keep-shapes` does not preserve every multipart island or hole |
 | MS-04 | A + B | Mapshaper, PY | independent variants from the source; measured size and geometry changes |
 | MS-N1 | A | PY | geometry repair without simplification; `vector-data-quality` selected |
-| MS-N2 | A | GDAL | raster resampling handled by `gdal-raster-basics` |
+| MS-N2 | A | GDAL | raster resampling handled by `gdal-raster-processing` |
 
 ### [geodata-intake](geodata-intake.md)
 
@@ -586,7 +586,7 @@ All CQL scenarios use supplied metadata and require no live service.
 | INT-02 | A + B | — | latitude-first CSV; overseas point |
 | INT-N1 | A | GDAL or PY | explicit conversion bypasses inventory |
 
-### [geopf-download-files](geopf-download-files.md)
+### [geopf-file-download](geopf-file-download.md)
 
 | Scenario | Modes | Needs | Watch in B |
 | --- | --- | --- | --- |
@@ -611,7 +611,7 @@ All CQL scenarios use supplied metadata and require no live service.
 | RTE-02 | A + B | NET, GDAL or PY | arrival direction and explicit duration units |
 | RTE-N1 | A | — | geometric buffer bypasses network routing |
 
-### [gdal-vector-basics](gdal-vector-basics.md)
+### [gdal-vector-processing](gdal-vector-processing.md)
 
 | Scenario | Modes | Needs | Watch in B |
 | --- | --- | --- | --- |
@@ -619,10 +619,10 @@ All CQL scenarios use supplied metadata and require no live service.
 | GVB-02 | A + B | GDAL | second layer added with `-update`; first layer still present |
 | GVB-03 | A + B | GDAL | box CRS stated; geometries cut; 319 m² in Lambert-93, not zero features |
 | GVB-04 | A + B | GDAL | explicit encoding and `.cpg`; field mapping reported; no `?` in the text |
-| GVB-N1 | A | PY | `geopandas-basics` loaded, not `gdal-vector-basics` |
-| GVB-N2 | A | NET, GDAL | `geopf-wfs-download` loaded, not `gdal-vector-basics` |
+| GVB-N1 | A | PY | `geopandas-vector-analysis` loaded, not `gdal-vector-processing` |
+| GVB-N2 | A | NET, GDAL | `geopf-wfs-download` loaded, not `gdal-vector-processing` |
 
-### [apicarto](apicarto.md)
+### [apicarto-query](apicarto-query.md)
 
 | Scenario | Modes | Needs | Watch in B |
 | --- | --- | --- | --- |
@@ -637,7 +637,7 @@ All CQL scenarios use supplied metadata and require no live service.
 | --- | --- | --- | --- |
 | GDS-01 | A + B | PY | mean/median 10, sum 30, sample std 10, quartiles 5/15, missing 25 %; strict JSON |
 | GDS-02 | A + B | PY | string IDs kept, counts 2/1/1 and frequencies 0.5/0.25/0.25 |
-| GDS-N1 | A | PY | `gdal-raster-basics` or `geopandas-basics` loaded; no single-layer summary |
+| GDS-N1 | A | PY | `gdal-raster-processing` or `geopandas-vector-analysis` loaded; no single-layer summary |
 | GDS-N2 | A | PY | `spatial-aggregation` loaded; no single-layer summary |
 
 ### [qgis-layer-styling](qgis-layer-styling.md)
@@ -655,7 +655,7 @@ All CQL scenarios use supplied metadata and require no live service.
 | SPA-01 | A + B | PY | `within`; counts 2/1/0 for 001/002/NA; `edge` and `outside` unmatched; string IDs |
 | SPA-02 | A + B | PY | `intersects` + `all`; `edge` counted twice; counts 3/2/0, sums 40/30/0, means 13.33/30, empty mean null |
 | SPA-N1 | A | PY | `geospatial-descriptive-statistics` loaded; no zone join |
-| SPA-N2 | A | PY | `gdal-raster-basics` or `geopandas-basics` loaded; no vector aggregation |
+| SPA-N2 | A | PY | `gdal-raster-processing` or `geopandas-vector-analysis` loaded; no vector aggregation |
 
 ### [bdtopo-schema-guide](bdtopo-schema-guide.md)
 
@@ -693,7 +693,7 @@ All CQL scenarios use supplied metadata and require no live service.
 | TES-02 | A + B | GDAL | degree slope, 8 selected / 16 rejected / 25 unknown cells, 800 m²; terrain candidates without landing suitability claims |
 | TES-03 | A + B | GDAL | empty layer retains CRS/schema; 48 valid rejected cells distinguished from missing coverage |
 | TES-N1 | A | NET | `geopf-altimetry` retrieves points; no area workflow |
-| TES-N2 | A | GDAL | `gdal-raster-basics` clips only; no threshold or site analysis |
+| TES-N2 | A | GDAL | `gdal-raster-processing` clips only; no threshold or site analysis |
 
 ### [map-illustration](map-illustration.md)
 
@@ -741,22 +741,22 @@ Summarize per skill over the three repetitions:
 
 | Skill | A pass | B pass | A − B | Cost A / B | Verdict |
 |-------|--------|--------|-------|------------|---------|
-| geopf-services | /15 | /15 | | | |
+| geopf-service-selection | /15 | /15 | | | |
 | geopf-geocoding | /18 | /18 | | | |
 | crs-reprojection-france | /15 | /15 | | | |
-| gdal-raster-basics | /18 | /18 | | | |
-| geopf-wms-wmts | /15 | /15 | | | |
+| gdal-raster-processing | /18 | /18 | | | |
+| geopf-raster-download | /15 | /15 | | | |
 | geopf-wfs-download | /21 | /21 | | | |
 | geoserver-cql-filter | /12 | /12 | | | |
-| geopandas-basics | /12 | /12 | | | |
+| geopandas-vector-analysis | /12 | /12 | | | |
 | vector-data-quality | /9 | /9 | | | |
 | mapshaper-simplify | /12 | /12 | | | |
 | geodata-intake | /6 | /6 | | | |
-| geopf-download-files | /6 | /6 | | | |
+| geopf-file-download | /6 | /6 | | | |
 | geopf-altimetry | /6 | /6 | | | |
 | geopf-routing | /6 | /6 | | | |
-| gdal-vector-basics | /12 | /12 | | | |
-| apicarto | /9 | /9 | | | |
+| gdal-vector-processing | /12 | /12 | | | |
+| apicarto-query | /9 | /9 | | | |
 | geospatial-descriptive-statistics | /6 | /6 | | | |
 | qgis-layer-styling | /6 | /6 | | | |
 | spatial-aggregation | /6 | /6 | | | |

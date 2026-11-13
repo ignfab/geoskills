@@ -7,7 +7,7 @@ description: "Simplifies polygon boundaries with Mapshaper while preserving shar
 
 Simplify adjacent polygons together so their common borders remain coincident. This is
 cartographic generalization: areas, holes and small islands can change. Use
-`vector-data-quality` for geometry repair and `gdal-raster-basics` for raster processing.
+`vector-data-quality` for geometry repair and `gdal-raster-processing` for raster processing.
 
 ## Prerequisites
 

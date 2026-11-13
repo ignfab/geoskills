@@ -9,15 +9,15 @@ contains details loaded only when needed.
 
 | Need | Start with | Boundary |
 | --- | --- | --- |
-| Choose a Géoplateforme service | [geopf-services](../skills/1-discover/geopf-services/README.md) | Route to the relevant extraction or calculation skill once the service is known. |
+| Choose a Géoplateforme service | [geopf-service-selection](../skills/1-discover/geopf-service-selection/README.md) | Route to the relevant extraction or calculation skill once the service is known. |
 | Understand a BD TOPO class or attribute | [bdtopo-schema-guide](../skills/1-discover/bdtopo-schema-guide/README.md) | The bundled guide covers a sourced building/road subset; unknown versions and mappings remain unverified. |
 | Produce a municipal building portrait | [municipality-building-profile](../skills/6-workflows/municipality-building-profile/README.md) | One municipality, shared building population, union footprint area and optional QGIS; no population or dwelling estimates. |
 | Screen terrain by altitude and slope | [terrain-elevation-screening](../skills/6-workflows/terrain-elevation-screening/README.md) | AOI-wide DEM filtering and candidate polygons with coverage checks; no helicopter landing suitability conclusion. |
 | Inspect an unfamiliar delivery | [geodata-intake](../skills/3-prepare/geodata-intake/README.md) | Identify files, layers and missing metadata before converting or analyzing them. |
 | Summarize one layer's values | [geospatial-descriptive-statistics](../skills/4-analyze/geospatial-descriptive-statistics/README.md) | Numeric and categorical distributions; no spatial assignment. |
 | Count or summarize objects by polygon zone | [spatial-aggregation](../skills/4-analyze/spatial-aggregation/README.md) | Declare border/overlap policies and reconcile unmatched or multiply matched objects. |
-| Perform general vector operations | [geopandas-basics](../skills/4-analyze/geopandas-basics/README.md) | Spatial joins, overlays and buffers; use [gdal-vector-basics](../skills/3-prepare/gdal-vector-basics/README.md) for command-line conversion and filtering. |
-| Compute raster zonal statistics | [gdal-raster-basics](../skills/3-prepare/gdal-raster-basics/README.md) | Account for grids, nodata and units; vector object counts are a different operation. |
+| Perform general vector operations | [geopandas-vector-analysis](../skills/4-analyze/geopandas-vector-analysis/README.md) | Spatial joins, overlays and buffers; use [gdal-vector-processing](../skills/3-prepare/gdal-vector-processing/README.md) for command-line conversion and filtering. |
+| Compute raster zonal statistics | [gdal-raster-processing](../skills/3-prepare/gdal-raster-processing/README.md) | Account for grids, nodata and units; vector object counts are a different operation. |
 | Illustrate existing data | [map-illustration](../skills/5-publish/map-illustration/README.md) | Static images by default, optional HTML, QGIS when useful; verify rendering and size, not new analysis. |
 | Create a reusable vector style | [qgis-layer-styling](../skills/5-publish/qgis-layer-styling/README.md) | Produces verified QML; it does not assemble a project or create a print layout. |
 | Assemble existing layers into a QGIS project | [qgis-project-builder](../skills/5-publish/qgis-project-builder/README.md) | Produces QGS/QGZ, optionally using existing QML; portability requires the data bundle as well. |
@@ -32,6 +32,7 @@ and lists further candidate chains that are not yet implemented.
 | Document | Purpose |
 | --- | --- |
 | [Contributing conventions](../CLAUDE.md) | Layout, language, agent conduct and the checklist for a new skill. Also exposed through `AGENTS.md`. |
+| [Skill names and families](skill-naming.md) | Naming convention, review of all 24 skills and old-to-current name correspondence. |
 | [Output reports](output-reports.md) | Shared terminology and evidence to include with different artifact types. |
 | [Test guide](../tests/README.md) | Current test inventory, prerequisites, offline checks, dedicated QGIS checks and opt-in live tests. |
 | [Fixture metadata](../tests/data/README.md) | Provenance, coordinate systems and intentional traps in test inputs. |
@@ -41,7 +42,8 @@ and lists further candidate chains that are not yet implemented.
 ## Dated evidence
 
 Reviews preserve what was checked at their stated date. Use the current test guide to run
-new checks; do not reinterpret an earlier partial run as a later success.
+new checks; do not reinterpret an earlier partial run as a later success. Historical skill
+names remain as recorded; see the [name correspondence](skill-naming.md) for current names.
 
 | Document | Scope |
 | --- | --- |

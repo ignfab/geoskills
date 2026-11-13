@@ -8,14 +8,14 @@ models and attribute meanings before choosing fields.
 
 | Skill | Use it to |
 | --- | --- |
-| [geopf-services](geopf-services/README.md) | Choose a Géoplateforme API for dataset discovery, maps, vector features, downloads, geocoding and geographic calculations. |
+| [geopf-service-selection](geopf-service-selection/README.md) | Choose a Géoplateforme API for dataset discovery, maps, vector features, downloads, geocoding and geographic calculations. |
 | [bdtopo-schema-guide](bdtopo-schema-guide/README.md) | Understand versioned BD TOPO building/road classes, field meanings and format mappings using sourced offline references. |
 
 ## Also relevant
 
 - [municipality-building-profile](../6-workflows/municipality-building-profile/README.md)
   combines source interpretation, analysis and optional QGIS delivery for one municipality.
-- [geopf-download-files](../2-access/geopf-download-files/README.md) selects a territory,
+- [geopf-file-download](../2-access/geopf-file-download/README.md) selects a territory,
   edition, format and CRS from the Download API metadata.
 - [geopf-altimetry](../4-analyze/geopf-altimetry/README.md) selects an elevation resource by
   product, coverage and resolution.

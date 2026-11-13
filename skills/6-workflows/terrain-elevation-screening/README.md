@@ -1,5 +1,7 @@
 # terrain-elevation-screening
 
+**Family:** [6. Solve a business need](../README.md).
+
 A business workflow for finding parts of an area that meet terrain elevation thresholds,
 with optional slope and minimum connected area filters. It produces elevation and
 selection rasters, candidate polygons and a coverage/method report.
@@ -35,8 +37,8 @@ authorization or site inspection is inferred from an elevation raster.
 ## Related skills
 
 [geopf-altimetry](../../4-analyze/geopf-altimetry/README.md) retrieves a few elevations or
-profiles; [gdal-raster-basics](../../3-prepare/gdal-raster-basics/README.md) handles raster
-operations alone; [geopf-download-files](../../2-access/geopf-download-files/README.md)
-and [geopf-wms-wmts](../../2-access/geopf-wms-wmts/README.md) acquire source data.
+profiles; [gdal-raster-processing](../../3-prepare/gdal-raster-processing/README.md) handles raster
+operations alone; [geopf-file-download](../../2-access/geopf-file-download/README.md)
+and [geopf-raster-download](../../2-access/geopf-raster-download/README.md) acquire source data.
 [qgis-project-builder](../../5-publish/qgis-project-builder/README.md) can package results.
 These skills remain independently installable.

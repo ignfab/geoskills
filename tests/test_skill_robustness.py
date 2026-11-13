@@ -1,6 +1,6 @@
 """Check the wording that keeps skill selection from depending on the model's own inference.
 
-A strong model can guess that "a raster skill" means `gdal-raster-basics`, or that a
+A strong model can guess that "a raster skill" means `gdal-raster-processing`, or that a
 request about a local file needs no Géoplateforme service; a smaller model often cannot.
 These checks require each skill to spell out what a model needs to choose correctly: when
 to use it, which skill to use instead at each boundary that a negative scenario tests, and

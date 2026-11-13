@@ -81,7 +81,7 @@ Run after WFS-01: the runner copies its output first (`ab_run WFS-03 with 1 WFS-
 > indisponible. Quelle solution de dernier recours proposes-tu ? N'installe rien et
 > n'exécute pas encore la conversion.
 
-**Expected skill:** `geopf-wfs-download`, with `geopandas-basics` only for an agreed
+**Expected skill:** `geopf-wfs-download`, with `geopandas-vector-analysis` only for an agreed
 Python fallback.
 
 - [ ] explains why the normal GDAL/container options are unavailable
@@ -117,10 +117,10 @@ counts match, but source ID `04` appears twice, so a record may be missing.
 
 > Télécharge l'orthophoto du Capitole de Toulouse.
 
-**Expected skill:** `geopf-wms-wmts`, not `geopf-wfs-download` (see
-[WMS-01](geopf-wms-wmts.md#wms-01--orthophoto-extract-in-lambert-93)): the WFS serves no
-imagery. `gdal-raster-basics` may be loaded as well for a
-conversion, but not instead of `geopf-wms-wmts`.
+**Expected skill:** `geopf-raster-download`, not `geopf-wfs-download` (see
+[WMS-01](geopf-raster-download.md#wms-01--orthophoto-extract-in-lambert-93)): the WFS serves no
+imagery. `gdal-raster-processing` may be loaded as well for a
+conversion, but not instead of `geopf-raster-download`.
 
 - [ ] retrieves the imagery through WMTS or WMS-R
 - [ ] does not query the WFS for imagery

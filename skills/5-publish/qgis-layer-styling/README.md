@@ -1,5 +1,7 @@
 # qgis-layer-styling
 
+**Family:** [5. Represent and publish](../README.md).
+
 Create reusable vector QML and verify it in a fresh layer instance.
 
 ## Requirements

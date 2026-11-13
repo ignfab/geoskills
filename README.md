@@ -33,15 +33,17 @@ into business workflows.
 
 | Family | Question | Skills |
 | --- | --- | --- |
-| [1. Discover and select](skills/1-discover/README.md) | Which data should be used for this request? | [geopf-services](skills/1-discover/geopf-services/README.md), [bdtopo-schema-guide](skills/1-discover/bdtopo-schema-guide/README.md) |
-| [2. Access and extract](skills/2-access/README.md) | How do I retrieve the right subset? | [geopf-download-files](skills/2-access/geopf-download-files/README.md), [geopf-wfs-download](skills/2-access/geopf-wfs-download/README.md), [geopf-wms-wmts](skills/2-access/geopf-wms-wmts/README.md), [geoserver-cql-filter](skills/2-access/geoserver-cql-filter/README.md), [apicarto](skills/2-access/apicarto/README.md), [geopf-geocoding](skills/2-access/geopf-geocoding/README.md) |
-| [3. Prepare and check](skills/3-prepare/README.md) | Is the data usable and compatible? | [geodata-intake](skills/3-prepare/geodata-intake/README.md), [crs-reprojection-france](skills/3-prepare/crs-reprojection-france/README.md), [gdal-vector-basics](skills/3-prepare/gdal-vector-basics/README.md), [gdal-raster-basics](skills/3-prepare/gdal-raster-basics/README.md), [vector-data-quality](skills/3-prepare/vector-data-quality/README.md) |
-| [4. Analyze and derive](skills/4-analyze/README.md) | What information should be computed? | [geopandas-basics](skills/4-analyze/geopandas-basics/README.md), [geopf-altimetry](skills/4-analyze/geopf-altimetry/README.md), [geopf-routing](skills/4-analyze/geopf-routing/README.md), [geospatial-descriptive-statistics](skills/4-analyze/geospatial-descriptive-statistics/README.md), [spatial-aggregation](skills/4-analyze/spatial-aggregation/README.md) |
+| [1. Discover and select](skills/1-discover/README.md) | Which data should be used for this request? | [geopf-service-selection](skills/1-discover/geopf-service-selection/README.md), [bdtopo-schema-guide](skills/1-discover/bdtopo-schema-guide/README.md) |
+| [2. Access and extract](skills/2-access/README.md) | How do I retrieve the right subset? | [geopf-file-download](skills/2-access/geopf-file-download/README.md), [geopf-wfs-download](skills/2-access/geopf-wfs-download/README.md), [geopf-raster-download](skills/2-access/geopf-raster-download/README.md), [geoserver-cql-filter](skills/2-access/geoserver-cql-filter/README.md), [apicarto-query](skills/2-access/apicarto-query/README.md), [geopf-geocoding](skills/2-access/geopf-geocoding/README.md) |
+| [3. Prepare and check](skills/3-prepare/README.md) | Is the data usable and compatible? | [geodata-intake](skills/3-prepare/geodata-intake/README.md), [crs-reprojection-france](skills/3-prepare/crs-reprojection-france/README.md), [gdal-vector-processing](skills/3-prepare/gdal-vector-processing/README.md), [gdal-raster-processing](skills/3-prepare/gdal-raster-processing/README.md), [vector-data-quality](skills/3-prepare/vector-data-quality/README.md) |
+| [4. Analyze and derive](skills/4-analyze/README.md) | What information should be computed? | [geopandas-vector-analysis](skills/4-analyze/geopandas-vector-analysis/README.md), [geopf-altimetry](skills/4-analyze/geopf-altimetry/README.md), [geopf-routing](skills/4-analyze/geopf-routing/README.md), [geospatial-descriptive-statistics](skills/4-analyze/geospatial-descriptive-statistics/README.md), [spatial-aggregation](skills/4-analyze/spatial-aggregation/README.md) |
 | [5. Represent and publish](skills/5-publish/README.md) | How do I make the result usable? | [map-illustration](skills/5-publish/map-illustration/README.md), [mapshaper-simplify](skills/5-publish/mapshaper-simplify/README.md), [qgis-layer-styling](skills/5-publish/qgis-layer-styling/README.md), [qgis-project-builder](skills/5-publish/qgis-project-builder/README.md) |
 | [6. Solve a business need](skills/6-workflows/README.md) | How do I chain the steps to reach an objective? | [municipality-building-profile](skills/6-workflows/municipality-building-profile/README.md), [terrain-elevation-screening](skills/6-workflows/terrain-elevation-screening/README.md) |
 
 Each family page describes its skills, lists the skills of other families that also serve
-it, and names the gaps.
+it, and names the gaps. Each skill README also displays its family. Names identify a tool
+or domain and its operation or result; the [naming guide](docs/skill-naming.md) records the
+convention and the correspondence with earlier names.
 
 ## Installation
 
