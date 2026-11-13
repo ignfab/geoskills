@@ -9,6 +9,8 @@ Deliver a project and verification report from **existing** data. Creating new c
 QML belongs to `qgis-layer-styling` when available; basic project creation works without
 it. `geodata-intake` can inspect unfamiliar inputs and `geopf-wms-wmts` can help discover
 IGN services. Neither is an installation dependency.
+For an image export of existing data/project or a small interactive HTML map, use
+`map-illustration`.
 
 ## Prerequisites
 

@@ -75,10 +75,10 @@ WFS-01 WFS-02 WFS-04 WFS-05 WFS-06 WFS-07 CQL-01 CQL-02 CQL-03 CQL-04
 GPD-01 GPD-02 GPD-03 GPD-04 VDQ-01 VDQ-02 VDQ-03 MS-01 MS-02 MS-03 MS-04
 INT-01 INT-02 DLF-01 DLF-02 ALT-01 ALT-02 RTE-01 RTE-02
 GVB-01 GVB-02 GVB-03 GVB-04 APC-01 APC-02 APC-03 GDS-01 GDS-02
-QLS-01 QLS-02 SPA-01 SPA-02 BTS-01 BTS-02 QPB-01 QPB-02 MBP-01 MBP-02 MBP-03 TES-01 TES-02 TES-03"
+QLS-01 QLS-02 SPA-01 SPA-02 BTS-01 BTS-02 QPB-01 QPB-02 MBP-01 MBP-02 MBP-03 TES-01 TES-02 TES-03 MAP-01 MAP-02 MAP-03 MAP-04"
 NEGATIVE="GSV-N1 GSV-N2 GEO-N1 CRS-N1 RAS-N1 WMS-N1 WFS-N1 CQL-N1 CQL-N2 GPD-N1 VDQ-N1 VDQ-N2
 MS-N1 MS-N2 INT-N1 DLF-N1 ALT-N1 RTE-N1 GVB-N1 GVB-N2 APC-N1 GDS-N1 GDS-N2
-QLS-N1 SPA-N1 SPA-N2 BTS-N1 BTS-N2 QPB-N1 MBP-N1 MBP-N2 MBP-N3 ALT-N2 TES-N1 TES-N2"
+QLS-N1 SPA-N1 SPA-N2 BTS-N1 BTS-N2 QPB-N1 MBP-N1 MBP-N2 MBP-N3 ALT-N2 TES-N1 TES-N2 MAP-N1 MAP-N2 MAP-N3"
 
 # Print the French prompt of a scenario or an experimental prompt (XP-NN), read from
 # tests/*.md, then tests/prompts/*.md.
@@ -416,9 +416,9 @@ source ab.sh
 AB_DRY=1 ab_campaign 1
 ```
 
-Then set `export AB=/path/to/a/new/campaign` for actual agent calls. One repetition has **195 runs**:
-80 positive scenarios in both modes and 35 negatives in A. At the example budget of $2 per
-run, the caps total $390 per repetition and $1170 for three repetitions. Starting the paid
+Then set `export AB=/path/to/a/new/campaign` for actual agent calls. One repetition has **206 runs**:
+84 positive scenarios in both modes and 38 negatives in A. At the example budget of $2 per
+run, the caps total $412 per repetition and $1236 for three repetitions. Starting the paid
 campaign is a separate user decision; a dry run does not authorize it.
 
 Smoke pass, one repetition:
@@ -695,6 +695,18 @@ All CQL scenarios use supplied metadata and require no live service.
 | TES-N1 | A | NET | `geopf-altimetry` retrieves points; no area workflow |
 | TES-N2 | A | GDAL | `gdal-raster-basics` clips only; no threshold or site analysis |
 
+### [map-illustration](map-illustration.md)
+
+| Scenario | Modes | Needs | Watch in B |
+| --- | --- | --- | --- |
+| MAP-01 | A + B | PY | actual PNG/SVG, 1400 × 1000 pixels, source/units, three features and measured bytes |
+| MAP-02 | A + B | QGIS | actual rendered red unfilled boundary; image rather than QML/QGZ |
+| MAP-03 | A + B | PY, browser | only selected attributes; interactions checked; Leaflet assets not mistaken for offline support |
+| MAP-04 | A + B | PY, GDAL | bounded raster display, valid zero versus nodata, no new terrain analysis |
+| MAP-N1 | A | QGIS | qgis-layer-styling creates QML only |
+| MAP-N2 | A | QGIS | qgis-project-builder assembles a portable project only |
+| MAP-N3 | A | MS | mapshaper-simplify changes display geometry, no illustration |
+
 ## Score a run
 
 For each row of `report.md`, in the run directory:
@@ -752,7 +764,8 @@ Summarize per skill over the three repetitions:
 | qgis-project-builder | /6 | /6 | | | |
 | municipality-building-profile | /9 | /9 | | | |
 | terrain-elevation-screening | /9 | /9 | | | |
-| Negative scenarios (A only) | /105 | — | — | — | |
+| map-illustration | /12 | /12 | | | |
+| Negative scenarios (A only) | /114 | — | — | — | |
 
 ## Model sensitivity
 
@@ -783,9 +796,9 @@ for model in $AB_MODELS; do AB="$AB/models/$model" ab_report; done
 ab_sensitivity
 ```
 
-`ab_panel` lists **46 scenarios**, the first positive and the first negative of each skill:
-**138 runs** per repetition with the 3 models of `AB_MODELS`, capped at $276. A full sweep
-runs all 115 scenarios: 345 runs, capped at $690 per repetition. Starting a paid sweep is a
+`ab_panel` lists **48 scenarios**, the first positive and the first negative of each skill:
+**144 runs** per repetition with the 3 models of `AB_MODELS`, capped at $288. A full sweep
+runs all 122 scenarios: 366 runs, capped at $732 per repetition. Starting a paid sweep is a
 separate user decision; a dry run does not authorize it.
 
 `$AB/sensitivity.md` has four tables:

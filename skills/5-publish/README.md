@@ -7,6 +7,7 @@ delivery formats, maps, styles and metadata.
 
 | Skill | Use it to |
 | --- | --- |
+| [map-illustration](map-illustration/README.md) | Produce lightweight map images by default, optional interactive HTML, or reuse QGIS project rendering; verify readability, bytes and external dependencies. |
 | [mapshaper-simplify](mapshaper-simplify/README.md) | Simplify polygon boundaries with Mapshaper, preserve shared borders and export lighter GeoJSON or TopoJSON. |
 | [qgis-layer-styling](qgis-layer-styling/README.md) | Create and reload reusable vector QML: single symbols, categorized fields and graduated numeric classes. |
 | [qgis-project-builder](qgis-project-builder/README.md) | Assemble existing vector/raster data into reopenable QGIS projects, with relative paths, QML inputs and optional verified public basemaps. |

@@ -180,3 +180,28 @@ with few or no skills and the chains behind business needs. Runs are recorded in
 - **Expected skills:** `terrain-elevation-screening`
 - **Watch:** Synthetic data only, valid zero and nodata preserved, Horn degree slopes without interpolated edges, 8/16/25 selected/rejected/unknown cells and one 800 m² candidate. Reopened outputs, unchanged sources and explicit unresolved operational assessment. Thresholds are study inputs, not aviation recommendations.
 - **Status:** open
+
+## XP-16 — Lightweight static map and interactive companion
+
+> Illustre `data/admin_units_synthetic.geojson` avec un titre et une source indiquant
+> qu’il s’agit de données fictives. Sans QGIS, fournis un PNG de 1 400 × 1 000 pixels,
+> un SVG et un HTML interactif sans fond de carte, avec seulement unit_id et label dans
+> les infobulles. Utilise population comme couleur, en habitants fictifs. Vérifie les
+> rendus et les interactions, indique les poids réels et les dépendances réseau.
+
+- **Family:** `5-publish`
+- **Expected skills:** `map-illustration`
+- **Watch:** Actual static and browser previews, three features, continuous 10–30 scale, readable title/units/source, selected tooltips/IDs, measured bytes and two declared Leaflet assets. No QGIS dependency or unsupported offline claim; unchanged sources.
+- **Status:** open
+
+## XP-17 — QGIS illustration export
+
+> Avec QGIS déjà installé, produis une illustration PNG de `data/saint_mande.geojson`,
+> avec un contour rouge sans remplissage, un titre « Saint-Mandé » et la source IGN.
+> Vérifie le rendu visuellement et donne les dimensions et le poids du fichier.
+> Ne livre pas de projet QGIS ni de fichier QML et ne modifie pas les données.
+
+- **Family:** `5-publish`
+- **Expected skills:** `map-illustration`
+- **Watch:** Real PyQGIS render and PNG preview, correct unfilled red boundary, title/source, projected CRS and sensible extent, no source edits or substitute QGZ/QML deliverable.
+- **Status:** open

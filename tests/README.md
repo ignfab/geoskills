@@ -102,11 +102,18 @@ that file: `-01`, `-02`… for positive scenarios and `-N1`, `-N2`… for negati
 | `qgis-project-builder` | [QPB](qgis-project-builder.md): 2 + 1 | `test_qgis_project_builder.py` (needs PyQGIS) | — |
 | `municipality-building-profile` | [MBP](municipality-building-profile.md): 3 + 3 | `test_municipality_building_profile.py` (GeoPandas) | — |
 | `terrain-elevation-screening` | [TES](terrain-elevation-screening.md): 3 + 2 | `test_terrain_elevation_screening.py` (GDAL recipes) | — |
+| `map-illustration` | [MAP](map-illustration.md): 4 + 3 | `test_map_illustration.py`, `test_qgis_map_illustration.py` | — |
 
 `geopf-services` and `geopf-wms-wmts` have no offline test: their value is advice and
 remote requests, so only the live tests and the agent scenarios exercise them.
 
 ## Offline tests
+
+Map illustration tests reopen real PNG/SVG/PDF outputs, check dimensions, numeric/missing
+values, selected HTML attributes and external assets, exercise a bounded raster preview,
+and check QGIS visible-layer rendering. They use Matplotlib/Folium from
+`requirements-geospatial.txt`; QGIS rendering runs in the dedicated QGIS job. Browser and
+visual inspections are separate author/agent checks recorded in the experimental log.
 
 The terrain workflow's [recipe tests](test_terrain_elevation_screening.py) execute the
 documented commands on synthetic rasters: inclusive and negative altitudes, valid zero,

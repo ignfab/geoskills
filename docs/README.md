@@ -18,6 +18,7 @@ contains details loaded only when needed.
 | Count or summarize objects by polygon zone | [spatial-aggregation](../skills/4-analyze/spatial-aggregation/README.md) | Declare border/overlap policies and reconcile unmatched or multiply matched objects. |
 | Perform general vector operations | [geopandas-basics](../skills/4-analyze/geopandas-basics/README.md) | Spatial joins, overlays and buffers; use [gdal-vector-basics](../skills/3-prepare/gdal-vector-basics/README.md) for command-line conversion and filtering. |
 | Compute raster zonal statistics | [gdal-raster-basics](../skills/3-prepare/gdal-raster-basics/README.md) | Account for grids, nodata and units; vector object counts are a different operation. |
+| Illustrate existing data | [map-illustration](../skills/5-publish/map-illustration/README.md) | Static images by default, optional HTML, QGIS when useful; verify rendering and size, not new analysis. |
 | Create a reusable vector style | [qgis-layer-styling](../skills/5-publish/qgis-layer-styling/README.md) | Produces verified QML; it does not assemble a project or create a print layout. |
 | Assemble existing layers into a QGIS project | [qgis-project-builder](../skills/5-publish/qgis-project-builder/README.md) | Produces QGS/QGZ, optionally using existing QML; portability requires the data bundle as well. |
 
