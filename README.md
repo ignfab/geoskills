@@ -9,7 +9,7 @@ The skills are created by [IGN](https://www.ign.fr/), the French national mappin
 (Institut national de l'information géographique et forestière). The repository aims to
 serve as a reference collection of agent skills for geomatics and geospatial data processing.
 
-The repository contains **22 independently installable skills**. It remains experimental:
+The repository contains **23 independently installable skills**. It remains experimental:
 automated checks and agent pilots are available, but a full comparative evaluation has not
 yet established the stability of every skill.
 
@@ -38,7 +38,7 @@ into business workflows.
 | [3. Prepare and check](skills/3-prepare/README.md) | Is the data usable and compatible? | [geodata-intake](skills/3-prepare/geodata-intake/README.md), [crs-reprojection-france](skills/3-prepare/crs-reprojection-france/README.md), [gdal-vector-basics](skills/3-prepare/gdal-vector-basics/README.md), [gdal-raster-basics](skills/3-prepare/gdal-raster-basics/README.md), [vector-data-quality](skills/3-prepare/vector-data-quality/README.md) |
 | [4. Analyze and derive](skills/4-analyze/README.md) | What information should be computed? | [geopandas-basics](skills/4-analyze/geopandas-basics/README.md), [geopf-altimetry](skills/4-analyze/geopf-altimetry/README.md), [geopf-routing](skills/4-analyze/geopf-routing/README.md), [geospatial-descriptive-statistics](skills/4-analyze/geospatial-descriptive-statistics/README.md), [spatial-aggregation](skills/4-analyze/spatial-aggregation/README.md) |
 | [5. Represent and publish](skills/5-publish/README.md) | How do I make the result usable? | [mapshaper-simplify](skills/5-publish/mapshaper-simplify/README.md), [qgis-layer-styling](skills/5-publish/qgis-layer-styling/README.md), [qgis-project-builder](skills/5-publish/qgis-project-builder/README.md) |
-| [6. Solve a business need](skills/6-workflows/README.md) | How do I chain the steps to reach an objective? | [municipality-building-profile](skills/6-workflows/municipality-building-profile/README.md) |
+| [6. Solve a business need](skills/6-workflows/README.md) | How do I chain the steps to reach an objective? | [municipality-building-profile](skills/6-workflows/municipality-building-profile/README.md), [terrain-elevation-screening](skills/6-workflows/terrain-elevation-screening/README.md) |
 
 Each family page describes its skills, lists the skills of other families that also serve
 it, and names the gaps.
@@ -164,6 +164,9 @@ travailler la donnée géographique. Elles sont regroupées en six familles, une
 
 **Résoudre un besoin métier** : comment assembler les étapes pour répondre à un objectif ?
 
+- présélection de zones selon l’altitude du terrain, la pente et la surface, avec contrôle
+  des données manquantes ; le cas hélicoptère prépare une analyse géographique sans valider
+  l’aptitude d’un site à l’atterrissage ;
 - portrait du bâti d’une commune : nombre d’objets, surface bâtie sans doubles comptes,
   hauteurs et usages documentés, avec livraison QGIS facultative ;
 - d’autres cas d’usage (accessibilité, exposition, suivi d’évolution) restent à explorer.

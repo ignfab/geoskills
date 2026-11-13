@@ -46,3 +46,14 @@ documented join on these two fixtures.
 
 - [ ] builds a local mosaic (`gdalbuildvrt` with `-a_srs EPSG:2154`)
 - [ ] makes no elevation API request
+
+## ALT-N2 — Negative: area-wide terrain screening
+
+> Sur l’emprise de `data/terrain_screening_aoi.geojson`, sélectionne les zones de terrain
+> entre 0 et 100 mètres inclus avec `data/terrain_screening.asc`. Utilise les métadonnées
+> de `data/README.md` et livre les polygones candidats et le bilan de couverture.
+
+**Expected skill:** `terrain-elevation-screening`, not `geopf-altimetry`.
+
+- [ ] Uses the area workflow and local DEM; no point API sampling.
+- [ ] Preserves missing data, retains 27 cells and exports 2,700 m² of candidate terrain.

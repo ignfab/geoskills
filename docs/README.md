@@ -12,6 +12,7 @@ contains details loaded only when needed.
 | Choose a Géoplateforme service | [geopf-services](../skills/1-discover/geopf-services/README.md) | Route to the relevant extraction or calculation skill once the service is known. |
 | Understand a BD TOPO class or attribute | [bdtopo-schema-guide](../skills/1-discover/bdtopo-schema-guide/README.md) | The bundled guide covers a sourced building/road subset; unknown versions and mappings remain unverified. |
 | Produce a municipal building portrait | [municipality-building-profile](../skills/6-workflows/municipality-building-profile/README.md) | One municipality, shared building population, union footprint area and optional QGIS; no population or dwelling estimates. |
+| Screen terrain by altitude and slope | [terrain-elevation-screening](../skills/6-workflows/terrain-elevation-screening/README.md) | AOI-wide DEM filtering and candidate polygons with coverage checks; no helicopter landing suitability conclusion. |
 | Inspect an unfamiliar delivery | [geodata-intake](../skills/3-prepare/geodata-intake/README.md) | Identify files, layers and missing metadata before converting or analyzing them. |
 | Summarize one layer's values | [geospatial-descriptive-statistics](../skills/4-analyze/geospatial-descriptive-statistics/README.md) | Numeric and categorical distributions; no spatial assignment. |
 | Count or summarize objects by polygon zone | [spatial-aggregation](../skills/4-analyze/spatial-aggregation/README.md) | Declare border/overlap policies and reconcile unmatched or multiply matched objects. |
@@ -22,7 +23,7 @@ contains details loaded only when needed.
 
 The skills are independently installable. Related skills can complement one another;
 installing a whole family is not a prerequisite for using one skill. The
-[workflow family](../skills/6-workflows/README.md) contains the municipal building portrait
+[workflow family](../skills/6-workflows/README.md) contains the municipal building portrait and terrain screening
 and lists further candidate chains that are not yet implemented.
 
 ## Contributor and validation guides

@@ -8,6 +8,7 @@ skills remain independently useful for narrower requests.
 
 | Skill | Use it to |
 | --- | --- |
+| [terrain-elevation-screening](terrain-elevation-screening/README.md) | Filter terrain over an area by altitude, optional slope and connected area, with candidate polygons and explicit coverage; supports preliminary helicopter terrain screening without validating landing suitability. |
 | [municipality-building-profile](municipality-building-profile/README.md) | Produce one municipality's building counts, union footprint coverage, height/usage summaries and optional portable QGIS delivery, with explicit source and boundary rules. |
 
 ## Further workflow candidates

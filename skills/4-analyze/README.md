@@ -18,6 +18,8 @@ not a subset of an existing dataset.
 
 ## Also relevant
 
+- [terrain-elevation-screening](../6-workflows/terrain-elevation-screening/README.md)
+  chains DEM acquisition, altitude/slope filtering and candidate-area delivery over an AOI.
 - [municipality-building-profile](../6-workflows/municipality-building-profile/README.md)
   combines source interpretation, analysis and optional QGIS delivery for one municipality.
 - [bdtopo-schema-guide](../1-discover/bdtopo-schema-guide/README.md) explains source-specific
