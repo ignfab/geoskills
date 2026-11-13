@@ -1,6 +1,6 @@
 ---
 name: geopf-download-files
-description: Discovers and downloads ready-made dataset archives and tiles from the French Géoplateforme Download API, selecting territory, edition, format and CRS and checking partial transfers. Use for bulk IGN file deliveries or offline product packages. Use the WFS skill for filtered features and the WMS/WMTS skill for map images.
+description: Discovers and downloads ready-made dataset archives and tiles from the French Géoplateforme Download API, selecting territory, edition, format and CRS and checking partial transfers. Use for bulk IGN file deliveries or offline product packages. Use geopf-wfs-download for filtered features and geopf-wms-wmts for map images.
 ---
 
 # Download Géoplateforme files

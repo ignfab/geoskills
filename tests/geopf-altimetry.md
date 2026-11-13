@@ -1,4 +1,4 @@
-# geopf-altimetry scenarios
+# geopf-altimetry
 
 ## ALT-01 — A small elevation profile
 
@@ -6,8 +6,17 @@
 > les coordonnées longitude 2,337306, latitude 48,849319 et longitude 2,367776, latitude
 > 48,852891. Indique la ressource choisie, les unités et les éventuelles valeurs manquantes.
 
-Expected: discover resource and detail metadata, `elevationLine`, 20 returned samples,
-lon/lat order, sentinel handling and no claim of centimetric accuracy/ellipsoidal heights.
+**Expected skill:** `geopf-altimetry`.
+
+**Expected result:** 20 samples along a line of about 2.2 km in central Paris, with
+plausible terrain altitudes in metres, from a resource discovered in the API metadata.
+`test_live_enrichment.py` runs the same profile request.
+
+- [ ] discovers the resource and its metadata before the calculation
+- [ ] uses `elevationLine` with 20 samples, in longitude, latitude order
+- [ ] treats `-99999` as missing data, never as an altitude
+- [ ] reports the resource, units and vertical reference, or says the reference is unknown
+- [ ] does not claim centimetric accuracy or call the values ellipsoidal heights
 
 ## ALT-02 — Preserve missing elevations
 
@@ -16,12 +25,24 @@ lon/lat order, sentinel handling and no claim of centimetric accuracy/ellipsoida
 > leurs identifiants. La ressource est `synthetic-terrain` et son référentiel vertical
 > n'est pas connu. Signale les altitudes manquantes et explique les contrôles effectués.
 
-Expected: two rows, IDs `001` and `002`, altitude 42 for the first and missing for the
-second (`-99999`); unknown vertical reference retained, returned coordinates checked.
+**Expected skill:** `geopf-altimetry`.
 
-## ALT-N1 — Local DEM processing
+**Expected result:** two rows, IDs `001` and `002`; altitude 42 for the first; the second
+returned the `-99999` sentinel and has no altitude. `test_enrichment.py` runs the
+documented join on these two fixtures.
+
+- [ ] keeps both rows and the string IDs `001` and `002`
+- [ ] leaves the second altitude empty and flags it, without writing `-99999` as a height
+- [ ] checks that the returned coordinates match the input points, in the same order
+- [ ] records the resource `synthetic-terrain` and keeps the vertical reference unknown
+- [ ] makes no network call
+
+## ALT-N1 — Negative: local DEM processing
 
 > Explique comment assembler les deux dalles de `data/mnt_dalles/` en un raster local.
 > Leur projection source confirmée est EPSG:2154. Aucun appel réseau n'est nécessaire.
 
-Expected: `gdal-raster-basics`, no point-elevation API requests or `geopf-altimetry` load.
+**Expected skill:** `gdal-raster-basics`, not `geopf-altimetry`.
+
+- [ ] builds a local mosaic (`gdalbuildvrt` with `-a_srs EPSG:2154`)
+- [ ] makes no elevation API request

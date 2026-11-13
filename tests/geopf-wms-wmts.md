@@ -68,17 +68,27 @@ observed previously, not a permanently required identifier.
 - [ ] uses `gdalinfo "WMTS:https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetCapabilities"`
   or reads the GetCapabilities document
 
+## WMS-05 — Check availability before downloading a named product
+
+> Télécharge le SCAN 25 sur le centre de Toulouse.
+
+**Expected skill:** `geopf-wms-wmts`.
+
+**Expected result:** the agent checks current public capabilities. If no usable SCAN 25
+layer is advertised, it explains that limitation; it does not invent a layer name or
+return an empty image. If a suitable layer has become available, a bounded download with
+its actual identifier is valid. Absence observed previously is not a permanent API contract.
+
+- [ ] reads the current WMTS or WMS capabilities before choosing a layer
+- [ ] does not invent a layer identifier from the product name
+- [ ] reports the limitation when no usable layer is advertised, instead of writing an
+  empty or unrelated image
+
 ## WMS-N1 — Negative: vector data
 
 > Télécharge les bâtiments BD TOPO du centre de Toulouse en GeoPackage.
 
 **Expected skill:** `geopf-wfs-download`, not `geopf-wms-wmts`.
 
-## WMS-05 — Check availability before downloading a named product
-
-> Télécharge le SCAN 25 sur le centre de Toulouse.
-
-**Expected result:** the agent checks current public capabilities. If no usable SCAN 25
-layer is advertised, it explains that limitation; it does not invent a layer name or
-return an empty image. If a suitable layer has become available, a bounded download with
-its actual identifier is valid. Absence observed previously is not a permanent API contract.
+- [ ] retrieves vector features from the WFS, not a rendered image of the buildings
+- [ ] takes the building layer name from the WFS capabilities

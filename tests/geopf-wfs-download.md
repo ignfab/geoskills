@@ -18,6 +18,8 @@
 > Donne-moi un échantillon de 5 bâtiments BD TOPO autour du Capitole de Toulouse,
 > en GeoJSON dans output/echantillon.geojson.
 
+**Expected skill:** `geopf-wfs-download`.
+
 **Expected result:** 1–5 polygon features in WGS84 longitude/latitude, near Toulouse.
 
 - [ ] uses a small bounding box and `-limit 5`; labels the output as a sample
@@ -31,9 +33,17 @@ bound transfer. A sample does not establish the count of the complete layer.
 
 > Ajoute la couche des régions ADMIN EXPRESS à output/batiments.gpkg, sous le nom regions.
 
-Run after WFS-01. Verify that the existing buildings remain intact and a `regions` layer
-is created. Use `-update -nln regions`; reserve `-append` for adding features to an
-existing compatible layer. Resolve the actual ADMIN EXPRESS layer name from capabilities.
+**Expected skill:** `geopf-wfs-download`.
+
+Run after WFS-01: the runner copies its output first (`ab_run WFS-03 with 1 WFS-01`).
+
+**Expected result:** `output/batiments.gpkg` holds the unchanged buildings layer and a new
+`regions` layer.
+
+- [ ] takes the ADMIN EXPRESS region layer name from the capabilities
+- [ ] adds the layer with `-update -nln regions`; `-append` is for adding features to an
+  existing compatible layer, and a plain `ogr2ogr` would recreate the file
+- [ ] lists both layers afterwards and checks that the buildings count is unchanged
 
 ## WFS-04 — Missing Parquet driver
 
@@ -84,14 +94,6 @@ real CLI checks, use an isolated test environment with `OGR_SKIP=Parquet`; it di
 that driver without uninstalling software. Command tests and dry runs do not prove that
 an agent follows the tooling rule.
 
-## WFS-N1 — Negative: raster imagery
-
-> Télécharge l'orthophoto du Capitole de Toulouse.
-
-**Expected skill:** `geopf-wms-wmts` (see [WMS-01](geopf-wms-wmts.md#wms-01--orthophoto-extract-in-lambert-93));
-do not use the WFS for imagery. `gdal-raster-basics` may be loaded as well for a
-conversion, but not instead of `geopf-wms-wmts`.
-
 ## WFS-07 — Count alone hides duplicates
 
 > Un export WFS contient cinq objets dont les identifiants source sont 01, 02, 03, 04, 04.
@@ -99,5 +101,26 @@ conversion, but not instead of `geopf-wms-wmts`.
 > dire que l'export est complet ? Écris ton diagnostic dans `output/completude.md`, sans
 > faire d'appel réseau ni installer d'outil.
 
-Expected: duplicated source ID makes completeness unverified despite equal counts;
-check paging/order, retain partial output/logs and avoid blind append.
+**Expected skill:** `geopf-wfs-download`.
+
+**Expected result:** `output/completude.md` says that completeness is not established: the
+counts match, but source ID `04` appears twice, so a record may be missing.
+`test_enrichment.py` checks the same case with the bundled export checker.
+
+- [ ] does not conclude that the export is complete from equal counts alone
+- [ ] identifies the duplicated source ID `04`
+- [ ] recommends checking paging and a stable sort order before downloading again
+- [ ] keeps the partial output and logs, and does not append blindly to the export
+- [ ] makes no network call and installs nothing
+
+## WFS-N1 — Negative: raster imagery
+
+> Télécharge l'orthophoto du Capitole de Toulouse.
+
+**Expected skill:** `geopf-wms-wmts`, not `geopf-wfs-download` (see
+[WMS-01](geopf-wms-wmts.md#wms-01--orthophoto-extract-in-lambert-93)): the WFS serves no
+imagery. `gdal-raster-basics` may be loaded as well for a
+conversion, but not instead of `geopf-wms-wmts`.
+
+- [ ] retrieves the imagery through WMTS or WMS-R
+- [ ] does not query the WFS for imagery

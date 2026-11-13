@@ -9,7 +9,6 @@
 
 **Expected skill:** `municipality-building-profile`.
 
-**Checks:**
 - [ ] Four source objects selected; crossing `003` included, touch-only and outside objects excluded.
 - [ ] Municipality area 10,000 m², union footprint 850 m², observed share 8.5%, overlap excess 100 m².
 - [ ] Heights: two valid, one sentinel, one missing; mean/median 15 m, quartiles 12.5/17.5 m.
@@ -24,7 +23,6 @@
 
 **Expected skill:** `municipality-building-profile`; `qgis-layer-styling` and `qgis-project-builder` are optional helpers.
 
-**Checks:**
 - [ ] Analytic outputs have the same population and indicators as MBP-01.
 - [ ] Actual QGZ/QGS exists, has valid layers in the right order and shows the requested style.
 - [ ] Entire bundle relocates with the original unavailable; all relative sources still resolve.
@@ -40,7 +38,6 @@
 
 **Expected skill:** `municipality-building-profile`.
 
-**Checks:**
 - [ ] A new manifest records unknown coverage and omits unverified height/usage measures.
 - [ ] Observed count/area/share are 4/850 m²/8.5%; no complete municipal inventory is claimed.
 - [ ] Height and usage are uncomputed, not fabricated as zero or assigned guessed meanings.
@@ -51,9 +48,9 @@
 > Télécharge uniquement les bâtiments BD TOPO de Saint-Mandé dans un GeoPackage, sans
 > calculer d'indicateurs ni créer de portrait communal.
 
-**Expected skill:** `geopf-wfs-download`.
+**Expected skill:** `geopf-wfs-download`, not `municipality-building-profile`: the request
+asks for an extraction and excludes indicators and a portrait.
 
-**Checks:**
 - [ ] `municipality-building-profile` is not loaded; the request remains an extraction task.
 - [ ] No unsolicited profile, statistics or QGIS project is created.
 
@@ -62,9 +59,9 @@
 > Dans `data/building_profile_buildings.geojson`, calcule seulement la moyenne et la médiane
 > du champ `height`, en excluant zéro et les valeurs manquantes. N'utilise pas de limite communale.
 
-**Expected skill:** `geospatial-descriptive-statistics`.
+**Expected skill:** `geospatial-descriptive-statistics`, not `municipality-building-profile`:
+the request asks for statistics on one table and excludes the municipal boundary.
 
-**Checks:**
 - [ ] The workflow is not loaded and no municipal clipping is performed.
 - [ ] Four usable input values: 10, 20, 500, 1000; mean 382.5, median 260.
 
@@ -73,8 +70,8 @@
 > Assemble `data/building_profile_municipalities.geojson` et
 > `data/building_profile_buildings.geojson` dans un projet QGIS. Ne calcule aucun indicateur.
 
-**Expected skill:** `qgis-project-builder`.
+**Expected skill:** `qgis-project-builder`, not `municipality-building-profile`: the request
+asks for a project from existing layers and excludes indicators.
 
-**Checks:**
 - [ ] The workflow is not loaded and no building portrait is computed.
 - [ ] Both existing layers are loaded without changing their features or source files.

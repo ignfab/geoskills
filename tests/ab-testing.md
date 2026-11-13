@@ -5,6 +5,9 @@ is run twice under the same conditions: **A** with the skills of this repository
 **B** without them. A higher pass rate in A is evidence of added value on those scenarios;
 when both pass, compare effort and cost as well as output quality.
 
+A [model sweep](#model-sensitivity) runs the same scenarios with several models, to find
+skills whose effect depends on the model that reads them.
+
 The scenario files remain the reference for prompts, expected results and checklists.
 This file adds the procedure, a runner and a scoring grid.
 
@@ -56,17 +59,26 @@ then load it with `source ab.sh`.
 export GEOSKILLS="${GEOSKILLS:-$HOME/projects/geoskills}"  # the repository clone
 export AB="${AB:-$HOME/geoskills-ab/$(date +%F)}"          # outside the repository
 export AB_MODEL="${AB_MODEL:-opus}"              # same model/version in both modes
+export AB_MODELS="${AB_MODELS:-haiku sonnet opus}"  # model panel of ab_sweep
 export AB_BUDGET="2"                            # USD cap per run
 export AB_TOOLS="Bash Read Write Edit Glob Grep Skill WebFetch WebSearch"
 export AB_DENY="Bash(sudo *) Bash(pip install *) Bash(pip3 install *) Bash(python3 -m pip install *) Bash(conda install *) Bash(mamba install *) Bash(apt *) Bash(apt-get *) Bash(brew install *) Bash(npm install *)"
 export AB_EXTRA_FLAGS=""                        # extra claude flags, both modes
 export AB_WITHOUT_FLAGS=""                      # extra claude flags, B runs only
 
-POSITIVE="GSV-01 GSV-02 GSV-03 GSV-04 GSV-05 GEO-01 GEO-02 GEO-03 GEO-04 GEO-05 CRS-01 CRS-02 CRS-03 CRS-04 CRS-05
-RAS-01 RAS-02 RAS-03 RAS-04 RAS-05 WMS-01 WMS-02 WMS-03 WMS-04 WMS-05
-WFS-01 WFS-02 WFS-04 WFS-05 WFS-06 CQL-01 CQL-02 CQL-03 CQL-04 GPD-01 GPD-02 GPD-03 GPD-04 VDQ-01 VDQ-02 VDQ-03 MS-01 MS-02 MS-03 MS-04 INT-01 INT-02 DLF-01 DLF-02 ALT-01 ALT-02 RTE-01 RTE-02 GEO-06 WFS-07 RAS-06
-GVB-01 GVB-02 GVB-03 GVB-04 APC-01 APC-02 APC-03 GDS-01 GDS-02 QLS-01 QLS-02 SPA-01 SPA-02 BTS-01 BTS-02 QPB-01 QPB-02 MBP-01 MBP-02 MBP-03"
-NEGATIVE="GSV-N1 GSV-N2 GEO-N1 CRS-N1 RAS-N1 WMS-N1 WFS-N1 CQL-N1 CQL-N2 GPD-N1 VDQ-N1 VDQ-N2 MS-N1 MS-N2 INT-N1 DLF-N1 ALT-N1 RTE-N1 GVB-N1 GVB-N2 APC-N2 GDS-N1 GDS-N2 QLS-N1 SPA-N1 SPA-N2 BTS-N1 BTS-N2 QPB-N1 MBP-N1 MBP-N2 MBP-N3"
+# Positive scenarios run in A and B; WFS-03 is missing on purpose: ab_campaign runs it
+# after WFS-01, whose output it extends. Negative scenarios run in A only.
+POSITIVE="GSV-01 GSV-02 GSV-03 GSV-04 GSV-05
+GEO-01 GEO-02 GEO-03 GEO-04 GEO-05 GEO-06 CRS-01 CRS-02 CRS-03 CRS-04 CRS-05
+RAS-01 RAS-02 RAS-03 RAS-04 RAS-05 RAS-06 WMS-01 WMS-02 WMS-03 WMS-04 WMS-05
+WFS-01 WFS-02 WFS-04 WFS-05 WFS-06 WFS-07 CQL-01 CQL-02 CQL-03 CQL-04
+GPD-01 GPD-02 GPD-03 GPD-04 VDQ-01 VDQ-02 VDQ-03 MS-01 MS-02 MS-03 MS-04
+INT-01 INT-02 DLF-01 DLF-02 ALT-01 ALT-02 RTE-01 RTE-02
+GVB-01 GVB-02 GVB-03 GVB-04 APC-01 APC-02 APC-03 GDS-01 GDS-02
+QLS-01 QLS-02 SPA-01 SPA-02 BTS-01 BTS-02 QPB-01 QPB-02 MBP-01 MBP-02 MBP-03"
+NEGATIVE="GSV-N1 GSV-N2 GEO-N1 CRS-N1 RAS-N1 WMS-N1 WFS-N1 CQL-N1 CQL-N2 GPD-N1 VDQ-N1 VDQ-N2
+MS-N1 MS-N2 INT-N1 DLF-N1 ALT-N1 RTE-N1 GVB-N1 GVB-N2 APC-N1 GDS-N1 GDS-N2
+QLS-N1 SPA-N1 SPA-N2 BTS-N1 BTS-N2 QPB-N1 MBP-N1 MBP-N2 MBP-N3"
 
 # Print the French prompt of a scenario or an experimental prompt (XP-NN), read from
 # tests/*.md, then tests/prompts/*.md.
@@ -98,6 +110,7 @@ ab_env() {
   {
     date -Iseconds
     echo "model: $AB_MODEL"
+    echo "model panel: $AB_MODELS"
     claude --version
     node --version
     mapshaper -version
@@ -253,6 +266,121 @@ for mode in ("with", "without"):
 print(root / "report.md")
 PY
 }
+# First positive and first negative scenario of each skill: the model-sweep panel.
+ab_panel() {
+  local id
+  for id in $POSITIVE $NEGATIVE; do
+    case $id in *-01|*-N1) printf '%s\n' "$id" ;; esac
+  done
+}
+
+# Model sensitivity: run scenarios in A only, once per model of AB_MODELS, all models of a
+# scenario back to back. Each model gets its own campaign, $AB/models/<model>/.
+# ab_sweep [rep] [scenario...]; without scenarios, every scenario.
+ab_sweep() {
+  : "${AB:?}" "${AB_MODELS:?}"
+  local rep=${1:-1} root=$AB id model after
+  shift $(($# > 0 ? 1 : 0))
+  for id in ${*:-$POSITIVE WFS-03 $NEGATIVE}; do
+    after=
+    [ "$id" = WFS-03 ] && after=WFS-01
+    for model in $AB_MODELS; do
+      AB="$root/models/$model" AB_MODEL="$model" ab_run "$id" with "$rep" $after || return 1
+    done
+  done
+}
+
+# Build $AB/sensitivity.md from an ab_sweep: skill selection scored automatically for every
+# run, task results read from the hand-scored models/<model>/report.md, spread per skill.
+ab_sensitivity() {
+  python3 - "$AB" "$GEOSKILLS" "${AB_SPREAD:-1/3}" "$AB_MODELS" <<'PY'
+import json, pathlib, re, sys
+from fractions import Fraction
+root, repo, limit = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2]), Fraction(sys.argv[3])
+owner = {}  # scenario -> skill whose tests/<skill>.md defines it
+for path in repo.glob("skills/*/*/SKILL.md"):
+    scenarios = repo / "tests" / f"{path.parent.name}.md"
+    if scenarios.exists():
+        for ident in re.findall(r"^## ([A-Z]+-N?\d+)\s", scenarios.read_text(encoding="utf-8"), re.M):
+            owner[ident] = path.parent.name
+found = sorted(p.name for p in (root / "models").glob("*") if p.is_dir())
+models = [m for m in sys.argv[4].split() if m in found] + [m for m in found if m not in sys.argv[4].split()]
+
+def hand_scores(model):
+    """(scenario, rep) -> True/False from the Result column of a scored report.md."""
+    path, scores = root / "models" / model / "report.md", {}
+    if path.exists():
+        for line in path.read_text(encoding="utf-8").splitlines():
+            cells = [c.strip() for c in line.strip().strip("|").split("|")]
+            if len(cells) > 8 and cells[1] == "with" and cells[8].lower() in ("pass", "fail"):
+                scores[(cells[0], cells[2])] = cells[8].lower() == "pass"
+    return scores
+
+runs, selection, result, ids, totals = {}, {}, {}, {}, {}
+for model in models:
+    scores = hand_scores(model)
+    total = totals.setdefault(model, {"runs": 0, "invalid": 0, "cost": 0.0, "turns": 0})
+    for path in sorted((root / "models" / model / "runs").glob("*/with-*/summary.json")):
+        s = json.loads(path.read_text(encoding="utf-8"))
+        skill = owner.get(s["scenario"])
+        if skill is None:
+            continue  # experimental prompt: no expected skill
+        ids.setdefault(model, set()).add(str(s.get("model")))
+        total["runs"] += 1
+        total["cost"] += s.get("cost_usd") or 0
+        total["turns"] += s.get("turns") or 0
+        key = (s["scenario"], s["rep"])
+        if not s.get("comparable", s.get("ok")):
+            total["invalid"] += 1
+            runs.setdefault(key, {})[model] = "invalid"
+            continue
+        loaded = skill in s["skills"]
+        hit = not loaded if "-N" in s["scenario"] else loaded
+        counts = selection.setdefault(skill, {}).setdefault(model, [0, 0])
+        counts[0] += hit
+        counts[1] += 1
+        cell = ("ok" if hit else "FAIL") + ": " + (", ".join(map(str, s["skills"])) or "-")
+        if key in scores:
+            counts = result.setdefault(skill, {}).setdefault(model, [0, 0])
+            counts[0] += scores[key]
+            counts[1] += 1
+            cell += "; " + ("pass" if scores[key] else "fail")
+        runs.setdefault(key, {})[model] = cell
+
+def table(title, data, note):
+    out = [f"## {title}", "", note, "",
+           "| Skill | " + " | ".join(models) + " | Spread | Flag |",
+           "|---|" + "---|" * len(models) + "---|---|"]
+    for skill in sorted(data):
+        rates = [Fraction(*data[skill][m]) for m in models if data[skill].get(m, [0, 0])[1]]
+        spread = max(rates) - min(rates) if len(rates) > 1 else None
+        flag = "SENSITIVE" if spread is not None and spread >= limit else ""
+        cells = ["{}/{}".format(*data[skill][m]) if m in data[skill] else "—" for m in models]
+        shown = "—" if spread is None else f"{round(100 * spread)} %"
+        out.append(f"| {skill} | " + " | ".join(cells) + f" | {shown} | {flag} |")
+    return out + [""]
+
+out = ["# Model sensitivity", "",
+       "Models: " + "; ".join(f"{m} ({', '.join(sorted(ids[m]))})" if m in ids else m for m in models), "",
+       f"A skill is flagged when the best and the worst model differ by at least {limit} of their runs.", ""]
+out += table("Skill selection (automatic)", selection,
+             "Correct runs / scored runs: the expected skill loaded for a positive scenario, "
+             "the excluded skill not loaded for a negative one. Invalid runs are left out.")
+out += table("Task result (hand scores)", result,
+             "Runs written `pass` / runs written `pass` or `fail` in the Result column of "
+             "`models/<model>/report.md`.")
+out += ["## Cost and invalid runs", "", "| Model | Runs | Invalid | Cost $ | Mean turns |", "|---|---|---|---|---|"]
+for m in models:
+    t = totals[m]
+    mean = f"{t['turns'] / t['runs']:.1f}" if t["runs"] else "—"
+    out.append(f"| {m} | {t['runs']} | {t['invalid']} | {t['cost']:.2f} | {mean} |")
+out += ["", "## Runs", "", "| Scenario | Rep | " + " | ".join(models) + " |", "|---|---|" + "---|" * len(models)]
+for (ident, rep), cells in sorted(runs.items()):
+    out.append(f"| {ident} | {rep} | " + " | ".join(cells.get(m, "—") for m in models) + " |")
+(root / "sensitivity.md").write_text("\n".join(out) + "\n", encoding="utf-8")
+print(root / "sensitivity.md")
+PY
+}
 ```
 
 | Function | Role |
@@ -262,7 +390,10 @@ PY
 | `ab_run <id> <with\|without> [rep] [after]` | Creates `$AB/runs/<id>/<mode>-<rep>/`, copies `data/` (and the skills in A), copies the output of the `after` run, runs `claude -p` and keeps `transcript.jsonl`. |
 | `ab_campaign [rep]` | One repetition of every scenario. |
 | `ab_summary <dir>` | Writes `summary.json`, `commands.txt` (Bash commands run) and `answer.md` (final answer). Rejects detected contamination in B and installation attempts. |
-| `ab_report` | Writes `$AB/report.md`: the environment and one row per run, with blank columns to score. |
+| `ab_report` | Writes `$AB/report.md`: the environment and one row per run, with blank columns to score. It rewrites the file: score after the last repetition. |
+| `ab_panel` | Prints the first positive and first negative scenario of each skill, the panel of a [model sweep](#model-sensitivity). |
+| `ab_sweep [rep] [id…]` | Runs the given scenarios (all by default) in A only, once per model of `AB_MODELS`, each model in `$AB/models/<model>/`. |
+| `ab_sensitivity` | Writes `$AB/sensitivity.md`: skill selection scored for every sweep run, hand-scored results, spread between models per skill. |
 
 `claude -p` cannot ask for permission, so the allowed tools are listed in `AB_TOOLS`. The
 agent can run shell commands and reach the web. The deny list and install counter cover
@@ -285,9 +416,9 @@ source ab.sh
 AB_DRY=1 ab_campaign 1
 ```
 
-Then set `export AB=/path/to/a/new/campaign` for actual agent calls. One repetition has **184 runs**:
-76 positive scenarios in both modes and 32 negatives in A. At the example budget of $2 per
-run, the caps total $368 per repetition and $1104 for three repetitions. Starting the paid
+Then set `export AB=/path/to/a/new/campaign` for actual agent calls. One repetition has **186 runs**:
+77 positive scenarios in both modes and 32 negatives in A. At the example budget of $2 per
+run, the caps total $372 per repetition and $1116 for three repetitions. Starting the paid
 campaign is a separate user decision; a dry run does not authorize it.
 
 Smoke pass, one repetition:
@@ -497,74 +628,76 @@ All CQL scenarios use supplied metadata and require no live service.
 | APC-01 | A + B | NET | all pages up to `numberMatched`; `localhost` links not followed |
 | APC-02 | A + B | NET | both Natura 2000 networks; longitude, latitude order |
 | APC-03 | A + B | NET | zone with document and date; outage reported, no invented zone |
-| APC-N2 | A | NET | download or WFS skill loaded; no paging of a whole department |
+| APC-N1 | A | NET | download or WFS skill loaded; no paging of a whole department |
 
 ### [geospatial-descriptive-statistics](geospatial-descriptive-statistics.md)
 
 | Scenario | Modes | Needs | Watch in B |
 | --- | --- | --- | --- |
-| GDS-01 | A + B | PY | `geospatial-descriptive-statistics`; mean/median 10, sum 30, sample std 10, quartiles 5/15, missing 25%; strict JSON. |
-| GDS-02 | A + B | PY | `geospatial-descriptive-statistics`; string IDs, counts 2/1/1 and frequencies .5/.25/.25. |
-| GDS-N1 | A | PY | `gdal-raster-basics` or `geopandas-basics`; no descriptive-statistics skill. |
-| GDS-N2 | A | PY | Spatial aggregation workflow; no single-layer descriptive summary. |
+| GDS-01 | A + B | PY | mean/median 10, sum 30, sample std 10, quartiles 5/15, missing 25 %; strict JSON |
+| GDS-02 | A + B | PY | string IDs kept, counts 2/1/1 and frequencies 0.5/0.25/0.25 |
+| GDS-N1 | A | PY | `gdal-raster-basics` or `geopandas-basics` loaded; no single-layer summary |
+| GDS-N2 | A | PY | `spatial-aggregation` loaded; no single-layer summary |
 
 ### [qgis-layer-styling](qgis-layer-styling.md)
 
 | Scenario | Modes | Needs | Watch in B |
 | --- | --- | --- | --- |
-| QLS-01 | A + B | QGIS | `qgis-layer-styling`; red polygon stroke, no fill, fresh-layer reload; missing PyQGIS reported without installation. |
-| QLS-02 | A + B | QGIS | `qgis-layer-styling`; numeric field, breaks 0/10/20/30, one unrendered null, checked renderer. |
-| QLS-N1 | A | QGIS | Project workflow; no QML generation or qgis-layer-styling load. |
+| QLS-01 | A + B | QGIS | red stroke, no fill, fresh-layer reload; missing PyQGIS reported, not installed |
+| QLS-02 | A + B | QGIS | numeric field, breaks 0/10/20/30, one unrendered null, checked renderer |
+| QLS-N1 | A | QGIS | `qgis-project-builder` loaded; no QML written, no `qgis-layer-styling` load |
 
 ### [spatial-aggregation](spatial-aggregation.md)
 
 | Scenario | Modes | Needs | Watch in B |
 | --- | --- | --- | --- |
-| SPA-01 | A + B | PY | `spatial-aggregation`; counts 2/1/0 for 001/002/NA; edge and outside unmatched; string IDs preserved. |
-| SPA-02 | A + B | PY | `spatial-aggregation`; intersects/all; edge counted twice, counts 3/2/0, sums 40/30/0, means 40/3 and 30, empty mean null. |
-| SPA-N1 | A | PY | `geospatial-descriptive-statistics`; no spatial-aggregation load. |
-| SPA-N2 | A | PY | `gdal-raster-basics` or `geopandas-basics`; no vector aggregation skill. |
+| SPA-01 | A + B | PY | `within`; counts 2/1/0 for 001/002/NA; `edge` and `outside` unmatched; string IDs |
+| SPA-02 | A + B | PY | `intersects` + `all`; `edge` counted twice; counts 3/2/0, sums 40/30/0, means 13.33/30, empty mean null |
+| SPA-N1 | A | PY | `geospatial-descriptive-statistics` loaded; no zone join |
+| SPA-N2 | A | PY | `gdal-raster-basics` or `geopandas-basics` loaded; no vector aggregation |
 
 ### [bdtopo-schema-guide](bdtopo-schema-guide.md)
 
 | Scenario | Modes | Needs | Watch in B |
 | --- | --- | --- | --- |
-| BTS-01 | A + B | — | `bdtopo-schema-guide`; batiment/hauteur (HAUTEUR in Shapefile), metres to eaves, zero unknown/not significant, IGN revision and pp. 76–77. |
-| BTS-02 | A + B | — | `bdtopo-schema-guide`; troncon_de_route, importance/IMPORTANCE and nombre_de_voies/NB_VOIES; no unsupported equivalence to 3.3. |
-| BTS-N1 | A | — | `geopf-wfs-download`; no semantic guide for an already identified extraction. |
-| BTS-N2 | A | — | `spatial-aggregation`; no BD TOPO schema-guide load. |
+| BTS-01 | A + B | — | `batiment`/`hauteur` (`HAUTEUR`), metres to the eaves, 0 unknown, revision and pp. 76–77; no network |
+| BTS-02 | A + B | — | `troncon_de_route`, `importance`/`IMPORTANCE`, `nombre_de_voies`/`NB_VOIES`; no claimed 3.3 equivalence |
+| BTS-N1 | A | NET | `geopf-wfs-download` loaded; no schema guide |
+| BTS-N2 | A | PY | `spatial-aggregation` loaded; no schema guide |
 
 ### [qgis-project-builder](qgis-project-builder.md)
 
 | Scenario | Modes | Needs | Watch in B |
 | --- | --- | --- | --- |
-| QPB-01 | A + B | QGIS | `qgis-project-builder`; two valid layers, point layer above zones, relative sources resolve inside moved bundle; originals unchanged. |
-| QPB-02 | A + B | QGIS | `qgis-project-builder`; discovered WMTS metadata, explicit local/remote status, no invented identifiers or false tile-rendering claim. |
-| QPB-N1 | A | QGIS | `qgis-layer-styling`; no qgis-project-builder load or QGZ output. |
+| QPB-01 | A + B | QGIS | points above zones, extent reaching `outside` at x = 20, relative sources resolved inside the moved bundle; originals unchanged |
+| QPB-02 | A + B | QGIS, NET | WMTS identifiers read from capabilities, extent on Saint-Mandé, local and remote status reported apart; no rendering claimed from a valid provider |
+| QPB-N1 | A | QGIS | `qgis-layer-styling` loaded; no `qgis-project-builder` load, no `.qgz` or `.qgs` written |
 
 ### [municipality-building-profile](municipality-building-profile.md)
 
-| Scenario | Modes | Tools | Pass condition |
+| Scenario | Modes | Needs | Watch in B |
 | --- | --- | --- | --- |
-| MBP-01 | A + B | PY | Four buildings; union 850 m², 8.5%; verified height/usage populations, round trips and unchanged sources. |
-| MBP-02 | A + B | PY, QGIS | Same indicators plus a real styled project reopened after bundle relocation. |
-| MBP-03 | A + B | PY | Unknown inventory coverage remains explicit; unverified height/usage measures omitted. |
-| MBP-N1 | A | NET, GDAL | Only `geopf-wfs-download`; no portrait. |
-| MBP-N2 | A | PY | Only `geospatial-descriptive-statistics`; mean 382.5 and median 260 without clipping. |
-| MBP-N3 | A | QGIS | Only `qgis-project-builder`; existing layers and no indicators. |
+| MBP-01 | A + B | PY | four buildings selected, union 850 m² and 8.5 % without double-counting the overlap; height and usage populations verified, round trips done, sources unchanged |
+| MBP-02 | A + B | PY, QGIS | same indicators as MBP-01 plus a real styled project reopened after moving the bundle; missing PyQGIS reported, not a JSON-only project |
+| MBP-03 | A + B | PY | unknown inventory coverage stated; height and usage left uncomputed instead of guessed |
+| MBP-N1 | A | NET, GDAL | `geopf-wfs-download` loaded; no `municipality-building-profile` load, no portrait |
+| MBP-N2 | A | PY | `geospatial-descriptive-statistics` loaded; mean 382.5 and median 260 without clipping |
+| MBP-N3 | A | QGIS | `qgis-project-builder` loaded; existing layers assembled, no indicators |
 
 ## Score a run
 
 For each row of `report.md`, in the run directory:
 
 1. **Skill selection.** In A, `Skills loaded` contains the expected skill of the scenario;
-   for a `-N` scenario, it does not contain the excluded one. In B, it contains none of
+   for a `-N` scenario, it does not contain the excluded one. For a model sweep,
+   `ab_sensitivity` applies this rule to every run. In B, it contains none of
    the skills of this repository: a run flagged `INVALID` is excluded; a historical run
    flagged `CHECK` needs manual review before scoring.
 2. **Result.** Compare `output/` and `answer.md` with the expected result of the scenario
    file. Write `pass` or `fail`.
-3. **Checklist.** Count the checklist items met, for example `4/5`. `commands.txt` shows
-   the commands actually run.
+3. **Checklist.** Count the checklist items met, for example `4/5`. Every scenario has
+   at least one item; `test_scenarios.py` enforces it. `commands.txt` shows the commands
+   actually run.
 4. **Conduct.** A non-zero `Installs`, a download piped through `head` or `tail`, or an
    invented layer or field name fails the run, whatever the result.
 
@@ -609,6 +742,72 @@ Summarize per skill over the three repetitions:
 | municipality-building-profile | /9 | /9 | | | |
 | Negative scenarios (A only) | /96 | — | — | — | |
 
+## Model sensitivity
+
+A skill is model-sensitive when its effect depends on the model that reads it: a large
+model selects it and follows it, a smaller one misses it, loads a neighbour or skips a
+step. Skills installed with the Skills CLI are read by many agents and models, so a skill
+should not rely on what only the strongest model can infer. Two layers check this.
+
+- **Every push, no model call.** [test_skill_robustness.py](test_skill_robustness.py)
+  checks the wording that keeps selection from resting on inference: each description says
+  when to use the skill and names other skills exactly (`geopf-wfs-download`, not "the WFS
+  skill"), and each boundary tested by a negative scenario is written in the skill to
+  exclude, so that a model that loads it by mistake reads where to go instead.
+- **On demand, paid.** A sweep runs scenarios in A only, once per model of `AB_MODELS`,
+  then compares the models skill by skill. B runs are left out: without skills they
+  measure each model's prior knowledge, which is a separate question.
+
+Prepare the directories first, then run the panel in a new sweep directory:
+
+```bash
+source ab.sh
+export AB_MODELS="haiku sonnet opus"            # aliases, or pinned model IDs
+AB_DRY=1 ab_sweep 1 $(ab_panel)
+export AB=/path/to/a/new/sweep
+ab_env
+ab_sweep 1 $(ab_panel)
+for model in $AB_MODELS; do AB="$AB/models/$model" ab_report; done
+ab_sensitivity
+```
+
+`ab_panel` lists **44 scenarios**, the first positive and the first negative of each skill:
+**132 runs** per repetition with the 3 models of `AB_MODELS`, capped at $264. A full sweep
+runs all 109 scenarios: 327 runs, capped at $654 per repetition. Starting a paid sweep is a
+separate user decision; a dry run does not authorize it.
+
+`$AB/sensitivity.md` has four tables:
+
+- **Skill selection**, scored automatically for every run: correct runs out of scored runs
+  per skill and model, with the spread between the best and the worst model.
+- **Task result**, read from the `Result` column of each `models/<model>/report.md` once
+  it is scored as in [Score a run](#score-a-run); rerun `ab_sensitivity` after scoring.
+- **Cost and invalid runs** per model.
+- **Runs**: each scenario and repetition, with the skills each model loaded.
+
+A skill is flagged `SENSITIVE` when the spread reaches `AB_SPREAD` (default `1/3`).
+
+| Selection | Result | Reading | Next step |
+|-----------|--------|---------|-----------|
+| Same for all models | Same for all models | Not model-sensitive on these scenarios | — |
+| Lower for some models | — | The description relies on inference | Put the words of the request, exact skill names and a `not …` clause in the description; sweep again |
+| Same for all models | Lower for some models | The body is too implicit for some models | Bring the main command forward, make each validation step explicit, move detail to `references/`; sweep again |
+| Low for every model | — | A description problem, not model sensitivity | Rewrite the description, then run the A/B campaign |
+
+Limits:
+
+- One repetition gives one or two panel runs per skill and model: a flag is a lead, not a
+  verdict. Before changing a skill, run all its scenarios three times with the models
+  that diverge.
+- Aliases such as `haiku` move to newer versions. `sensitivity.md` records the resolved
+  model IDs; pin full IDs to compare sweeps over time.
+- The sweep reaches the models that the `claude` CLI serves. Another agent or model family
+  needs its own harness. `ab_sensitivity` only reads
+  `models/<model>/runs/<id>/with-<rep>/summary.json` (`scenario`, `rep`, `skills`,
+  `comparable`), so a harness that writes these files can reuse it.
+- A live service outage fails every model alike. `ab_sweep` runs all models of a scenario
+  back to back so that they meet the same service state.
+
 ## Variants
 
 Use a new `AB` directory for each variant, so that reports do not mix.
@@ -633,8 +832,8 @@ read first, so an `XP` identifier never replaces a scenario prompt.
   geospatial skills for a paired comparison; the no-skill variant is a separate experiment.
   The transcript check detects explicit reads and invocations, not every form of inherited
   context. Absence of a warning does not prove that B was uncontaminated.
-- VDQ-01 and VDQ-02 have no fixture: the agent builds its own data, so compare the
-  procedure, not the values.
+- VDQ-01, VDQ-02 and GPD-04 have no fixture: the agent builds its own data, so compare
+  the procedure, not the values.
 - VDQ-03 uses `data/coverage_synthetic.geojson`, whose defects are known. With
   GeoPandas < 1.1 and GDAL < 3.12, only the overlap-pair and enclosed-gap recipes remain,
   in both modes.

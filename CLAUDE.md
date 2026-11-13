@@ -66,8 +66,13 @@ description: Downloads WFS data from the French Géoplateforme ... Use when the 
 
 - `name` and `description` are both **required** — a `SKILL.md` missing either is silently
   skipped by the CLI.
-- `description` states *what the skill does* and *when to use it*. It is the only thing the
-  agent reads before deciding to load the skill, so it carries the trigger words.
+- `description` states *what the skill does* and *when to use it* (`Use when …`). It is the
+  only thing the agent reads before deciding to load the skill, so it carries the trigger
+  words.
+- Do not rely on the model to guess. Skills are read by many agents and models, some much
+  smaller than the one used to write them. Name other skills exactly, in the description
+  too (`use geopf-wfs-download`, not "use the WFS skill"), and write each boundary that a
+  negative scenario tests in the skill to exclude, with the skill to use instead.
 - Keep `SKILL.md` short: the endpoint or entry command, the minimal syntax, and the two or
   three commands covering most needs. Everything longer goes to `references/` and is linked
   from a `## References` section.
@@ -121,9 +126,12 @@ these rules, and states them where they apply:
 - [ ] `SKILL.md` has `## Prerequisites` and `## Validate the output` sections, and its
   prerequisites follow the agent conduct rules above
 - [ ] `tests/<skill-name>.md` with French scenario prompts, including at least one negative
-  scenario, and a row in the `Contents` table of `tests/README.md`
-- [ ] scenario identifiers added to `POSITIVE` / `NEGATIVE`, to a skill section and to the
-  score table of `tests/ab-testing.md`
+  scenario, each with an `**Expected skill:**` line and a checklist, and a row in the
+  `Coverage by skill` table of `tests/README.md`
+- [ ] scenario identifiers added to `POSITIVE` / `NEGATIVE`, to a skill section, to the
+  score table and to the run count of `tests/ab-testing.md`; the model-sweep cost sentence
+  follows the number of skills
+- [ ] each negative scenario's alternative skill is named in the `SKILL.md` it excludes
 - [ ] exploratory prompts tried while writing the skill added to
   `tests/prompts/catalog.md`, and their runs to `tests/prompts/runs.md`
 
@@ -135,7 +143,11 @@ references. It
 also runs the unit tests in `tests/`: helper scripts, local GDAL/PROJ, GeoPandas and
 Mapshaper workflows, the documented curl requests, and a dry run of the A/B runner. That dry
 run fails when a skill has no `tests/<skill-name>.md` or when one of its scenarios is missing
-from `tests/ab-testing.md`.
+from `tests/ab-testing.md`. `tests/test_scenarios.py` also fails when a scenario lacks its
+prompt, expected skill or checklist, or when the matrix, score table or run count of
+`tests/ab-testing.md` no longer matches the scenario files. `tests/test_skill_robustness.py`
+fails when a description lacks its `Use …` clause or names a skill vaguely, or when a skill
+excluded by a negative scenario does not name the alternative.
 Install the Python validation dependency with `python3 -m pip install -r tests/requirements.txt`.
 
 Discovery by the Skills CLI and agent skill selection remain separate checks; see

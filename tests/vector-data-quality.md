@@ -63,6 +63,8 @@ is not a valid coverage. It finds the 1 m² overlap between `P02` and `P03`, the
 **Expected skill:** `geopandas-basics`, not `vector-data-quality`, unless invalid geometries
 or data-quality failures are also reported.
 
+- [ ] performs a spatial join without a geometry audit or repair
+
 ## VDQ-N2 — Negative: swapped coordinates
 
 > Les points de data/points_gps.csv tombent dans l'océan Indien au lieu de la France.

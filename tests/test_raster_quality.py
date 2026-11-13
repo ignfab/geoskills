@@ -11,11 +11,10 @@ from test_workflows import DATA, GDALCase
 
 class RasterQualityTests(GDALCase):
     def classes(self):
-        source = self.output / "classes.asc"
-        source.write_text("ncols 2\nnrows 2\nxllcorner 650000\nyllcorner 6860000\n"
-                          "cellsize 10\nNODATA_value 255\n0 1\n5 255\n")
+        # The RAS-06 fixture: 2 x 2 cells of 10 m, classes 0/1/5 and nodata 255, CRS confirmed.
         target = self.output / "classes.tif"
-        self.run_tool("gdal_translate", "-a_srs", "EPSG:2154", "-ot", "Byte", source, target)
+        self.run_tool("gdal_translate", "-a_srs", "EPSG:2154", "-ot", "Byte",
+                      DATA / "classes_synthetic.asc", target)
         return target
 
     def test_documented_class_resampling_preserves_codes_and_valid_zero(self):

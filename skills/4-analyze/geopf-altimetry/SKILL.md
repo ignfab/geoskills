@@ -1,6 +1,6 @@
 ---
 name: geopf-altimetry
-description: Retrieves point elevations and elevation profiles from the French Géoplateforme Elevation API, preserving source metadata and missing values. Use to add terrain heights to coordinates or sample a profile along a path. Use a raster skill for downloading or processing a full DEM, and a CRS skill for converting vertical datums.
+description: Retrieves point elevations and elevation profiles from the French Géoplateforme Elevation API, preserving source metadata and missing values. Use to add terrain heights to coordinates or sample a profile along a path. Use gdal-raster-basics for downloading or processing a full DEM, and crs-reprojection-france for converting vertical datums.
 ---
 
 # Point elevations and profiles

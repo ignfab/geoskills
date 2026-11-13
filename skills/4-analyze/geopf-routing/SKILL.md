@@ -1,6 +1,6 @@
 ---
 name: geopf-routing
-description: Calculates routes and reachable areas by travel time or distance using the French Géoplateforme Navigation API, with discovered resources, profiles, units and direction. Use for pedestrian or car itineraries, isochrones and isodistances on the IGN road network. Use local geometry tools for straight-line buffers or custom network analysis.
+description: Calculates routes and reachable areas by travel time or distance using the French Géoplateforme Navigation API, with discovered resources, profiles, units and direction. Use for pedestrian or car itineraries, isochrones and isodistances on the IGN road network. Use geopandas-basics or other local geometry tools for straight-line buffers or custom network analysis.
 ---
 
 # Routes and reachable areas

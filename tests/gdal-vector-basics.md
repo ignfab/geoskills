@@ -79,9 +79,14 @@ characters or fewer are chosen and mapped, or GDAL's truncated names are reporte
 
 **Expected skill:** `geopandas-basics`, not `gdal-vector-basics`.
 
+- [ ] reprojects to EPSG:2154 before computing the area (about 90.6 ha)
+
 ## GVB-N2 — Negative: Géoplateforme download
 
 > Télécharge les communes du Val-de-Marne depuis la Géoplateforme au format GeoPackage.
 
 **Expected skill:** `geopf-wfs-download`, not `gdal-vector-basics`: the data must first be
 discovered and downloaded from the WFS.
+
+- [ ] discovers the ADMIN EXPRESS municipality layer from the WFS capabilities
+- [ ] filters on the Val-de-Marne (department `94`) on the server side

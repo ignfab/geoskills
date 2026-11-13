@@ -204,8 +204,10 @@ class LocalWorkflowTests(GDALCase):
                                    "--grid-check", "discard_missing", "--hide-ballpark", "-o", "PROJ")
         if not any(grid in operations for grid in ("fr_ign_gr3df97a.tif", "fr_ign_ntf_r93.tif", "ntf_r93.gsb")):
             self.skipTest("Accurate NTF transformation needs an installed IGN grid")
+        with (DATA / "points_lambert2e.csv").open(encoding="utf-8", newline="") as handle:
+            points = "".join(f'{row["x"]} {row["y"]}\n' for row in csv.DictReader(handle))
         result = self.run_tool("gdaltransform", "-s_srs", "EPSG:27572", "-t_srs", "EPSG:2154",
-                               input="600000 2428000\n536000 1841000\n")
+                               input=points)
         self.assertEqual(len(result.splitlines()), 2)
         for line, expected in zip(result.splitlines(), [(651313.03,6861349.81),(582461.10,6275414.00)]):
             self.assertEqual(len(line.split()), 3)

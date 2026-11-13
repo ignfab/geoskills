@@ -118,5 +118,50 @@ class AggregationTests(unittest.TestCase):
         assert_geodataframe_equal(self.zones, zones)
 
 
+class ScenarioFixtureTests(unittest.TestCase):
+    """SPA-01 and SPA-02 references, run through the documented CLI on their fixtures."""
+    DATA = ROOT/'tests/data'
+    SCRIPT = ROOT/'skills/4-analyze/spatial-aggregation/scripts/aggregate.py'
+
+    @classmethod
+    def setUpClass(cls):
+        if importlib.util.find_spec('geopandas') is None:
+            raise unittest.SkipTest('GeoPandas is not installed')
+
+    def aggregate(self, *options):
+        import csv, json, subprocess, sys
+        sources = [self.DATA/'aggregation_objects.geojson', self.DATA/'aggregation_zones.geojson']
+        before = [p.read_bytes() for p in sources]
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp)/'out'
+            subprocess.run([sys.executable, str(self.SCRIPT), *map(str, sources), str(out),
+                            '--objects-layer', 'aggregation_objects', '--zones-layer', 'aggregation_zones',
+                            '--zone-id', 'code', '--object-id', 'id', *options],
+                           check=True, capture_output=True, text=True)
+            with (out/'indicators.csv').open(newline='', encoding='utf-8') as handle:
+                rows = {row['code']: row for row in csv.DictReader(handle)}
+            report = json.loads(next(out.glob('*.json')).read_text())
+        self.assertEqual([p.read_bytes() for p in sources], before)
+        return rows, report
+
+    def test_spa01_within_counts(self):
+        rows, report = self.aggregate('--predicate', 'within', '--policy', 'error')
+        self.assertEqual({code: row['count'] for code, row in rows.items()},
+                         {'001': '2', '002': '1', 'NA': '0'})
+        self.assertEqual(report['unmatched_ids'], ['edge', 'outside'])
+        self.assertEqual(report['matched_objects'] + len(report['unmatched_ids']), report['objects'])
+
+    def test_spa02_intersects_all_sums_and_means(self):
+        rows, report = self.aggregate('--field', 'height', '--predicate', 'intersects', '--policy', 'all')
+        self.assertEqual([rows[c]['count'] for c in ('001', '002', 'NA')], ['3', '2', '0'])
+        self.assertEqual([float(rows[c]['sum']) for c in ('001', '002', 'NA')], [40, 30, 0])
+        self.assertAlmostEqual(float(rows['001']['mean']), 40 / 3)
+        self.assertEqual(float(rows['002']['mean']), 30)
+        self.assertEqual(rows['NA']['mean'], '')
+        self.assertEqual(rows['002']['missing'], '1')
+        self.assertEqual(report['multiple_match_ids'], ['edge'])
+        self.assertEqual((report['assignments'], report['matched_objects']), (5, 4))
+
+
 if __name__ == '__main__':
     unittest.main()
