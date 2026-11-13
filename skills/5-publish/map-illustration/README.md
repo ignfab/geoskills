@@ -82,6 +82,15 @@ QGIS runs use their own Python environment, with `QT_QPA_PLATFORM=offscreen` whe
 Creating the files needs no network service. Opening the HTML fetches Leaflet assets, and
 loading a QGIS project can access remote providers; a no-network request uses local data.
 
+## MCP servers
+
+Optional. With a QGIS MCP server connected to the QGIS session you have open, the agent
+first uses it to export the map you have open to a new image, without saving the project,
+then checks the image and compares it with the layer list: some servers draw hidden layers
+or ignore the layer order. Maps from data files and HTML maps use the routes of the table
+above. Without such a server, or when a call fails, nothing changes. See
+[MCP servers](../../../docs/mcp-servers.md).
+
 ## Installation
 
 ```bash

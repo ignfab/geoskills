@@ -65,6 +65,15 @@ the user; the agent never installs software itself.
 
 Local processing needs no network service or API key.
 
+## MCP servers
+
+Optional. When the layer is a table of a PostGIS database and a PostGIS MCP server is
+connected, the agent first runs the audit there with read-only queries. A repair in the
+database happens only on request, into a new table whose name is checked to be unused;
+otherwise the agent asks you for an export and repairs it as documented. It never asks for
+database credentials. Without such a server, or when a query fails, nothing changes. See
+[MCP servers](../../../docs/mcp-servers.md).
+
 ## Installation
 
 ```bash

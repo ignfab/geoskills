@@ -205,3 +205,64 @@ with few or no skills and the chains behind business needs. Runs are recorded in
 - **Expected skills:** `map-illustration`
 - **Watch:** Real PyQGIS render and PNG preview, correct unfilled red boundary, title/source, projected CRS and sensible extent, no source edits or substitute QGZ/QML deliverable.
 - **Status:** open
+
+## XP-18 — Parcel and zoning at a place, with Geocontext connected
+
+> Quelle est la parcelle cadastrale et quel est le zonage du PLU au niveau de la mairie de
+> Saint-Mandé (Val-de-Marne) ? Indique le document d'urbanisme en vigueur.
+
+- **Family:** `2-access`
+- **Expected skills:** `apicarto-query`
+- **Watch:** with the Geocontext MCP server connected, the place located with `geocode`
+  and the namesake in another department rejected from `city` and `zipcode`; `cadastre`
+  and `urbanisme` used first; the document and its dates reported with the information-only
+  caveat; no file written. Without Geocontext, the API Carto route as documented and at
+  most a mention that the server exists. In both cases no attempt to install, configure or
+  start a server.
+- **Status:** open
+
+## XP-19 — Complete building download, with Geocontext connected
+
+> Télécharge les bâtiments de la BD TOPO de la commune de Saint-Mandé dans un GeoPackage en
+> Lambert-93, dans `output/`, et vérifie que l'export est complet.
+
+- **Family:** `2-access`
+- **Expected skills:** `geopf-wfs-download`
+- **Watch:** with the Geocontext MCP server connected, the layer and its fields found with
+  the type search and description tools (whatever their names in the connected version),
+  the municipality identified with `adminexpress`, and the expected count taken from
+  Geocontext before the download (1,741 intersecting buildings on 2026-11-13) then
+  compared with the export, with the difference between the two filters explained. The
+  download itself made with `ogr2ogr`, never with Geocontext. Without Geocontext, discovery
+  with the documented commands.
+- **Status:** open
+
+## XP-20 — Export the map open in QGIS, with a QGIS MCP server connected
+
+> Exporte en PNG la carte actuellement ouverte dans mon QGIS, sans modifier mon projet, et
+> donne les dimensions et le poids de l'image.
+
+- **Family:** `5-publish`
+- **Expected skills:** `map-illustration`
+- **Watch:** with a QGIS MCP server connected, its tool list read, the map rendering tool
+  used on the open project, the project neither saved nor changed (layers, styles,
+  extent), and the image reopened and checked for size and content. Without it, a
+  question about the project file or the data, then a documented route. In both cases no
+  server or QGIS plugin installed, configured or started.
+- **Status:** open
+
+## XP-21 — Buildings per municipality inside PostGIS, with a PostGIS MCP server connected
+
+> Dans ma base PostGIS, compte les bâtiments de la table `batiment` par commune de la table
+> `commune` et donne aussi leur hauteur moyenne. Garde les communes sans bâtiment et ne
+> modifie rien dans la base.
+
+- **Family:** `4-analyze`
+- **Expected skills:** `spatial-aggregation`
+- **Watch:** with a PostGIS MCP server connected, the schemas, geometry columns, SRIDs and
+  row counts read first; the predicate and the policy for buildings on a border stated;
+  municipalities without buildings kept; matched plus unmatched buildings reconciled with
+  the total and multiple matches reported; `SELECT` statements only, no table created.
+  Without it, a request for an export, then the helper on that file; no database
+  credentials asked for.
+- **Status:** open

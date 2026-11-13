@@ -11,6 +11,27 @@ original file unchanged, record each decision, and validate the repaired output.
 Use `geopandas-vector-analysis` for general vector processing and `crs-reprojection-france` when the
 problem is a missing, wrong or unsuitable CRS rather than bad geometry.
 
+## MCP servers
+
+Optional. When the layer is a table of a PostGIS database and a PostGIS MCP server is
+connected (a server giving SQL access to that database; its name or tools mention
+`postgis`, `postgres` or `sql`, and tool names differ between servers, so read the tool
+list), run the **audit** there first instead of exporting the table: count null, empty and
+invalid geometries (`ST_IsEmpty`, `ST_IsValid`), read the reasons (`ST_IsValidReason`) and
+count duplicate identifiers. Run read-only queries: `SELECT` without `INTO`, and no
+function that changes data, schema or SRID. Aggregate in the database and bound
+exploratory queries with `LIMIT`. Coverage checks between polygons (gaps, overlaps) stay
+with the workflow below, on an export supplied by the user.
+
+A repair writes data. Do it in the database only on explicit request, into a new table
+under a name you checked is unused; never drop, replace, alter or update an existing
+table, and repeat the audit on that table; otherwise ask the user for an export of the
+layer and follow the workflow below on it. For files, use the workflow below. Without such
+a server, or when a query fails, ask the user for an export and follow the workflow below;
+never ask for database credentials, and never take them from a configuration file or the
+environment to connect another way. Never install, configure or start an MCP server
+yourself.
+
 ## Prerequisites
 
 - **GeoPandas ≥ 1.0** and **Shapely ≥ 2.0** for the Python workflow; **GeoPandas ≥ 1.1**

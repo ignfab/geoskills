@@ -887,6 +887,9 @@ read first, so an `XP` identifier never replaces a scenario prompt.
   GeoPandas < 1.1 and GDAL < 3.12, only the overlap-pair and enclosed-gap recipes remain,
   in both modes.
 - Live results (scores, labels, layer lists) drift: compare A and B of the same repetition.
+- The runner allows no MCP tool (`AB_TOOLS`), so A and B both follow the command route:
+  the `## MCP servers` sections of the skills are not measured. Try them with prompts
+  XP-18 to XP-21 in a session where you connected the server yourself.
 - GDAL < 3.12 removes the `gdal raster zonal-stats` path of RAS-05 in both modes.
 - GVB-01 to GVB-04 use `data/communes_sans_cpg/`, `data/communes_points.geojson` and
   `data/coverage_synthetic.geojson`, whose expected values are fixed. With GDAL 3.13.0 to

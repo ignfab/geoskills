@@ -10,6 +10,34 @@ resource's `availableOperations` and their `availableParameters`: profiles, opti
 units and constraints differ by operation/resource. Never assume a resource from an old
 example is still available. The API describes modelled network travel, not live traffic.
 
+## MCP servers
+
+Optional. When the [Geocontext](https://github.com/ignfab/geocontext) MCP server is
+connected (tools often prefixed `mcp__geocontext__`), locate named places with its
+`geocode` tool first. The first `geocode` candidate can be a namesake elsewhere or another
+object of the right municipality: check `fulltext` and `kind` as well as `city` and
+`zipcode`. When they do not match, add the postcode to the text, not the department name,
+or take another candidate. When its tool list also offers the tools below (version 0.10 or
+later), use them first when no geometry is needed:
+
+- `distance` gives the distance in metres between two points. Its default `profile` is
+  `spherical`, a straight line, like `ellipsoidal`: pass `car` or `pedestrian` for a
+  distance on the road network, which also returns an estimated travel time in minutes.
+  Say which profile and `optimize` value were used (`time` by default: the fastest route,
+  not the shortest), and that the tool states neither the routing resource nor the snapped
+  points.
+- `gpf_count_features` or `gpf_get_features` with `travel_time_filter` (`lon`, `lat`,
+  `minutes`, `profile`) counts or lists the objects of a Géoplateforme layer that
+  intersect the area reachable from that point (departure only, 120 minutes at most).
+  `gpf_get_features` returns 100 objects by default and 5,000 at most: call a list
+  complete only when `numberReturned` equals `numberMatched`.
+
+Check an answer before reporting it: no error returned, and a distance and a duration that
+are plausible for the two places. Use the Navigation API below for a route geometry or its
+steps, an isochrone or isodistance polygon, a chosen resource, constraints, direction and
+units. Without these tools, or when a call fails, use the API for every case. Never
+install, configure or start an MCP server yourself.
+
 ## Prerequisites
 
 Check curl for HTTP examples and Python 3's standard library for response/GeoJSON handling.

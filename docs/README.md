@@ -62,6 +62,7 @@ are written in French to check that a French request selects the right English s
 | Validate before reporting | The agent checks that the output is non-empty, in the expected CRS and of a plausible magnitude before calling it done. |
 | Keep long commands visible | Downloads run in the foreground with progress, not hidden behind a filter. |
 | Report what was done | Source, output, processing, validation and remaining issues, in the vocabulary of [output reports](output-reports.md). |
+| Prefer a connected MCP server, never require one | When Geocontext, a PostGIS server or a QGIS server is connected and covers a step, the agent uses it first; otherwise it runs the documented commands. It never installs or configures a server. See [MCP servers](mcp-servers.md). |
 
 ## Get started
 
@@ -302,6 +303,17 @@ them, and the agent leaves any login to you. Behind a proxy, `curl`, GDAL and Py
 the standard `http_proxy` and `https_proxy` variables; make sure the agent's shell has
 them. On a machine without a display, run the QGIS skills with `QT_QPA_PLATFORM=offscreen`.
 
+### Optional MCP servers
+
+Most skills use a connected MCP server first for part of their work, and their
+commands otherwise: [Geocontext](https://github.com/ignfab/geocontext) for Géoplateforme
+reference data (a place, an elevation, what lies at a point, the schema or a count of a
+WFS layer), a PostGIS server for data already in a database, and a QGIS server for the
+QGIS session you have open. No server is required, and the agent never installs or
+configures one: connecting a server is your decision. [MCP servers](mcp-servers.md) lists
+what each skill does with which server, what stays with its commands, and how to connect
+Geocontext.
+
 ## Check the results
 
 The agent's report should cover five points for each output, described in
@@ -352,6 +364,7 @@ default for applicable metropolitan-France tasks. See [CRS handling](crs-handlin
 | Accents are garbled after reading a Shapefile | The `.cpg` file is missing and the text is in CP1252 | Ask for `gdal-vector-processing`, which detects and sets the encoding |
 | Points land in the wrong place | Latitude and longitude are swapped, or the source CRS is wrong or missing | Ask for `crs-reprojection-france`, which checks axis order and diagnoses missing projections |
 | An installed skill still has an old name, such as `geopf-services` or `apicarto` | The skill was renamed on 2026-11-13; installed copies are not renamed automatically | Install the current name, then remove the old copy after checking it has no local changes; see the [naming guide](skill-naming.md) |
+| The agent runs commands although an MCP server is connected | The server's tools are not in this session, or the skill keeps that step for its commands (file exports, bulk data, validated styles and projects) | Check that the tools appear in the agent's tool list, then see [MCP servers](mcp-servers.md) for what each skill does with a server |
 | A QGIS skill fails on a server | No display, or the Python used is not the one supplied with QGIS | Use the QGIS Python and set `QT_QPA_PLATFORM=offscreen` |
 
 ## Limits and status
@@ -365,9 +378,13 @@ default for applicable metropolitan-France tasks. See [CRS handling](crs-handlin
   GeoPandas, QGIS, Mapshaper and map illustration skills apply to data from anywhere.
 - **Licences.** Check the licence of each dataset you download; a report records it only
   when the metadata states it.
+- **MCP routes are not measured yet.** The scenarios run without MCP servers. Geocontext
+  is a prototype whose tools change between versions, and the PostGIS route is guidance
+  without tested SQL recipes; see [MCP servers](mcp-servers.md).
 - **Gaps.** Not covered yet: comparing candidate products by resolution and edition;
   change detection between editions; network analysis on local data; terrain derivatives
-  beyond the `gdaldem` one-liners; styles other than vector QML; print layouts, atlases
+  beyond the `gdaldem` one-liners; processing inside a PostGIS database as a skill of its
+  own; styles other than vector QML; print layouts, atlases
   and delivery metadata; dedicated workflows for territorial diagnosis, accessibility,
   exposure and change monitoring. The family pages keep this list up to date.
 
@@ -376,7 +393,7 @@ default for applicable metropolitan-France tasks. See [CRS handling](crs-handlin
 ```text
 README.md                  Catalog, installation and French summary
 CLAUDE.md                  Contributor conventions (also exposed as AGENTS.md)
-docs/                      This guide, report conventions, naming guide and landscape study
+docs/                      This guide, MCP servers, report conventions, naming guide, landscape study
 skills/<family>/README.md  Family page: question, skills, how to choose, tools, related skills, gaps
 skills/<family>/<skill>/   One skill: SKILL.md, README.md, references/, scripts/
 tests/                     Automated tests, scenario files, fixtures, A/B protocol, reviews
@@ -390,6 +407,7 @@ tests/prompts/             Experimental prompts and the log of their runs
 | --- | --- |
 | [Contributing conventions](../CLAUDE.md) | Layout, families, language, agent conduct and the checklist for a new skill. Also exposed as `AGENTS.md`. |
 | [Skill names and families](skill-naming.md) | Naming convention, review of all skills and the correspondence between old and current names. |
+| [MCP servers](mcp-servers.md) | The optional Geocontext, PostGIS and QGIS servers: the rule, what each skill does with them and how to connect one. |
 | [Output reports](output-reports.md) | Shared terminology and the evidence to include for each kind of output. |
 | [Test guide](../tests/README.md) | The kinds of tests, which ones to run for a given change, what CI runs, how to read the skips, coverage by skill, fixtures and a glossary. |
 | [Fixture metadata](../tests/data/README.md) | Provenance, coordinate systems and intentional traps of the test inputs. |
@@ -418,6 +436,7 @@ names remain as recorded; see the [name correspondence](skill-naming.md) for cur
 
 | Document | Scope |
 | --- | --- |
+| [2026-11-13 MCP review](../tests/review-mcp-servers-2026-11-13.md) | Optional MCP routes: checks against the live Geocontext service, paper simulations with a small model, defects fixed and limits. |
 | [2026-11-12 review](../tests/review-2026-11-12.md) | Scenario and test audit: standard scenario format, fixtures tied to their tests, structure checks and model-sensitivity checks. |
 | [2026-11-12 municipal workflow review](../tests/review-municipality-building-profile-2026-11-12.md) | First workflow, independently checked building indicators and a portable QGIS forward pilot. |
 | [2026-11-11 review](../tests/review-2026-11-11.md) | Five complementary skills, issues and merged PRs, QGIS integration, discovery and actual agent pilots. |

@@ -42,6 +42,12 @@ requests are a separate delivery choice: disclose them when an interactive map i
 Use the Python supplied with QGIS; on a machine without a display, set
 `QT_QPA_PLATFORM=offscreen`.
 
+**Optional MCP server.** With a QGIS MCP server connected to the QGIS session you have
+open, `qgis-layer-styling` and `qgis-project-builder` read your project and, on request,
+show their result there, and `map-illustration` exports the map you have open. The style
+and project files are still produced by the tested helpers. See
+[MCP servers](../../docs/mcp-servers.md).
+
 ## Also relevant
 
 - [municipality-building-profile](../6-workflows/municipality-building-profile/README.md)

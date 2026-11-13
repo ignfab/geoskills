@@ -9,6 +9,24 @@ Make a readable map of an **existing result**. Default to a static PNG; produce 
 HTML only when requested or useful for inspecting features. Select a renderer from the
 available environment and source material, not from a requirement to use QGIS everywhere.
 
+## MCP servers
+
+Optional. A QGIS MCP server drives the QGIS session the user has open. Its tools mention
+QGIS (for example `get_layers`, `zoom_to_layer`, `render_map`), and their names differ
+between servers, so read the tool list. When one is connected and the request is an image
+of **the map the user has open**, use its map rendering tool first, after reading its
+input schema for the output path and size, with an output path you checked is unused: it
+does not save the project. Then apply *Validate the output* to that file and compare it
+with the layer list: some servers draw hidden layers, ignore the layer order or do not
+reproject. Say that the image is the server's rendering of the current extent, without an
+added title or legend, and mention any hidden layer the list shows. Do not change the
+user's layers, styles or extent unless asked. If the rendering tool fails, ask the user
+for the saved project file or the data; never save their project yourself.
+
+For data files and HTML maps, choose a route below. Without a QGIS MCP server, or when a
+call fails, choose a route below as well and say so. Never install, configure or start an
+MCP server or a QGIS plugin yourself.
+
 ## Prerequisites
 
 Check only the chosen route; never install software or run interactive setup/login.

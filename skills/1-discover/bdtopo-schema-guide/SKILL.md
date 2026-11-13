@@ -10,6 +10,20 @@ unknowns. This is a curated **buildings and roads** subset, not every BD TOPO cl
 Downloads belong to `geopf-wfs-download` or `geopf-file-download`; local counts belong to
 `spatial-aggregation`. No network call is needed for the offline path.
 
+## MCP servers
+
+Optional. When the [Geocontext](https://github.com/ignfab/geocontext) MCP server is
+connected (tools often prefixed `mcp__geocontext__`), use it first to find a WFS type and
+read its properties: `gpf_search_types` finds the type from French keywords, and
+`gpf_describe_type` returns the property names, types, descriptions and allowed values
+(`gpf_wfs_search_types` and `gpf_wfs_describe_type` in Geocontext 0.9). They come from a
+schema catalogue bundled with the server, not from the service itself: name that source,
+report it apart from the versioned model, and use step 4 when the answer must reflect the
+live service. The versioned model stays the source for the model version, the document
+revision and the special values; when the catalogue and the model differ, report the
+difference instead of merging them. Without Geocontext, or when a call fails, follow step
+4 as written. Never install, configure or start an MCP server yourself.
+
 ## Prerequisites
 
 Read the bundled Markdown/JSON without GIS software. The optional lookup needs Python 3

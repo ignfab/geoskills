@@ -76,6 +76,15 @@ The output driver must report vector support and `Create()` capability. The agen
 
 Network: the public Géoplateforme WFS at `https://data.geopf.fr/wfs/ows`; the documented requests carry no API key.
 
+## MCP servers
+
+Optional. With the [Geocontext](https://github.com/ignfab/geocontext) MCP server
+connected, the agent first uses it to find the layer and its fields, which it then
+confirms on the service, to identify a named municipality, to get the expected order of
+magnitude of the count before a download, and to answer questions that need no file.
+Downloads and conversions always use `ogr2ogr`. Without the server, or when a call fails,
+discovery uses the documented commands. See [MCP servers](../../../docs/mcp-servers.md).
+
 ## Installation
 
 ```bash

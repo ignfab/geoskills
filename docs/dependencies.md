@@ -27,6 +27,10 @@ Do not bypass real dependencies with `--no-deps` or upgrade a working stack for 
 feature. Package managers resolve transitive dependencies; the download volume depends
 on platform, versions and the local cache, so package counts are not size estimates.
 
+An MCP server (Geocontext, PostGIS, QGIS) is never a dependency. When one is connected and
+covers a step, that step can need no local tool at all; otherwise the requirements above
+apply. Agents never install or configure a server: see [MCP servers](mcp-servers.md).
+
 ## By family
 
 The family pages list every skill's base requirements and conditional additions.

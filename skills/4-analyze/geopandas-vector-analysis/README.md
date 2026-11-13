@@ -66,6 +66,15 @@ recipes. The agent never installs software itself. See the
 
 Network: the Géoplateforme WFS (`https://data.geopf.fr/wfs/ows`) only when reading WFS data directly. Local files need no network.
 
+## MCP servers
+
+Optional. When the layers are tables of a PostGIS database and a PostGIS MCP server is
+connected, the agent first runs the join or the overlay in SQL there, with read-only
+queries and the same checks on the result, and reports counts and checks rather than every
+joined row. Files, WFS extracts and raster zonal statistics use GeoPandas as documented.
+Without such a server, or when a query fails, nothing changes. See
+[MCP servers](../../../docs/mcp-servers.md).
+
 ## Installation
 
 ```bash

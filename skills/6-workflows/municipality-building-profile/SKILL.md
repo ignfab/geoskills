@@ -11,6 +11,36 @@ source building objects, never infer dwellings, inhabitants, floor area or build
 This workflow owns the selection, common statistical population and reconciliation across
 stages. Use related skills when available; the local helper works independently of them.
 
+## MCP servers
+
+Optional. Supplied local files come first (step 1). When step 1 needs online discovery and
+the [Geocontext](https://github.com/ignfab/geocontext) MCP server is connected (tools
+often prefixed `mcp__geocontext__`), use it first:
+
+- `geocode`, then `adminexpress` at that point, identify the municipality: its INSEE code
+  and a reusable `feature_ref`. The first `geocode` candidate can be a namesake elsewhere
+  or another object of the right municipality: check `fulltext` and `kind` as well as
+  `city` and `zipcode`. When they do not match, add the postcode to the text, not the
+  department name, or take another candidate.
+- `gpf_search_types` and `gpf_describe_type` give the building layer and its property
+  names, from a schema catalogue bundled with the server, not from the service itself:
+  confirm them on the service before the download.
+- `gpf_count_features`, filtered by intersection with that `feature_ref`, counts the
+  buildings intersecting the municipality. Use it as a cross-check of the helper's
+  selected count: it matched exactly on Saint-Mandé on 2026-11-13 (1,741), leaving out the
+  3 buildings that only touch the boundary. Report both numbers. It is not the
+  completeness evidence of the bounding-box extract, which needs a count for the same
+  filter.
+
+Tool and parameter names differ in Geocontext 0.9 (`gpf_wfs_search_types`,
+`gpf_wfs_describe_type`, `gpf_wfs_get_features` with `result_type: "hits"` and
+`spatial_operator: "intersects_feature"`): read the tool list and the input schemas of the
+connected server. Still download the municipality boundary and the whole building polygons
+with `geopf-wfs-download`, even when a Geocontext layer tool could return geometries: its
+output stops at 5,000 objects and is meant for map display, not for a checked extract.
+Without Geocontext, or when a call fails, follow step 1 as written. Never install,
+configure or start an MCP server yourself.
+
 ## Prerequisites
 
 Check `python3 -c "import geopandas, pandas, shapely, pyogrio; print(geopandas.__version__)"`.

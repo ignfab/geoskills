@@ -12,6 +12,43 @@ To process the downloaded layers in Python (joins, buffers, overlays), see the
 `geopandas-vector-analysis` skill. The WFS serves vector features only: for orthophotos and other map
 images, use `geopf-raster-download`.
 
+## MCP servers
+
+Optional. The download and the conversion always use `ogr2ogr` (see the tooling rule). A
+connected [Geocontext](https://github.com/ignfab/geocontext) MCP server (tools often
+prefixed `mcp__geocontext__`) comes first for what surrounds them:
+
+- **Find the layer and its fields:** `gpf_search_types` with French keywords, then
+  `gpf_describe_type` for the property names, types and allowed values. They come from a
+  schema catalogue bundled with the server, not from the service itself: confirm the layer
+  and the fields you will use with `ogrinfo -so`, as in *Discover before querying*, before
+  writing `-where` or `-select`. A layer that the search does not return can still be on
+  the WFS: look for it in GetCapabilities before saying that it does not exist.
+- **Identify a named municipality:** `geocode` then `adminexpress` give its INSEE code and
+  a `feature_ref` usable as a spatial filter of the count. The first `geocode` candidate
+  can be a namesake elsewhere or another object of the right municipality: check
+  `fulltext` and `kind` as well as `city` and `zipcode`. When they do not match, add the
+  postcode to the text, not the department name, or take another candidate. Check the unit
+  returned by `adminexpress` against the request before using its code in `-where`.
+- **Know the expected order of magnitude before downloading:** `gpf_count_features` with
+  the same filter as the download, for example the same bounding box, and report it next
+  to the exported count. A few objects of difference at the edge are normal, because
+  `ogr2ogr -spat` tests the box again on the client (2,636 counted, 2,634 written for the
+  Saint-Mandé box on 2026-11-13); a large gap needs the completeness checks of the
+  references. An intersection with a municipality is not a bounding box.
+- **Answer without a file** (a count, a few attributes): `gpf_count_features`, or
+  `gpf_get_features`, which returns attributes without geometry, 100 objects by default
+  and 5,000 at most. Check that `numberReturned` equals `numberMatched`.
+
+Geocontext 0.9 names these tools `gpf_wfs_search_types`, `gpf_wfs_describe_type` and
+`gpf_wfs_get_features`, counts with `result_type: "hits"` and names the filter parameters
+differently: follow the tool list and the input schemas of the connected server.
+Geometries, including the boundary of a named area, still come from `ogr2ogr`: do not
+replace a requested file export with these tools, even with a layer tool that returns
+geometries, since its output stops at 5,000 objects. Without Geocontext, or when a call
+fails, discover with the commands below. Never install, configure or start an MCP server
+yourself.
+
 ## Prerequisites
 
 - Working **GDAL** CLI tools (`ogr2ogr` and `ogrinfo`) from the same environment, with
@@ -58,9 +95,8 @@ Reuse an existing capable GDAL before proposing a
 - **Géoplateforme WFS**: `https://data.geopf.fr/wfs/ows` (WFS 2.0).
 - GetCapabilities: `https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetCapabilities`
 - Layer names include a namespace prefix, e.g. `BDTOPO_V3:batiment`, `ADMINEXPRESS-COG.LATEST:region`.
-- Discover layers with the MCP tool `gpf_search_types` from
-  [@ignfab/geocontext](https://github.com/ignfab/geocontext), or by opening
-  GetCapabilities in a browser.
+- Discover layers with Geocontext when it is connected (see [MCP servers](#mcp-servers)),
+  or from GetCapabilities as shown below.
 
 ## Discover before querying
 

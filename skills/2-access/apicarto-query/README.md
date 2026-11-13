@@ -73,6 +73,16 @@ The user installs missing software; the agent does not. The service is
 (`aoc`): the user provides the key outside the chat, and it is never printed in commands
 or logs.
 
+## MCP servers
+
+Optional. With the [Geocontext](https://github.com/ignfab/geocontext) MCP server
+connected, the agent first answers questions about one point (parcel, planning zone,
+easements, administrative units) with its tools, and reports the distance between the
+point and each object, since the nearest object is not always at the point. API Carto
+remains the route for areas, codes, complete listings, protected areas, RPG parcels and
+file outputs. Without the server, or when a call fails, API Carto is used for every case.
+See [MCP servers](../../../docs/mcp-servers.md).
+
 ## Installation
 
 ```bash

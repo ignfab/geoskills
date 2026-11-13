@@ -26,7 +26,8 @@ prompts can become scenarios.
    session. The A/B runner does all of this for one prompt (`ab_run XP-05 with x1`); see
    [Experimental prompts in the A/B protocol](../ab-testing.md#experimental-prompts).
 3. **Send the prompt as is.** Note the skills loaded, in order, and check the result against
-   the `Watch` line of the catalog entry.
+   the `Watch` line of the catalog entry. When a prompt needs an MCP server (its title says
+   so), connect it yourself in the client before the session and note its name and version.
 4. **Record the run** as a new row of `runs.md`.
 5. **Follow up.** When the expected behavior is clear, promote the prompt to a scenario of
    `tests/<skill>.md` and set its status to `promoted to <ID>`. Otherwise change the skill or

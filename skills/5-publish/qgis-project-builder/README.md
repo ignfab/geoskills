@@ -63,6 +63,17 @@ QGIS/PyQGIS.
   WMTS endpoints without credentials and reads their capabilities with a 15-second timeout;
   no API key is used. Local projects need no network.
 
+## MCP servers
+
+Optional. With a QGIS MCP server connected to the QGIS session you have open, the agent
+first lists the layers you have open when you ask to package them, and reads their sources
+from your saved project file or asks you for them when the server does not give them. The
+project file is still built by the helper whenever standalone PyQGIS runs. Opening a
+project replaces the one you have open and drops its unsaved changes, so the agent does it
+only when asked, after telling you and getting your agreement, and never saves over yours.
+Without such a server, or when a call fails, nothing changes. See
+[MCP servers](../../../docs/mcp-servers.md).
+
 ## Installation
 
 ```bash

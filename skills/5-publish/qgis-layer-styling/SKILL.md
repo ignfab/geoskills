@@ -10,6 +10,32 @@ Deliver a `.qml` and a renderer report for an existing layer. Project assembly b
 edit geometries/attributes or promise labels, rule engines, SLD, layouts or atlases.
 For a rendered map image or interactive HTML deliverable, use `map-illustration`.
 
+## MCP servers
+
+Optional. A QGIS MCP server drives the QGIS session the user has open. Its tools mention
+QGIS (for example `get_layers`, `add_vector_layer`, `render_map`, `execute_code`), and
+their names differ between servers, so read the tool list. When one is connected, use its
+read tools first (layer list, project information, layer features) to find the layer in
+the user's project, and take what they return: often only the name, the type, the feature
+count and the field names. When they do not return the source file, ask the user for it
+instead of guessing. Then inspect that source as in step 1, with standalone PyQGIS.
+
+Create the `.qml` with the helper below whenever standalone PyQGIS runs: it is the route
+that validates the style by reloading it. A tool that executes code runs anything in the
+user's QGIS: use it only when standalone PyQGIS cannot do the step, with the user's
+agreement, and on a layer object created from the same source and not added to the
+project. To create the style that way, build the same renderer, save it with
+`saveNamedStyle` to a new path, reload it on a fresh layer object and report that these
+checks were done by hand.
+
+Only when the user asks to see the style: say first that loading it replaces the whole
+current style of their layer in the session (symbols, and labels too) and cannot be
+undone, and wait for their agreement; then load the finished `.qml` on their layer and
+render a preview. Never edit data through the server: that is outside this skill. Do not
+save, replace or close the user's project, or add or remove layers, unless asked. Without
+a QGIS MCP server, or when a call fails, use the helper only. Never install, configure or
+start an MCP server or a QGIS plugin yourself.
+
 ## Prerequisites
 
 Use the Python supplied with an **existing** QGIS installation. Check with

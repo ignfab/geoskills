@@ -13,6 +13,29 @@ For one-shot conversions and downloads, the CLI is often enough: see `geopf-wfs-
 CRS). For invalid geometries, duplicates and schema audits, use `vector-data-quality`.
 Use GeoPandas when the workflow is scripted, iterative or mixes analysis steps.
 
+## MCP servers
+
+Optional. When the layers to join or overlay are tables of a PostGIS database and a
+PostGIS MCP server is connected (a server giving SQL access to that database; its name or
+tools mention `postgis`, `postgres` or `sql`, and tool names differ between servers, so
+read the tool list), run the operation in SQL there first instead of loading the tables in
+Python. Read the geometry columns and SRIDs, bring both layers to one projected CRS suited
+to the territory with `ST_Transform`, state the predicate used (`ST_Within` leaves points
+on a boundary unmatched), and apply the checks of *Validate the output* to the query
+result: unmatched features, multiple matches, counts, and areas measured in a projected
+CRS. Run read-only queries: `SELECT` without `INTO`, and no function that changes data,
+schema or SRID. Aggregate in the database and bound exploratory queries with `LIMIT`.
+Report counts and checks, not every joined row: when the user needs the resulting layer
+itself, offer a table or ask for an export and use GeoPandas. Create a table only on
+request, under a name you checked is unused; never drop, replace, alter or update an
+existing table.
+
+For files, WFS extracts and raster zonal statistics, use GeoPandas as described below.
+Without such a server, or when a query fails, ask the user for an export and use GeoPandas
+on it; never ask for database credentials, and never take them from a configuration file
+or the environment to connect another way. Never install, configure or start an MCP server
+yourself.
+
 ## Prerequisites
 
 Check the existing Python environment and only the operation's dependencies:

@@ -61,6 +61,16 @@ document revision July 2026 are separate from delivery dates.
   Debian/Ubuntu installation: `sudo apt install curl`.
 - The agent never installs software and never runs interactive login or setup commands.
 
+## MCP servers
+
+Optional. With the [Geocontext](https://github.com/ignfab/geocontext) MCP server
+connected, the agent first reads the properties of the WFS type (names, types, allowed
+values) from the schema catalogue bundled with that server. It names that source, reports
+it apart from the versioned model, which stays the reference for the model version, the
+document revision and the special values, and checks the live service when the answer must
+reflect it. Without the server, or when a call fails, nothing changes. See
+[MCP servers](../../../docs/mcp-servers.md).
+
 ## Installation
 
 ```bash

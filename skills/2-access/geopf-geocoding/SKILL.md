@@ -8,6 +8,24 @@ description: Geocodes addresses, points of interest and parcels with the French 
 Geocode French addresses (Base Adresse Nationale), points of interest and cadastral parcels
 with the IGN Géoplateforme geocoding API. No API key is needed.
 
+## MCP servers
+
+Optional. When the [Geocontext](https://github.com/ignfab/geocontext) MCP server is
+connected (tools often prefixed `mcp__geocontext__`), use its `geocode` tool first to
+**locate one place or address**; this route needs no local tool. It returns up to 10
+candidates (`maximumResponses`, 3 by default) with `lon` and `lat` in WGS84, a full label,
+`kind`, `city` and `zipcode`, from the autocompletion service. It gives no score, and the
+first candidate can be a namesake in another department or another object of the right
+municipality: check `fulltext`, `kind`, `city` and `zipcode` against the request. A
+`street` candidate for a requested house number is the street, not the address: say so, or
+use the API. When none matches, ask for more candidates or add the postcode to the text,
+not the department name; when several remain plausible, ask the user.
+
+Use the API below for CSV files, reverse geocoding, parcels, filters (`postcode`,
+`citycode`, `type`), scores and the quality review. Without Geocontext, or when a call
+fails, use the API for every case. Never install, configure or start an MCP server
+yourself.
+
 ## Prerequisites
 
 - `curl` (or any HTTP client). No API key is needed.

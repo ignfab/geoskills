@@ -66,6 +66,14 @@ outside this skill: a terrain DEM does not establish them.
 - QGIS is optional for a requested map, not required for the analytic result. Agents
   never install software or run interactive setup or login commands.
 
+## MCP servers
+
+Optional. A connected [Geocontext](https://github.com/ignfab/geocontext) MCP server helps
+only around the screening: identifying a named municipality and spot-checking a few
+elevations against the DEM. The DEM, the screening and the candidate polygons are produced
+as documented. Without the server, nothing changes. See
+[MCP servers](../../../docs/mcp-servers.md).
+
 ## Installation
 
 ```bash
