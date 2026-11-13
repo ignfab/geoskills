@@ -45,6 +45,10 @@ it, and names the gaps. Each skill README also displays its family. Names identi
 or domain and its operation or result; the [naming guide](docs/skill-naming.md) records the
 convention and the correspondence with earlier names.
 
+Skills preserve suitable existing or requested coordinate systems. Lambert-93 is a
+conditional default for metropolitan-France tasks, not a required CRS; see
+[CRS handling](docs/crs-handling.md) for units, service constraints and delivery choices.
+
 ## Installation
 
 Skills are installed with the [Vercel Skills CLI](https://github.com/vercel-labs/skills),

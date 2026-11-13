@@ -68,6 +68,26 @@ class ProjectTests(unittest.TestCase):
             tree = ET.fromstring(archive.read(member))
         self.assertTrue(all(n.text.startswith('./data/') for n in tree.findall('.//projectlayers/maplayer/datasource')))
 
+    def test_utm_and_custom_project_crs_survive_roundtrip(self):
+        from osgeo import osr
+        from qgis.core import QgsCoordinateReferenceSystem
+        custom = QgsCoordinateReferenceSystem.fromProj(
+            '+proj=tmerc +lat_0=48.8123 +lon_0=2.4567 +k=0.9999 +x_0=1234 +y_0=5678 +ellps=GRS80 +units=m +no_defs')
+        self.assertTrue(custom.isValid())
+        self.assertFalse(custom.authid())
+        for name, crs in [('utm', QgsCoordinateReferenceSystem('EPSG:32631')), ('custom', custom)]:
+            with self.subTest(name=name):
+                self.config['crs'] = crs.toWkt()
+                output = self.root/f'{name}.qgz'
+                report = self.helper.build_project(self.config, output)
+                project = self.reopen(output)
+                expected = osr.SpatialReference(wkt=crs.toWkt())
+                self.assertTrue(expected.IsSame(osr.SpatialReference(wkt=project.crs().toWkt())))
+                self.assertTrue(expected.IsSame(osr.SpatialReference(wkt=report['validated']['crs_wkt'])))
+                self.assertTrue(report['validated']['crs_wkt'])
+                for layer in project.mapLayers().values():
+                    self.assertEqual(layer.crs().authid(), 'EPSG:4326')
+
     def test_moving_whole_bundle_keeps_sources(self):
         output = self.root/'map.qgz'
         self.helper.build_project(self.config, output)
@@ -77,6 +97,27 @@ class ProjectTests(unittest.TestCase):
         self.assertFalse(self.root.exists())
         for layer in project.mapLayers().values():
             self.assertTrue(Path(layer.source().split('|')[0]).is_relative_to(moved))
+
+    def test_changed_custom_crs_is_rejected_even_without_authority_ids(self):
+        from qgis.core import QgsCoordinateReferenceSystem, QgsProject
+        definition = '+proj=tmerc +lat_0=48.8123 +lon_0={lon} +k=0.9999 +x_0=1234 +y_0=5678 +ellps=GRS80 +units=m +no_defs'
+        intended = QgsCoordinateReferenceSystem.fromProj(definition.format(lon=2.4567))
+        changed = QgsCoordinateReferenceSystem.fromProj(definition.format(lon=3.4567))
+        self.assertFalse(intended.authid())
+        self.assertFalse(changed.authid())
+        self.config['crs'] = intended.toWkt()
+        original_read = QgsProject.read
+
+        def altered_read(project, path):
+            success = original_read(project, path)
+            project.setCrs(changed)
+            return success
+
+        output = self.root/'changed.qgz'
+        with patch.object(QgsProject, 'read', altered_read):
+            with self.assertRaisesRegex(ValueError, 'round-trip'):
+                self.helper.build_project(self.config, output)
+        self.assertFalse(output.exists())
 
     def test_existing_style_without_styling_skill(self):
         from qgis.core import QgsVectorLayer

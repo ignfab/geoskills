@@ -7,6 +7,10 @@ municipality, from local inputs or bounded IGN extraction to indicators and opti
 
 ## Requirements
 
+The manifest selects the analysis CRS. Any suitable projected CRS with known compatible
+linear units is accepted; reported areas are converted to m². Lambert-93 is a conditional
+metropolitan-France default, not a required input/output CRS.
+
 Python 3.10+, GeoPandas ≥ 1.0, Shapely ≥ 2 and Pyogrio. The user can prepare an environment
 with `python3 -m pip install 'geopandas>=1.0,<2' pyogrio`; agents never install software.
 Online acquisition also needs GDAL/OGR and curl (`sudo apt install gdal-bin curl` on

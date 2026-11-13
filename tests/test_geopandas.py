@@ -86,16 +86,20 @@ class GeoPandasTests(GDALCase):
 
         source = gpd.GeoDataFrame({"id": ["001"], "note": [None]},
                                   geometry=[Point(2.35, 48.85)], crs=4326)
-        result = run_example("geopandas-vector-analysis/references/spatial-operations.md",
-                             "## Buffer", {"gdf": source})
-        result = run_example("geopandas-vector-analysis/references/spatial-operations.md",
-                             "## Buffer", result, example=1)["tampon"]
-        self.assertEqual(result.crs.to_epsg(), 2154)
-        self.assertEqual(result["id"].tolist(), ["001"])
-        self.assertTrue(result["note"].isna().all())
-        self.assertAlmostEqual(result.area.iloc[0], 31415.93, delta=60)
-        center = source.to_crs(2154).geometry.iloc[0]
-        self.assertLess(result.geometry.iloc[0].centroid.distance(center), 0.001)
+        from pyproj import CRS
+        for target in (2154, 32631, '+proj=utm +zone=31 +datum=WGS84 +units=us-ft +type=crs'):
+            with self.subTest(target=target):
+                result = run_example("geopandas-vector-analysis/references/spatial-operations.md",
+                                     "## Buffer", {"gdf": source, "metric_crs": target})
+                result = run_example("geopandas-vector-analysis/references/spatial-operations.md",
+                                     "## Buffer", result, example=1)["tampon"]
+                self.assertEqual(result.crs, CRS.from_user_input(target))
+                self.assertEqual(result["id"].tolist(), ["001"])
+                self.assertTrue(result["note"].isna().all())
+                factor = result.crs.axis_info[0].unit_conversion_factor
+                self.assertAlmostEqual(result.area.iloc[0] * factor**2, 31415.93, delta=60)
+                center = source.to_crs(target).geometry.iloc[0]
+                self.assertLess(result.geometry.iloc[0].centroid.distance(center) * factor, 0.001)
         self.assertEqual(source.crs.to_epsg(), 4326)
         self.assertEqual(source.geom_type.tolist(), ["Point"])
 
@@ -171,6 +175,27 @@ class GeoPandasTests(GDALCase):
                 run_example("geopandas-vector-analysis/references/zonal-stats.md", "## Basic usage",
                             {"communes": zones, "stats": stats}, example=1)
             assert_geodataframe_equal(zones, original)
+
+    def test_documented_zonal_stats_discovers_non_lambert_raster_crs(self):
+        import geopandas as gpd
+        import numpy as np
+        import rasterio
+        from rasterio.transform import from_origin
+        from shapely.geometry import box
+
+        raster_path = self.output/'utm.tif'
+        with rasterio.open(raster_path, 'w', driver='GTiff', width=2, height=2, count=1,
+                           dtype='float32', crs=32631, transform=from_origin(500000, 5400020, 10, 10),
+                           nodata=-9999) as raster:
+            raster.write(np.array([[1, 2], [3, 4]], dtype='float32'), 1)
+        zones = gpd.GeoDataFrame({'id': ['zone']}, geometry=[box(499999, 5399999, 500021, 5400021)], crs=32631)
+        zones_path = self.output/'zones.geojson'
+        zones.to_crs(4326).to_file(zones_path)
+        result = run_example('geopandas-vector-analysis/references/zonal-stats.md', '## Basic usage',
+                             {'zones_path': zones_path, 'raster_path': raster_path})
+        self.assertEqual(result['communes'].crs.to_epsg(), 32631)
+        self.assertEqual(result['stats'], [{'min': 1., 'max': 4., 'mean': 2.5, 'count': 4}])
+        self.assertEqual(gpd.read_file(zones_path).crs.to_epsg(), 4326)
 
     def test_zonal_stats_with_filtered_index(self):
         import geopandas as gpd

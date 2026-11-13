@@ -122,6 +122,12 @@ these rules, and states them where they apply:
   wizard); ask the user to run it.
 - **Discover before querying.** Take layer names, field names and CRSs from the service or
   file metadata, not from memory.
+- **Keep CRS handling configurable.** Preserve a suitable existing or user-requested CRS.
+  Lambert-93 (EPSG:2154) is a fallback for suitable metropolitan-France tasks, never an
+  inferred source CRS or a mandatory intermediate. Distinguish source, analysis, service
+  and delivery CRSs; inspect units and area of use. Examples must label their CRS choices,
+  accept other valid definitions (including WKT without an EPSG code), and retain genuine
+  format/service and measurement constraints. See [CRS handling](docs/crs-handling.md).
 - **Validate before reporting.** Each `SKILL.md` has a `## Validate the output` section
   saying how to check that a result is non-empty, in the expected CRS and of a plausible
   magnitude.

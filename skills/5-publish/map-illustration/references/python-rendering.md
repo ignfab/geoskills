@@ -3,12 +3,20 @@
 ## Vector helper
 
 Resolve `scripts/render_vector.py` relative to this skill. It accepts one inspected local
-vector layer, a new output directory, a short title and a source note. `--crs` must be a
-suitable projected metre CRS for static output; EPSG:2154 fits metropolitan France, not
-every territory. It preserves all input features and does no simplification or statistics.
+vector layer, a new output directory, a short title and a source note. Omit `--crs` to keep
+the input CRS or set `DISPLAY_CRS` to the requested/suitable display definition (authority
+code or WKT). EPSG:2154 is only a fallback for a suitable metropolitan-France map.
+Projected maps convert linear units, including feet, for a metre scale bar; this is a
+grid-distance scale, subject to projection distortion. Geographic maps use equal angular
+axis spacing without a linear scale bar; they are illustrations, not distance measurements.
+It preserves all input features and does no simplification or statistics.
+
+`--crs` applies to static output. The HTML route converts a display copy to EPSG:4326
+GeoJSON and uses Leaflet's EPSG:3857 view, reported as `html.data_crs` and
+`html.display_crs`; it does not change the analytic/source CRS.
 
 ```bash
-python3 scripts/render_vector.py zones.gpkg output/map --layer zones --crs EPSG:2154 \
+python3 scripts/render_vector.py zones.gpkg output/map --layer zones --crs "$DISPLAY_CRS" \
   --title 'Observed indicator' --source-note 'Source: supplied survey, edition 2024' \
   --column indicator --units 'documented unit' --formats png svg
 ```
@@ -18,7 +26,8 @@ on an explicit display copy first; the helper treats valid zero as zero and null
 It rejects non-finite values and all-null thematic fields. Constant data are reported as
 such in the range; prefer a single symbol or a labelled constant rather than implying
 variation. `report.json` contains source note, display CRS, range/null count, dimensions,
-versions and file sizes. A source date left unknown must remain unknown.
+versions, scale-bar conversion/omission and file sizes. A source date left unknown must
+remain unknown. Inspect polar/antimeridian extents before choosing this simple renderer.
 
 PNG is the default. `--formats png pdf` also makes a PDF; `svg` retains vector paths/text.
 Check a rendered preview of both formats. Matplotlib [savefig](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.savefig.html)
@@ -64,8 +73,6 @@ with rasterio.open(raster_path) as src:
         raise ValueError('No valid finite raster values')
     transform = src.transform * Affine.scale(src.width/out_width, src.height/out_height)
     west, south, east, north = array_bounds(out_height, out_width, transform)
-    if src.crs.is_geographic:
-        raise ValueError('Prepare a suitable projected display raster before this recipe')
 fig = Figure(figsize=(10, 7), dpi=140)
 FigureCanvasAgg(fig)
 ax = fig.add_subplot(111)
@@ -78,5 +85,8 @@ fig.savefig(output_png, dpi=140)
 ```
 
 Add the source/date as a caption, or compose it in the figure for a standalone image.
+This preview preserves the raster CRS and draws no distance scale. A geographic preview
+uses angular coordinates; do not label its horizontal units as metres. Reproject only
+when the requested display needs it, with an explicit resampling choice.
 Record original versus displayed pixel dimensions and resampling. A resampled elevation
 preview must not be used to claim that small obstacles or local peaks are absent.

@@ -94,9 +94,13 @@ def profile(municipalities, buildings, manifest):
     check_polygons(boundary, 'municipality')
     check_polygons(buildings, 'buildings')
     crs = CRS.from_user_input(manifest['analysis_crs'])
-    require(crs.is_projected and len(crs.axis_info) >= 2
-            and all(axis.unit_conversion_factor == 1 for axis in crs.axis_info[:2])
-            and crs.to_epsg() != 3857, 'Choose a suitable projected metre CRS, not geographic/Web Mercator')
+    axes = crs.axis_info[:2]
+    require(crs.is_projected and len(axes) == 2
+            and all(math.isfinite(axis.unit_conversion_factor) and axis.unit_conversion_factor > 0 for axis in axes)
+            and math.isclose(axes[0].unit_conversion_factor, axes[1].unit_conversion_factor, rel_tol=1e-12)
+            and crs.to_epsg() != 3857, 'Choose a suitable projected CRS with known linear units, not geographic/Web Mercator')
+    metres_per_unit = axes[0].unit_conversion_factor
+    area_factor = metres_per_unit ** 2
     if crs.area_of_use:
         west, south, east, north = crs.area_of_use.bounds
         x1, y1, x2, y2 = boundary.to_crs(4326).total_bounds
@@ -108,19 +112,19 @@ def profile(municipalities, buildings, manifest):
     objects.geometry = objects.geometry.map(shapely.force_2d)
     check_polygons(boundary, 'projected municipality')
     check_polygons(objects, 'projected buildings')
-    area = float(boundary.geometry.iloc[0].area)
+    area = float(boundary.geometry.iloc[0].area) * area_factor
     require(math.isfinite(area) and area > 0, 'Municipality area must be positive and finite')
     shape = boundary.geometry.iloc[0]
     clips = objects.geometry.map(lambda g: polygonal(g.intersection(shape)))
     selected = pd.Series([g.area > 0 for g in clips], index=objects.index, dtype=bool)
     touches = objects.geometry.intersects(shape) & ~selected
-    crosses = selected & pd.Series([g.difference(shape).area > max(1e-8, g.area * 1e-10)
+    crosses = selected & pd.Series([g.difference(shape).area > max(1e-8 / area_factor, g.area * 1e-10)
                                     for g in objects.geometry], index=objects.index, dtype=bool)
     chosen = objects.loc[selected].copy()
     chosen_clips = list(clips.loc[selected])
     footprint = unary_union(chosen_clips)
-    footprint_area = float(footprint.area)
-    sum_area = float(sum(g.area for g in chosen_clips))
+    footprint_area = float(footprint.area) * area_factor
+    sum_area = float(sum(g.area for g in chosen_clips)) * area_factor
     require(math.isfinite(sum_area) and 0 <= footprint_area <= area + max(1e-8, area * 1e-10),
             'Footprint area cannot exceed municipality area')
     ids = objects[building_spec['id_field']]
@@ -145,7 +149,7 @@ def profile(municipalities, buildings, manifest):
         warnings.append('Distinct IDs have identical geometry: counts are source-object counts; investigate before interpreting them as physical buildings.')
     output = gpd.GeoDataFrame({'building_id': pd.Series(ids.loc[selected].tolist(), dtype='str'),
                               'crosses_boundary': crosses.loc[selected].astype(int).tolist(),
-                              'clipped_area_m2': [float(g.area) for g in chosen_clips]},
+                              'clipped_area_m2': [float(g.area) * area_factor for g in chosen_clips]},
                              geometry=chosen_clips, crs=crs)
     heights, usage = None, None
     if manifest.get('height'):
@@ -171,6 +175,7 @@ def profile(municipalities, buildings, manifest):
     union = gpd.GeoDataFrame({'area_m2': pd.Series([footprint_area] if chosen_clips else [], dtype='float64')},
                              geometry=[footprint] if chosen_clips else [], crs=crs)
     audit = {'municipality_id': boundary_spec['id'], 'analysis_crs': crs.to_string(),
+             'horizontal_unit': axes[0].unit_name, 'metres_per_unit': metres_per_unit,
              'method': 'positive-area intersection; planar 2D union; unweighted building statistics; linear quantiles',
              'completeness': scope, 'metrics': metrics, 'height': heights, 'usage': usage,
              'reconciliation': {'input_buildings': len(objects), 'selected_buildings': len(chosen),

@@ -109,6 +109,43 @@ class BuildingProfileTests(unittest.TestCase):
         self.assertEqual(audit['height']['mean_m'], 15)
         self.assertFalse(layers['buildings'].geometry.has_z.any())
 
+    def test_requested_utm_and_custom_feet_keep_crs_and_square_metre_metrics(self):
+        from geopandas.testing import assert_geodataframe_equal
+        from pyproj import CRS
+        from shapely.geometry import box
+
+        targets = [CRS.from_epsg(32631), CRS.from_proj4(
+            '+proj=tmerc +lat_0=48.85 +lon_0=2.35 +k=1 +x_0=0 +y_0=0 +ellps=GRS80 +units=us-ft +type=crs')]
+        for target in targets:
+            with self.subTest(crs=target.to_string()):
+                factor = target.axis_info[0].unit_conversion_factor
+                x, y = (500000, 5400000) if target.to_epsg() else (0, 0)
+                self.municipalities = self.gpd.GeoDataFrame({'id': ['00001']},
+                    geometry=[box(x, y, x+100/factor, y+100/factor)], crs=target)
+                self.buildings = self.gpd.GeoDataFrame({'id': ['b']},
+                    geometry=[box(x+10/factor, y+10/factor, x+20/factor, y+20/factor)], crs=target)
+                self.manifest['analysis_crs'] = target.to_wkt()
+                self.manifest['municipality'].update(id_field='id', id='00001')
+                self.manifest['buildings']['id_field'] = 'id'
+                self.manifest.pop('height', None)
+                self.manifest.pop('usage', None)
+                original = self.buildings.copy(deep=True)
+                layers, audit = self.run_profile()
+                self.assertEqual(layers['buildings'].crs, target)
+                self.assertAlmostEqual(audit['metrics']['municipality_area_m2'], 10000)
+                self.assertAlmostEqual(audit['metrics']['footprint_area_m2'], 100)
+                self.assertAlmostEqual(layers['buildings'].clipped_area_m2.iloc[0], 100)
+                self.assertAlmostEqual(layers['footprint'].area_m2.iloc[0], 100)
+                self.assertAlmostEqual(audit['metres_per_unit'], factor)
+                self.assertEqual(audit['metrics']['building_count'], 1)
+                assert_geodataframe_equal(self.buildings, original)
+                with tempfile.TemporaryDirectory() as tmp:
+                    output = Path(tmp)/'profile'
+                    self.helper.export(layers, audit, output)
+                    restored = self.gpd.read_file(output/'profile.gpkg', layer='buildings')
+                    self.assertEqual(restored.crs, target)
+                    self.assertAlmostEqual(restored.clipped_area_m2.iloc[0], 100)
+
     def test_missing_crs_invalid_geometry_and_unsuitable_projection_fail(self):
         from shapely.geometry import Polygon
         for crs in ('EPSG:4326', 'EPSG:3857', 'EPSG:2263', 'EPSG:32755'):

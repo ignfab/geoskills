@@ -215,6 +215,17 @@ class VectorQualityTests(GDALCase):
         self.assertEqual(len(namespace["quarantine"]), 2)
         self.assertIn("Area before/after:", output)
 
+    def test_custom_crs_without_catalogue_area_is_not_replaced(self):
+        import geopandas as gpd
+        from shapely.geometry import box
+        custom = '+proj=tmerc +lat_0=48.85 +lon_0=2.35 +k=1 +ellps=GRS80 +units=m +type=crs'
+        source = gpd.GeoDataFrame(geometry=[box(2.3, 48.8, 2.31, 48.81)], crs=4326).to_crs(custom)
+        self.assertIsNone(source.crs.area_of_use)
+        namespace, _ = run_quietly('vector-data-quality/SKILL.md', '## Audit first',
+                                  {'src': source, 'comparable_geometry': source.geometry.notna()}, example=1)
+        self.assertIsNone(namespace['outside_crs_area'])
+        self.assertEqual(namespace['src'].crs, source.crs)
+
     def test_crs_area_check_flags_projected_coordinates_labelled_wgs84(self):
         self.in_output_dir()
         parcels = self.parcels()

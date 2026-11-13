@@ -37,12 +37,17 @@ QGIS runs use its own Python environment and `QT_QPA_PLATFORM=offscreen` when he
    GeoPandas/Matplotlib for simple static maps; reuse QGIS for existing project styles,
    labels or mixed raster/vector composition. Use Folium for a modest vector HTML map.
    Browser access to JavaScript/CSS or tiles is a separate dependency from file generation.
+   Preserve a suitable source/project or requested display CRS. Lambert-93 is only a
+   fallback for a suitable metropolitan-France map. The helper accepts geographic and
+   projected CRSs, including feet/custom definitions; it omits the linear scale bar for
+   geographic coordinates and converts projected units for a metre scale bar.
 3. For a simple vector image, inspect/select a layer, then run this helper relative to
-   the installed skill directory. Replace sample names/CRS with the inspected values:
+   the installed skill directory. Set `DISPLAY_CRS` to the chosen definition, or omit
+   `--crs` to keep the input CRS. Replace sample names with the inspected values:
 
 ```bash
 python3 scripts/render_vector.py input.gpkg output/illustration --layer zones \
-  --crs EPSG:2154 --title 'Study area' --source-note 'Source: supplied data; edition unknown'
+  --crs "$DISPLAY_CRS" --title 'Study area' --source-note 'Source: supplied data; edition unknown'
 ```
 
 Add `--column indicator --units 'documented unit'` for a continuous numeric colour scale.
@@ -56,6 +61,8 @@ for multiple layers, rasters and the limits of this intentionally small helper.
 5. For HTML, follow [interactive delivery](references/interactive-html.md), including
    resource dependencies, tooltip selection and actual browser checks. No web framework,
    server, hosting or full QGIS project is needed for a small local HTML delivery.
+   `--crs` selects the static display only; the Leaflet recipe uses longitude/latitude
+   GeoJSON and Web Mercator display, recorded separately in the report.
 
 ## Validate the output
 

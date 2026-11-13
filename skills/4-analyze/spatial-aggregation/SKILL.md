@@ -24,6 +24,8 @@ software or run interactive setup. Existing compatible environments may be selec
 2. Check null/empty/invalid geometry and polygon zones. Stop on defects; geometry repair
    requires a separate decision (`vector-data-quality`). Transform known CRSs to a common
    CRS in memory; never assign a guessed CRS. State units for any requested measurements.
+   The helper aligns objects to the zones' declared CRS and preserves that output CRS;
+   it does not need EPSG:2154 for counts/sums. Handle polar/antimeridian topology explicitly.
 3. Select the [predicate](references/spatial-predicates.md) and
    [assignment policy](references/aggregation-policies.md) from the request. Default
    `within` excludes points on borders; `error` stops on multiple matches. Explain these

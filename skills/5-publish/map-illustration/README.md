@@ -8,6 +8,11 @@ No application server, web build pipeline or mandatory QGIS installation.
 
 ## Requirements
 
+For static maps, the vector helper preserves the input CRS unless `--crs` is provided. Projected and
+geographic CRSs are supported: projected linear units are converted for the metre scale
+bar; geographic maps omit that bar. HTML uses longitude/latitude data and a Web Mercator
+view. See [CRS handling](../../../docs/crs-handling.md).
+
 - Static vectors: GeoPandas ≥ 1.0 and Matplotlib ≥ 3.7 (includes Pillow).
 - Interactive vectors: GeoPandas ≥ 1.0 and Folium ≥ 0.16; thematic colours also use Matplotlib.
 - Existing QGIS project export: QGIS/PyQGIS 3.34–3.x and Qt.

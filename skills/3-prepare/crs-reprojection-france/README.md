@@ -6,6 +6,11 @@ Choose the right coordinate reference system for French data (Lambert-93, CC zon
 the overseas UTM systems) and reproject vectors, rasters and points with GDAL, PROJ and
 pyproj, without the usual pitfalls.
 
+Preserve suitable requested/existing CRSs. Lambert-93 is a fallback for applicable
+metropolitan-France tasks; other authority codes and custom WKT definitions remain valid.
+This guide's French scope does not restrict the generic tools; see
+[CRS handling](../../../docs/crs-handling.md).
+
 ## Requirements
 
 Choose an existing route: GDAL for vector/raster files (`sudo apt install gdal-bin`),

@@ -34,6 +34,11 @@ use `terrain-elevation-screening`.
 
 ## Inspect first
 
+Preserve a suitable source grid for clipping, mosaics and conversion. Honour a suitable
+requested target CRS; Lambert-93 is only a metropolitan-France fallback when a new
+projection is needed. Read pixel units from the CRS, including non-metre units. Transform
+zones to the raster CRS for statistics instead of resampling the raster to EPSG:2154.
+
 Always run `gdalinfo` before processing, to learn the CRS, resolution and nodata value:
 
 ```bash
@@ -43,7 +48,8 @@ gdalinfo -stats mnt.tif          # also compute min/max/mean/stddev
 
 ## Most common commands
 
-Reproject to Lambert-93 and clip to a bounding box expressed in the **target** CRS:
+Metropolitan-France example: reproject to Lambert-93 and clip to a bounding box in the
+**target** CRS. Adapt the target and bounds together for another territory/request:
 
 ```bash
 gdalwarp -t_srs EPSG:2154 -te 650000 6860000 660000 6870000 \

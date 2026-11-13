@@ -13,7 +13,9 @@ A manifest beside a `data/` folder and optional `styles/` folder:
 }
 ```
 
-These are example filenames/CRS only. Use a declared, suitable project CRS. For GeoPackage
+These are example filenames/CRS only. Honour a suitable requested/existing project CRS;
+the `crs` value can also be a full WKT definition without an authority ID. The helper
+records full WKT for project/layer CRS round-trip checks. For GeoPackage
 include `"layer":"<discovered layer name>"`. GeoJSON and GeoTIFF need no sublayer option.
 All local layers must have valid declared CRSs. Layer order is top to bottom; members of
 each named group must be consecutive. Names must be unique so validation is unambiguous.

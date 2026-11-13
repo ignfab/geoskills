@@ -40,8 +40,11 @@ aligned grid. If only a few coordinates or a path are needed, use `geopf-altimet
 
 ## Prepare a common metric grid
 
-Choose a projected metre CRS appropriate to the territory; EPSG:2154 is an option for
-metropolitan France, not a worldwide default. Verify metre elevation values too. Apply
+Keep an existing/requested projected metre CRS appropriate to the territory; choose a
+new one only when required. EPSG:2154 is a fallback for suitable metropolitan-France
+tasks, not a worldwide default or an intermediate step. Custom definitions are valid.
+The metre requirement serves this slope/area recipe; do not assume source coordinates
+or elevation units from the default. Verify metre elevation values too. Apply
 documented scale/offset with `gdal_translate -unscale` to a new file where necessary.
 Convert units or vertical references explicitly, with available validated transformations;
 do not merely relabel the band or CRS. Normalize mask-only or documented missing values

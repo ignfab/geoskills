@@ -66,6 +66,7 @@ def build_project(config, output):
 
 
 def _build_project(config, output):
+    from osgeo import osr
     from qgis.core import (Qgis, QgsProject, QgsVectorLayer, QgsRasterLayer,
                            QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsRectangle,
                            QgsReferencedRectangle, QgsRenderContext, QgsReadWriteContext, QgsPointXY)
@@ -188,7 +189,7 @@ def _build_project(config, output):
             layer = node.layer()
             record = {'name': layer.name(), 'visible': node.itemVisibilityChecked(),
                       'group': node.parent().name(), 'valid': layer.isValid(), 'source': layer.source(),
-                      'crs': layer.crs().authid()}
+                      'crs': layer.crs().authid(), 'crs_wkt': layer.crs().toWkt()}
             if isinstance(layer, QgsVectorLayer):
                 record['feature_count'] = layer.featureCount()
                 doc = QDomDocument()
@@ -198,10 +199,22 @@ def _build_project(config, output):
                 record['raster_size'] = [layer.width(), layer.height(), layer.bandCount()]
             items.append(record)
         box = proj.viewSettings().defaultViewExtent()
-        return {'layers': items, 'crs': proj.crs().authid(), 'relative': proj.filePathStorage() == Qgis.FilePathType.Relative,
+        return {'layers': items, 'crs': proj.crs().authid(), 'crs_wkt': proj.crs().toWkt(),
+                'relative': proj.filePathStorage() == Qgis.FilePathType.Relative,
                 'extent': [box.xMinimum(), box.yMinimum(), box.xMaximum(), box.yMaximum()]}
 
     expected = snapshot(project)
+
+    def comparable(state):
+        # QGIS can normalize WKT metadata on save (e.g. a unit authority identifier).
+        # CRS definitions are checked separately with OSR; retain WKT in the audit.
+        result = dict(state)
+        result.pop('crs_wkt')
+        result.pop('crs')
+        if 'layers' in result:
+            result['layers'] = [comparable(layer) for layer in result['layers']]
+        return result
+
     output.parent.mkdir(parents=True, exist_ok=True)
     # Stage in the same directory so relative paths remain unchanged on publication.
     with tempfile.TemporaryDirectory(dir=output.parent) as temporary:
@@ -210,8 +223,15 @@ def _build_project(config, output):
             if not project.write(str(staged)):
                 raise ValueError('Project write failed')
             fresh = QgsProject()
-            if not fresh.read(str(staged)) or snapshot(fresh) != expected:
+            if not fresh.read(str(staged)):
                 raise ValueError('Fresh project round-trip failed')
+            restored = snapshot(fresh)
+            if comparable(restored) != comparable(expected):
+                raise ValueError('Fresh project round-trip failed')
+            pairs = [(expected, restored), *zip(expected['layers'], restored['layers'])]
+            if any(not osr.SpatialReference(wkt=left['crs_wkt']).IsSame(
+                       osr.SpatialReference(wkt=right['crs_wkt'])) for left, right in pairs):
+                raise ValueError('Fresh project CRS round-trip failed')
             with output.open('xb') as stream:
                 stream.write(staged.read_bytes())
         finally:

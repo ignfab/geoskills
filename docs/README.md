@@ -34,6 +34,7 @@ and lists further candidate chains that are not yet implemented.
 | [Contributing conventions](../CLAUDE.md) | Layout, language, agent conduct and the checklist for a new skill. Also exposed through `AGENTS.md`. |
 | [Skill names and families](skill-naming.md) | Naming convention, review of all 24 skills and old-to-current name correspondence. |
 | [Runtime dependencies](dependencies.md) | Minimal requirements by family, conditional packages and reuse of existing environments. |
+| [CRS handling](crs-handling.md) | Source, analysis and delivery CRSs; conditional Lambert-93 default, units and custom definitions. |
 | [Output reports](output-reports.md) | Shared terminology and evidence to include with different artifact types. |
 | [Test guide](../tests/README.md) | Current test inventory, prerequisites, offline checks, dedicated QGIS checks and opt-in live tests. |
 | [Fixture metadata](../tests/data/README.md) | Provenance, coordinate systems and intentional traps in test inputs. |

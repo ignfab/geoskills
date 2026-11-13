@@ -7,6 +7,12 @@ description: Chooses French coordinate reference systems and transforms vectors,
 
 Pick the right CRS for French data and reproject vectors, rasters or single points.
 
+Preserve a suitable existing or requested CRS. Lambert-93 is the default recommendation
+only when a new projected CRS is needed for a suitable metropolitan-France task and none
+was requested. It is never an inferred source CRS or a mandatory intermediate. Accept
+other authority codes and full WKT definitions; this skill's French examples do not
+restrict GDAL/PROJ to French CRSs. Check area of use, units, datum and task accuracy.
+
 ## Prerequisites
 
 Reuse the tools for the selected route: GDAL (`ogr2ogr` for vectors, `gdalwarp` for
@@ -88,8 +94,9 @@ x, y = to_l93.transform(2.3522, 48.8566)   # (652469.02, 6862035.26)
   de Paris: 2.3499, 48.8530 (EPSG:4326) gives 652296.97, 6861636.36 (EPSG:2154).
 - Check the output extent (`ogrinfo -so`, `gdalinfo`) against the usual ranges of the
   target CRS (see *Quick sanity checks*).
-- State the units: metres for a projected CRS, degrees for EPSG:4326 or 4171. Never report
-  an area or a distance computed in degrees or in EPSG:3857.
+- Read axis units from the CRS: projected coordinates may be metres, feet or other linear
+  units; EPSG:4326 and 4171 use degrees. Convert linear units and squared area units
+  explicitly. Never report angular or Web Mercator planar measurements as ground metrics.
 
 ## Report the result
 

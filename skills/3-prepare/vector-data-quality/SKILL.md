@@ -68,12 +68,18 @@ data lie inside the area of use of their CRS (a custom CRS may have none: compar
 bounds with the expected area instead):
 
 ```python
-west, south, east, north = src.crs.area_of_use.bounds
-lon_min, lat_min, lon_max, lat_max = src.loc[comparable_geometry].to_crs(4326).total_bounds
-outside_crs_area = not (west <= lon_min <= lon_max <= east
-                        and south <= lat_min <= lat_max <= north)
+outside_crs_area = None
+if src.crs.area_of_use is not None:
+    west, south, east, north = src.crs.area_of_use.bounds
+    lon_min, lat_min, lon_max, lat_max = src.loc[comparable_geometry].to_crs(4326).total_bounds
+    outside_crs_area = not (west <= lon_min <= lon_max <= east
+                            and south <= lat_min <= lat_max <= north)
 print("Outside the CRS area of use:", outside_crs_area)
 ```
+
+`None` means this catalogue check was unavailable, as can happen for custom WKT. Validate
+against the documented study extent/control points instead; do not substitute EPSG:2154.
+For an area crossing the antimeridian, use a wrap-aware extent check instead of this local box recipe.
 
 Data outside that area usually have a wrong CRS: use `crs-reprojection-france` before any
 repair or measurement. This coarse check does not catch swapped longitude and latitude

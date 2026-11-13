@@ -47,8 +47,12 @@ npx skills add ignfab/geoskills --skill geopandas-vector-analysis
 ```python
 import geopandas as gpd
 
-communes = gpd.read_file("communes.gpkg").to_crs(2154)
-points = gpd.read_file("adresses.gpkg").to_crs(2154)
+communes = gpd.read_file("communes.gpkg")  # inspect its declared CRS before joining
+points = gpd.read_file("adresses.gpkg").to_crs(communes.crs)
 joined = gpd.sjoin(points, communes[["code_insee", "geometry"]], predicate="within")
 joined.to_parquet("adresses_communes.parquet")
 ```
+
+The join preserves the zone CRS; it does not require Lambert-93. Measurements use a
+suitable analysis CRS with explicit unit conversions. Zonal statistics align vectors to
+the raster's actual CRS. See [CRS handling](../../../docs/crs-handling.md).

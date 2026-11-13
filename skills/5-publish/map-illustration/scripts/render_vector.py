@@ -42,13 +42,23 @@ def illustrate(frame, output, *, crs=None, title, source_note, column=None, unit
     else:
         valid = None
     static = bool(set(formats) - {'html'})
-    display_crs = CRS.from_user_input(crs or frame.crs)
-    if static and (not display_crs.is_projected or any(abs(a.unit_conversion_factor - 1) > 1e-12 for a in display_crs.axis_info[:2])):
-        raise ValueError('Static recipe requires a justified projected metre CRS; use --crs')
-    plotted = frame.to_crs(display_crs)
-    if not np.isfinite(plotted.total_bounds).all():
+    display_crs = CRS.from_user_input(frame.crs if crs is None else crs)
+    metres_per_unit = None
+    if static:
+        if not (display_crs.is_projected or display_crs.is_geographic):
+            raise ValueError('Static recipe needs a projected or geographic display CRS')
+        axes = display_crs.axis_info[:2]
+        if len(axes) != 2 or any(not np.isfinite(a.unit_conversion_factor) or a.unit_conversion_factor <= 0 for a in axes):
+            raise ValueError('Display CRS needs two axes with known positive unit conversions')
+        if not np.isclose(axes[0].unit_conversion_factor, axes[1].unit_conversion_factor, rtol=1e-12, atol=0):
+            raise ValueError('Display CRS horizontal axes must use compatible units')
+        if display_crs.is_projected:
+            metres_per_unit = axes[0].unit_conversion_factor
+    plotted = frame.to_crs(display_crs) if static else None
+    if static and not np.isfinite(plotted.total_bounds).all():
         raise ValueError('Reprojection produced nonfinite coordinates')
-    report = {'features': len(frame), 'input_crs': str(frame.crs), 'display_crs': display_crs.to_string(),
+    report = {'features': len(frame), 'input_crs': str(frame.crs),
+              'display_crs': display_crs.to_string() if static else 'EPSG:3857',
               'title': title, 'source_note': source_note, 'column': column, 'units': units,
               'null_values': int(frame[column].isna().sum()) if column else 0,
               'range': [float(valid.min()), float(valid.max())] if column else None,
@@ -74,7 +84,7 @@ def illustrate(frame, output, *, crs=None, title, source_note, column=None, unit
         FigureCanvasAgg(fig)
         ax = fig.add_axes([.06, .16, .74 if column else .88, .69])
         if column:
-            plotted.plot(ax=ax, column=column, cmap=palette, norm=norm, linewidth=.65,
+            plotted.plot(ax=ax, column=column, cmap=palette, norm=norm, linewidth=.65, aspect=None,
                          missing_kwds={'color': '#d1d5db', 'label': 'No data'})
             from matplotlib.cm import ScalarMappable
             cax = fig.add_axes([.85, .24, .018, .47])
@@ -85,19 +95,28 @@ def illustrate(frame, output, *, crs=None, title, source_note, column=None, unit
                 fig.legend(handles=[Patch(facecolor='#d1d5db', label='No data')], loc='upper left',
                            bbox_to_anchor=(.82, .2), fontsize=8, frameon=False)
         else:
-            plotted.plot(ax=ax, color='#237a8a', linewidth=1.1)
+            plotted.plot(ax=ax, color='#237a8a', linewidth=1.1, aspect=None)
         xmin, ymin, xmax, ymax = plotted.total_bounds
-        margin = max(xmax-xmin, ymax-ymin, 1) * .06
+        extent_span = max(xmax-xmin, ymax-ymin)
+        # A one-unit minimum would add a degree-wide margin around a small geographic map.
+        margin = (extent_span if extent_span > 0 else 1e-3 if display_crs.is_geographic else 1) * .06
         ax.set_xlim(xmin-margin, xmax+margin)
         ax.set_ylim(ymin-margin, ymax+margin)
         ax.set_aspect('equal')
         ax.set_axis_off()
-        span = (xmax-xmin+2*margin) / 4
-        power = 10 ** np.floor(np.log10(span))
-        scale = max(value * power for value in (1, 2, 5) if value * power <= span)
-        ax.add_artist(AnchoredSizeBar(ax.transData, scale, f'{scale:g} m', 'upper left',
-                                     bbox_to_anchor=(0, -.035), bbox_transform=ax.transAxes,
-                                     frameon=False, borderpad=0, pad=.2, color='#263238', size_vertical=0))
+        report['scale_bar'] = None
+        if metres_per_unit is not None:
+            span_m = (xmax-xmin+2*margin) / 4 * metres_per_unit
+            power = 10 ** np.floor(np.log10(span_m))
+            scale_m = max(value * power for value in (1, 2, 5) if value * power <= span_m)
+            scale = scale_m / metres_per_unit
+            ax.add_artist(AnchoredSizeBar(ax.transData, scale, f'{scale_m:g} m', 'upper left',
+                                         bbox_to_anchor=(0, -.035), bbox_transform=ax.transAxes,
+                                         frameon=False, borderpad=0, pad=.2, color='#263238', size_vertical=0))
+            report['scale_bar'] = {'length_m': float(scale_m), 'length_crs_units': float(scale),
+                                   'metres_per_unit': float(metres_per_unit), 'basis': 'projected grid distance'}
+        else:
+            report['scale_bar_note'] = 'Omitted for geographic coordinates; angular units are not metres.'
         fig.text(.06, .94, textwrap.fill(title, 65), fontsize=15, weight='bold', va='top')
         fig.text(.06, .07, textwrap.fill(source_note, 100), fontsize=8, color='#475569', va='top')
         for extension in formats:
@@ -142,7 +161,8 @@ def illustrate(frame, output, *, crs=None, title, source_note, column=None, unit
             '.map-heading{top:8px;left:55px}.map-caption{bottom:25px;right:10px;font-size:12px}</style>'
             f'<div class="map-heading">{html.escape(title)}</div><div class="map-caption">{legend}{html.escape(source_note)}</div>'))
         m.save(str(output / 'map.html'))
-        report['html'] = {'data_crs': 'EPSG:4326', 'tooltip_fields': list(tooltip), 'tiles': None,
+        report['html'] = {'data_crs': 'EPSG:4326', 'display_crs': 'EPSG:3857',
+                          'tooltip_fields': list(tooltip), 'tiles': None,
                           'external_assets': [url for _, url in m.default_js + m.default_css],
                           'offline': False, 'browser_check': 'not performed by helper'}
     for extension in formats:

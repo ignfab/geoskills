@@ -115,7 +115,9 @@ Before reporting a download as complete:
 - Run `ogrinfo -so <output> <layer>`: the feature count must be non-zero, the CRS the one
   expected, and the extent must cover the requested area.
 - Compare with an order of magnitude you know. For polygons, compute the total area in
-  Lambert-93 (see *Selecting features inside a named area* in the options reference).
+  a suitable projected CRS with verified linear units, converting area to the reported
+  units. Lambert-93 is a fallback for suitable metropolitan-France data only (see
+  *Selecting features inside a named area* in the options reference).
 - Say explicitly when the result is a sample (`-limit`) or when pages failed.
 - Run long downloads in the foreground, with `-progress`. Do not pipe `ogr2ogr` through
   `head` or `tail`, which hides progress and can cut the output.

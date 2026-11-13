@@ -56,8 +56,9 @@ gdal_translate -of GTiff -co COMPRESS=DEFLATE ortho_wms.xml ortho_l93.tif
 - `DataWindow` is expressed in the `<CRS>` of the service: `UpperLeft` = (xmin, ymax),
   `LowerRight` = (xmax, ymin).
 - `SizeX`/`SizeY` set the pixel grid (here 4000 m / 0.5 m = 8000 px).
-- **Axis order:** for a projected CRS (EPSG:2154) the order is easting/northing, so no
-  special handling. For **EPSG:4326 with WMS 1.3.0** the axis order is lat/lon — add
+- **Axis order:** EPSG:2154 uses easting/northing in this example. Inspect other CRS axis
+  definitions; not every projected CRS has that order. For **EPSG:4326 with WMS 1.3.0**
+  the axis order is lat/lon — add
   `<BBoxOrder>yxYX</BBoxOrder>` inside `<Service>` if you use it.
 
 ## Elevation (32-bit float)

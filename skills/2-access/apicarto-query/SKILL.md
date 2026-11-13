@@ -93,7 +93,8 @@ twice, a few seconds apart, and report it if it persists.
   summary), identifiers are unique and the geometries have the expected type.
 - Reopen the file: `ogrinfo -so -al parcelles.geojson` reports EPSG:4326 and an extent in
   France (metropolitan longitudes about −5 to 10, latitudes about 41 to 51.5). Overseas
-  data have their own ranges. For areas, reproject to Lambert-93 or the local CRS first.
+  data have their own ranges. For areas, use a suitable analysis CRS and verify units;
+  Lambert-93 is a metropolitan-France fallback, not an API/output requirement.
 - A GeoJSON whose `crs` member is `urn:ogc:def:crs:CRS::84` (nature module) makes GDAL print
   `crs not found: CRS:84`; the coordinates are still longitude/latitude. Check the extent.
 - For zoning, report the document (`partition`, `idurba`, `du_type`) and its approval date

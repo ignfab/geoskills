@@ -1,7 +1,10 @@
 # Spatial operations
 
 All the operations below require the layers to share the same CRS: align them first with
-`b = b.to_crs(a.crs)`. For buffers and areas, use a projected CRS (metres), e.g. EPSG:2154.
+`b = b.to_crs(a.crs)`. Keep a suitable existing/requested CRS. For planar measurements,
+choose `metric_crs` for the territory and accuracy, then inspect its linear units.
+EPSG:2154 is only a fallback for suitable metropolitan-France tasks; local joins do not
+require it. The recipes below also accept custom CRS definitions and convert linear units.
 
 ## Spatial join
 
@@ -23,7 +26,10 @@ joined = gpd.sjoin(points, communes[["code_insee", "nom_officiel", "geometry"]],
 Nearest-neighbour join with distance:
 
 ```python
-nearest = gpd.sjoin_nearest(points, gares, how="left", distance_col="dist_m")
+if not points.crs.is_projected or points.crs != gares.crs:
+    raise ValueError('Align both layers in a suitable projected CRS first')
+nearest = gpd.sjoin_nearest(points, gares, how="left", distance_col="dist_crs_units")
+nearest['dist_m'] = nearest['dist_crs_units'] * points.crs.axis_info[0].unit_conversion_factor
 ```
 
 `distance_col` is in CRS units — metres in EPSG:2154, **degrees** in EPSG:4326.
@@ -52,8 +58,11 @@ clipped = gpd.clip(batiments, commune)
 ## Buffer
 
 ```python
-gdf_l93 = gdf.to_crs(2154)          # metres — NOT degrees
-zone_100m = gdf_l93.buffer(100)     # GeoSeries of polygons
+measured = gdf.to_crs(metric_crs)
+if not measured.crs.is_projected:
+    raise ValueError('Choose a suitable projected analysis CRS')
+metres_per_unit = measured.crs.axis_info[0].unit_conversion_factor
+zone_100m = measured.buffer(100 / metres_per_unit)  # GeoSeries of polygons
 ```
 
 Calling `.buffer()` on a layer in EPSG:4326 buffers in **degrees** and triggers
@@ -62,8 +71,8 @@ Calling `.buffer()` on a layer in EPSG:4326 buffers in **degrees** and triggers
 `buffer` returns a GeoSeries; to keep the attributes, assign it back:
 
 ```python
-tampon = gdf_l93.copy()
-tampon["geometry"] = tampon.buffer(100)
+tampon = measured.copy()
+tampon["geometry"] = zone_100m
 ```
 
 ## Dissolve
@@ -87,10 +96,15 @@ parts = gdf.explode(index_parts=False)
 ## Areas, lengths, centroids
 
 ```python
-gdf_l93 = gdf.to_crs(2154)
-gdf_l93["surface_m2"] = gdf_l93.area
-gdf_l93["perimetre_m"] = gdf_l93.length
-centres = gdf_l93.centroid
+measured = gdf.to_crs(metric_crs)
+if not measured.crs.is_projected:
+    raise ValueError('Choose a suitable projected analysis CRS')
+metres_per_unit = measured.crs.axis_info[0].unit_conversion_factor
+measured["surface_m2"] = measured.area * metres_per_unit ** 2
+measured["perimetre_m"] = measured.length * metres_per_unit
+centres = measured.centroid
 ```
 
-All in CRS units — reproject to EPSG:2154 first, same warning as `buffer` otherwise.
+These planar operations need a justified projection; an arbitrary projected CRS is not
+proof of measurement accuracy. Require two horizontal axes with the same known positive
+unit conversion. For unsuitable large/global extents use a justified geodesic method.

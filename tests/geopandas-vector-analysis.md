@@ -4,6 +4,7 @@
 
 > Avec Python, trouve lesquels des points de data/points.csv sont dans la commune de
 > Saint-Mandé (data/saint_mande.geojson).
+> Garde le système de coordonnées de la couche communale dans le résultat.
 
 **Expected skill:** `geopandas-vector-analysis`
 
@@ -13,6 +14,7 @@
 - [ ] builds a GeoDataFrame from the CSV with `gpd.points_from_xy` and `crs=4326`
 - [ ] uses `gpd.sjoin` with `predicate="within"` (or `intersects`)
 - [ ] aligns the CRS of the two layers before the join
+- [ ] preserves the municipality CRS instead of adding an unrequested Lambert-93 conversion
 
 ## GPD-02 — Assign versus reproject
 
@@ -38,7 +40,7 @@ Lambert-93. Notre-Dame de Paris ≈ (2.3499, 48.8530).
 
 **Expected result:** mean ≈ 50.15 m (min ≈ 39.30, max ≈ 54.08, count 9046).
 
-- [ ] reprojects the commune to EPSG:2154 (the raster CRS) before `zonal_stats`
+- [ ] discovers the raster CRS, then aligns the commune to it before `zonal_stats` (EPSG:2154 for this fixture only)
 - [ ] handles the missing `.prj` of the raster tiles using the fixture metadata and a VRT
   with `-a_srs EPSG:2154`; GeoPandas `set_crs` applies to vectors, not raster files
 - [ ] uses `rasterstats.zonal_stats` (or hands over to the CLI `gdal raster zonal-stats`)

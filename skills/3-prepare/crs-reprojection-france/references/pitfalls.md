@@ -89,8 +89,9 @@ Check the result on a known point: `600000 2428000` in EPSG:27572 gives about
 IGN has published updated realisations of RGF93: v2 replaced v1 in 2010, and v2b replaced
 v2 in 2021. EPSG:2154 is
 **RGF93 v1** / Lambert-93. The v2b equivalent is EPSG:9794, and the geographic CRS is
-EPSG:9782. The differences are a few centimetres, so keep EPSG:2154 unless you do geodetic or
-survey-grade work.
+EPSG:9782. Preserve the documented realisation and requested target; a Lambert-93 default
+does not justify relabelling another datum realisation. Choose the transformation and
+any epoch handling to match the accuracy requirement.
 
 ## 5. Altitudes
 
@@ -121,11 +122,12 @@ coordinates require a stated datum/epoch assumption and do not justify centimetr
 ## 6. Web Mercator distortion
 
 EPSG:3857 is only meant for display. Its distances are too large by a factor of 1/cos(lat)
-(about ×1.5 in Paris), and its areas by 1/cos²(lat) (about ×2.3). Never compute a length or an area in EPSG:3857: use
-Lambert-93 (or the local UTM zone overseas).
+(about ×1.5 in Paris), and its areas by 1/cos²(lat) (about ×2.3). Do not use those planar
+values as ground measurements. Choose a suitable analysis projection or geodesic method
+for the actual territory, units and accuracy. Lambert-93 is one metropolitan-France option.
 
 ```sql
--- PostGIS
+-- PostGIS: example only for suitable metropolitan-France parcels, returning square metres
 SELECT ST_Area(ST_Transform(geom, 2154)) FROM parcelles;
 ```
 

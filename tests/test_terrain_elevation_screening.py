@@ -57,14 +57,29 @@ class TerrainScreeningTests(GDALCase):
         return json.loads(self.run_tool("ogr2ogr", "-f", "GeoJSON", "/vsistdout/",
                                         "candidates.gpkg"))["features"]
 
-    def check_grids(self):
+    def check_grids(self, epsg=2154):
         dem = json.loads(self.run_tool("gdalinfo", "-json", "elevation.tif"))
         mask = json.loads(self.run_tool("gdalinfo", "-json", "selection.tif"))
         self.assertEqual(dem["size"], mask["size"])
         self.assertEqual(dem["geoTransform"], mask["geoTransform"])
         self.assertEqual(mask["bands"][0]["noDataValue"], 255)
         for path in ("elevation.tif", "selection.tif", "candidates.gpkg"):
-            self.assert_crs(path, 2154)
+            self.assert_crs(path, epsg)
+
+    def test_utm_analysis_grid_is_preserved(self):
+        self.prepare()
+        self.run_tool('gdalwarp', '-t_srs', 'EPSG:32631', '-tr', '10', '10', '-tap',
+                      '-r', 'near', '-dstnodata', '-9999', 'dem_metric.tif', 'dem_utm.tif')
+        self.run_tool('ogr2ogr', '-t_srs', 'EPSG:32631', 'aoi_utm.gpkg', 'aoi_metric.gpkg', '-nln', 'aoi')
+        (self.output/'dem_utm.tif').replace(self.output/'dem_metric.tif')
+        (self.output/'aoi_utm.gpkg').replace(self.output/'aoi_metric.gpkg')
+        self.screen()
+        self.check_grids(32631)
+        selected = Counter(self.values('selection.tif'))[1]
+        self.assertGreater(selected, 0)
+        area = sum(feature['properties']['area_m2'] for feature in self.candidates())
+        self.assertGreater(area, 0)
+        self.assertLessEqual(area, selected * 100 + 1e-6)
 
     def test_inclusive_altitude_keeps_zero_and_preserves_missing_values_and_sources(self):
         sources = [DATA / "terrain_screening.asc", DATA / "terrain_screening_aoi.geojson"]

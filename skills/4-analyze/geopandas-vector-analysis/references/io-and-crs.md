@@ -83,8 +83,8 @@ The same distinction as assigning versus reprojecting in GDAL (see the
 `crs-reprojection-france` skill):
 
 ```python
-gdf = gdf.set_crs(2154)    # ASSIGN: declare what the coordinates already are (no change)
-gdf = gdf.to_crs(2154)     # REPROJECT: transform the coordinates
+gdf = gdf.set_crs(confirmed_source_crs)  # ASSIGN only after independent confirmation
+gdf = gdf.to_crs(target_crs)            # REPROJECT to the selected destination
 ```
 
 - For missing or wrong CRS metadata, confirm the source CRS from metadata or a known

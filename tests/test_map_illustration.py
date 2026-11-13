@@ -71,6 +71,8 @@ class IllustrationTests(unittest.TestCase):
         self.assertEqual(report['html']['tooltip_fields'], ['unit_id', 'label'])
         self.assertNotIn('tileLayer(', markup)
         self.assertEqual(report['html']['data_crs'], 'EPSG:4326')
+        self.assertEqual(report['html']['display_crs'], 'EPSG:3857')
+        self.assertEqual(report['display_crs'], 'EPSG:3857')
 
     def test_uniform_html_does_not_require_matplotlib(self):
         with patch.dict(sys.modules, {'matplotlib': None}):
@@ -87,10 +89,42 @@ class IllustrationTests(unittest.TestCase):
         yellow = (pixels[:,:,0] > 220) & (pixels[:,:,1] > 200) & (pixels[:,:,2] < 80)
         self.assertGreaterEqual(int(yellow.sum()), 10)
 
+    def test_static_preserves_geographic_or_utm_crs(self):
+        from geopandas.testing import assert_geodataframe_equal
+        from PIL import Image
+        for crs in (4326, 32631):
+            with self.subTest(crs=crs):
+                frame = self.frame.to_crs(crs)
+                original = frame.copy(deep=True)
+                output = self.root / str(crs)
+                report = self.helper.illustrate(frame, output, title='Native CRS', source_note='Synthetic fixture')
+                self.assertEqual(report['display_crs'], f'EPSG:{crs}')
+                self.assertEqual(report['bounds'], frame.total_bounds.tolist())
+                with Image.open(output/'map.png') as rendered:
+                    self.assertEqual(rendered.size, (1400, 1000))
+                if crs == 4326:
+                    self.assertIsNone(report['scale_bar'])
+                    self.assertIn('angular', report['scale_bar_note'])
+                else:
+                    self.assertGreater(report['scale_bar']['length_m'], 0)
+                assert_geodataframe_equal(frame, original)
+
+    def test_custom_foot_crs_scale_is_converted_to_metres(self):
+        from pyproj import CRS
+        target = CRS.from_proj4('+proj=tmerc +lat_0=48.85 +lon_0=2.35 +k=1 +x_0=0 +y_0=0 +ellps=GRS80 +units=us-ft +type=crs')
+        self.assertIsNone(target.to_epsg())
+        report = self.helper.illustrate(self.frame, self.root/'feet', crs=target.to_wkt(),
+                                       title='Custom feet', source_note='Synthetic fixture', formats=('svg',))
+        self.assertEqual(CRS.from_user_input(report['display_crs']), target)
+        scale = report['scale_bar']
+        self.assertAlmostEqual(scale['metres_per_unit'], 1200/3937)
+        self.assertAlmostEqual(scale['length_m'], scale['length_crs_units'] * 1200/3937)
+        self.assertIn(f"{scale['length_m']:g} m", (self.root/'feet/map.svg').read_text())
+
     def test_invalid_inputs_and_existing_outputs_fail(self):
         for change in ({'column': 'absent', 'units': 'm'}, {'column': 'label', 'units': 'm'},
                        {'column': 'indicator'}, {'tooltip': ('secret_missing',)},
-                       {'crs': 4326}, {'formats': ('jpeg',)}):
+                       {'crs': 4978}, {'formats': ('jpeg',)}):
             with self.subTest(change=change), self.assertRaises(ValueError):
                 self.helper.illustrate(self.frame, self.root/'bad', **(self.kwargs | change))
             self.assertFalse((self.root/'bad').exists())

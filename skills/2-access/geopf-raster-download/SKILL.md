@@ -25,6 +25,11 @@ install software yourself.
 
 ## Endpoints
 
+Use the requested output CRS when suitable and supported; otherwise preserve an appropriate
+source grid. Discover service CRSs/axis order, and transform the AOI accordingly. EPSG:2154
+below is a metropolitan-France example, not a required target. Pixel sizes use target CRS
+units; numeric elevations have their own vertical units/datum.
+
 - **WMTS** (pre-rendered tile pyramid, cached, fastest): `https://data.geopf.fr/wmts`.
   GDAL needs the full GetCapabilities URL: `WMTS:https://data.geopf.fr/wmts` alone fails
   with HTTP 400.
