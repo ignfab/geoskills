@@ -17,12 +17,15 @@ yet established the stability of every skill.
 
 Skills give coding agents instructions, local reference material and, where useful,
 tested helper scripts. They cover service selection, data extraction, GDAL/PROJ and
-GeoPandas processing, BD TOPO semantics, statistics, vector styling and QGIS projects.
+GeoPandas processing, BD TOPO semantics, statistics and territorial indicators, vector
+styling, QGIS projects and map illustrations, and business workflows such as a municipal
+building portrait or a terrain screening.
 Each skill states its prerequisites, limits and output checks. Agents use existing tools,
 discover schemas before querying and validate results before reporting success.
 
-Start with the [documentation guide](docs/README.md) to choose between related skills or
-find validation evidence. The [landscape study](docs/landscape.md) preserves the dated
+Start with the [documentation guide](docs/README.md): how the skills work, installation,
+choosing a skill, the tools each one needs, checking results, troubleshooting and
+validation evidence. The [landscape study](docs/landscape.md) preserves the dated
 comparison with other collections and links to subsequent implementation reviews.
 
 ## Skills
@@ -86,8 +89,8 @@ npx skills add ignfab/geoskills -a claude-code
 Skills are installed in the current project by default; add `-g` to install them for the
 whole user account.
 
-Installing a skill copies its instructions and supporting files. It does not install
-GDAL, GeoPandas, QGIS or other GIS software. Check the selected skill's README for runtime
+Installing a skill adds its instructions and supporting files to the agent. It does not
+install GDAL, GeoPandas, QGIS or other GIS software. Check the selected skill's README for runtime
 requirements and commands the user can run if a dependency is missing.
 
 ## Contributing
@@ -98,16 +101,20 @@ tooling) for the conventions.
 
 ## Validation
 
-See [tests/README.md](tests/README.md) for automated checks, optional live IGN tests and
-manual skill-selection scenarios. Exploratory prompts and their runs are traced in
+See [tests/README.md](tests/README.md) for automated checks, optional live IGN tests,
+manual skill-selection scenarios and which tests to run for a given change. Exploratory prompts and their runs are traced in
 [tests/prompts/](tests/prompts/README.md). Report conventions are described in
 [docs/output-reports.md](docs/output-reports.md).
 
 The [2026-11-11 review](tests/review-2026-11-11.md) records five complementary skills,
 their merged PRs, functional checks and actual agent pilots. The
 [municipal workflow review](tests/review-municipality-building-profile-2026-11-12.md)
-records the first business workflow and its portable-QGIS forward pilot. Historical results describe
-the tested versions and fixtures; they are not a guarantee of current live-service behavior.
+records the first business workflow and its portable-QGIS forward pilot. The
+[2026-11-12 review](tests/review-2026-11-12.md) audits the agent scenarios and adds checks
+that skill selection does not depend on the model reading the skills. Historical results
+describe the tested versions and fixtures, with the skill names of that date (see the
+[naming guide](docs/skill-naming.md)); they are not a guarantee of current live-service
+behavior.
 
 ## Résumé (FR)
 

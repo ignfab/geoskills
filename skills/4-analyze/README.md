@@ -16,6 +16,31 @@ not a subset of an existing dataset.
 | [geospatial-descriptive-statistics](geospatial-descriptive-statistics/README.md) | Summarize numeric attributes, categories and missingness in one layer with explicit units and statistical conventions. |
 | [spatial-aggregation](spatial-aggregation/README.md) | Compute vector object-to-zone counts, sums, means and ratios with explicit border/overlap policies and audited totals. |
 
+## Choose between them
+
+- Statistics on one layer's attributes, without spatial matching:
+  `geospatial-descriptive-statistics`.
+- Indicators per zone (counts, sums, means or ratios of objects in polygons):
+  `spatial-aggregation`.
+- General vector operations in Python (joins, overlays, buffers, dissolve, clip):
+  `geopandas-vector-analysis`.
+- Raster values summarized per polygon: zonal statistics with `gdal-raster-processing`, in
+  [3. Prepare and check](../3-prepare/README.md).
+- Elevations at points or along a line from the IGN service: `geopf-altimetry`; a full DEM
+  is processed with `gdal-raster-processing`.
+- Routes and reachable areas on the IGN road network: `geopf-routing`; straight-line
+  buffers stay with `geopandas-vector-analysis`.
+
+## What they need
+
+| Skill | Local tools | Network |
+| --- | --- | --- |
+| `geopandas-vector-analysis` | GeoPandas ≥ 1.0; pyarrow for GeoParquet, rasterstats for zonal statistics | None, except to read WFS data |
+| `geopf-altimetry` | `curl`, Python 3 | Géoplateforme Elevation API |
+| `geopf-routing` | `curl`, Python 3; GDAL or GeoPandas to export | Géoplateforme Navigation API |
+| `geospatial-descriptive-statistics` | pandas; GeoPandas and Shapely for vector inputs | None |
+| `spatial-aggregation` | GeoPandas ≥ 1.0, pandas, Shapely | None |
+
 ## Also relevant
 
 - [terrain-elevation-screening](../6-workflows/terrain-elevation-screening/README.md)

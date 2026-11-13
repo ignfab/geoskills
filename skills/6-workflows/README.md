@@ -11,6 +11,26 @@ skills remain independently useful for narrower requests.
 | [terrain-elevation-screening](terrain-elevation-screening/README.md) | Filter terrain over an area by altitude, optional slope and connected area, with candidate polygons and explicit coverage; supports preliminary helicopter terrain screening without validating landing suitability. |
 | [municipality-building-profile](municipality-building-profile/README.md) | Produce one municipality's building counts, union footprint coverage, height/usage summaries and optional portable QGIS delivery, with explicit source and boundary rules. |
 
+## Choose between them
+
+- Use `municipality-building-profile` for the full building portrait of one municipality.
+  It fixes which buildings are counted, how the built area is measured and which heights
+  and usages can be summarized, so that its numbers can be reconciled.
+- Use `terrain-elevation-screening` to filter an area of interest by altitude, optionally
+  slope and connected area, from DEM discovery to candidate polygons and a coverage report.
+  A DEM filter never establishes that a site is safe or suitable for a helicopter landing.
+- For a single step, use the building block directly: a download (`geopf-wfs-download`),
+  statistics on one table (`geospatial-descriptive-statistics`), indicators for several
+  zones (`spatial-aggregation`) or project assembly (`qgis-project-builder`); elevations
+  at a few points (`geopf-altimetry`) or DEM clipping alone (`gdal-raster-processing`).
+
+## What they need
+
+| Skill | Local tools | Network |
+| --- | --- | --- |
+| `municipality-building-profile` | GeoPandas ≥ 1.0, Shapely ≥ 2, Pyogrio; GDAL and `curl` for online extraction; PyQGIS only for a QGIS project | Géoplateforme WFS, only when data is extracted online |
+| `terrain-elevation-screening` | GDAL ≥ 3.3 with matching Python bindings and NumPy (`gdaldem`, `gdal_calc.py`, `gdal_polygonize.py`); `curl` for online discovery | Géoplateforme services, only when the DEM is discovered online |
+
 ## Further workflow candidates
 
 | Use case | Building blocks available today |
