@@ -11,6 +11,30 @@ skills whose effect depends on the model that reads them.
 The scenario files remain the reference for prompts, expected results and checklists.
 This file adds the procedure, a runner and a scoring grid.
 
+## A campaign in five steps
+
+1. **Prepare the machine:** install the tools of [Prerequisites](#prerequisites) and the
+   `claude` CLI; the runner never installs anything.
+2. **Save the runner:** copy the [Runner](#runner) block to `ab.sh` outside the repository
+   and `source` it.
+3. **Dry run, free:** `AB_DRY=1 ab_campaign 1` prepares every run directory without calling
+   an agent ([Run the campaign](#run-the-campaign)).
+4. **Paid runs, on a separate decision:** a smoke pass of one repetition, then three
+   repetitions; `ab_report` builds `report.md` with one row per run.
+5. **Score and conclude:** fill in each row with the [scoring grid](#score-a-run), then
+   summarize per skill and [interpret](#interpret) the difference between A and B.
+
+| Section | Use it to |
+| --- | --- |
+| [Principle](#principle) | Understand what keeps A and B comparable |
+| [Prerequisites](#prerequisites) | Check tools, grids and budgets before a campaign |
+| [Runner](#runner) | Copy the shell functions that prepare, run and report |
+| [Run the campaign](#run-the-campaign) | Start a dry run, a smoke pass or full repetitions |
+| [Scenario matrix](#scenario-matrix) | See, per skill, which modes each scenario runs in, what it needs and what to watch without the skills |
+| [Score a run](#score-a-run) and [Interpret](#interpret) | Turn runs into pass rates and conclusions |
+| [Model sensitivity](#model-sensitivity) | Run the same scenarios with several models |
+| [Variants](#variants), [Experimental prompts](#experimental-prompts), [Limits](#limits) | Adapt the protocol and know what it cannot show |
+
 ## Principle
 
 - **One variable.** A and B differ only by `.claude/skills/` in the run directory: same

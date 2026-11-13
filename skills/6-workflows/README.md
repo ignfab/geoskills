@@ -11,6 +11,32 @@ skills remain independently useful for narrower requests.
 | [terrain-elevation-screening](terrain-elevation-screening/README.md) | Filter terrain over an area by altitude, optional slope and connected area, with candidate polygons and explicit coverage; supports preliminary helicopter terrain screening without validating landing suitability. |
 | [municipality-building-profile](municipality-building-profile/README.md) | Produce one municipality's building counts, union footprint coverage, height/usage summaries and optional portable QGIS delivery, with explicit source and boundary rules. |
 
+## Choose between them
+
+- Use `municipality-building-profile` for the full building portrait of one municipality.
+  It fixes which buildings are counted, how the built area is measured and which heights
+  and usages can be summarized, so that its numbers can be reconciled.
+- Use `terrain-elevation-screening` to filter an area of interest by altitude, optionally
+  slope and connected area, from DEM discovery to candidate polygons and a coverage report.
+  A DEM filter never establishes that a site is safe or suitable for a helicopter landing.
+- For a single step, use the building block directly: a download (`geopf-wfs-download`),
+  statistics on one table (`geospatial-descriptive-statistics`), indicators for several
+  zones (`spatial-aggregation`) or project assembly (`qgis-project-builder`); elevations
+  at a few points (`geopf-altimetry`) or DEM clipping alone (`gdal-raster-processing`).
+
+## What they need
+
+Check only the workflow stages that will run; referenced skills are not a requirement to
+install their entire families. See the [dependency guide](../../docs/dependencies.md).
+
+| Skill | Base route | Conditional additions | Network |
+| --- | --- | --- | --- |
+| `municipality-building-profile` | GeoPandas ≥ 1.0 with Shapely/Pyogrio for the analytic bundle | GDAL + curl for online extraction; existing QGIS/PyQGIS only for a requested project | Géoplateforme WFS, only when data is extracted online |
+| `terrain-elevation-screening` | GDAL ≥ 3.3, matching Python bindings/utilities and NumPy | curl for online acquisition; existing QGIS/PyQGIS only for a requested map/project | Géoplateforme services, only when the DEM is discovered online |
+
+Local inputs avoid acquisition dependencies. Missing optional QGIS leaves the analytic
+bundle usable; report the requested cartographic delivery as outstanding if it cannot run.
+
 ## Further workflow candidates
 
 | Use case | Building blocks available today |
@@ -25,19 +51,6 @@ These broader chains are explored with the business-need prompts of the
 [runs.md](../../tests/prompts/runs.md). One documented chain is in
 [mapshaper-simplify](../5-publish/mapshaper-simplify/README.md): download boundaries with
 `geopf-wfs-download`, audit them with `vector-data-quality`, then simplify them.
-
-## Runtime dependencies
-
-Check only the workflow stages that will run; referenced skills are not a requirement to
-install their entire families. See the [dependency guide](../../docs/dependencies.md).
-
-| Skill | Base route | Conditional additions |
-| --- | --- | --- |
-| `municipality-building-profile` | GeoPandas ≥ 1.0 with Shapely/Pyogrio for the analytic bundle | GDAL + curl for online extraction; existing QGIS/PyQGIS only for a requested project |
-| `terrain-elevation-screening` | GDAL ≥ 3.3, matching Python bindings/utilities and NumPy | curl for online acquisition; existing QGIS/PyQGIS only for a requested map/project |
-
-Local inputs avoid acquisition dependencies. Missing optional QGIS leaves the analytic
-bundle usable; report the requested cartographic delivery as outstanding if it cannot run.
 
 ## Also relevant
 

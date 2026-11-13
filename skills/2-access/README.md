@@ -16,22 +16,40 @@ areas) are in [4. Analyze and derive](../4-analyze/README.md).
 | [apicarto-query](apicarto-query/README.md) | Query API Carto for parcels, urban-planning zones and easements, protected areas and RPG parcels at a point, in an area or by code, with complete pagination. |
 | [geopf-geocoding](geopf-geocoding/README.md) | Geocode addresses, POIs and parcels, and review CSV matches, ambiguity and unmatched rows. |
 
-## Runtime dependencies
+## Choose between them
+
+- Whole products by territory and edition (archives or tiles): `geopf-file-download`.
+- Vector features filtered by area or attribute, converted to the format you need:
+  `geopf-wfs-download`. To write or debug a GeoServer `cql_filter` for such a request, use
+  `geoserver-cql-filter`.
+- Raster images and grids over an extent (orthophotos, Plan IGN, elevation): `geopf-raster-download`.
+- What lies at a point or in an area (cadastral parcels, urban-planning zones, easements,
+  protected areas, RPG crops), or every parcel of a municipality: `apicarto-query`.
+- Coordinates for addresses, places or parcels, reverse geocoding, or a review of results
+  that are already geocoded: `geopf-geocoding`.
+
+## What they need
 
 Reuse existing tools and check only the selected operation. Installing this family does
 not require every tool below; see the [dependency guide](../../docs/dependencies.md).
 
-| Skill | Base route | Conditional additions |
-| --- | --- | --- |
-| `apicarto-query` | Python 3 standard library for pagination; curl for manual requests | GDAL for the documented spatial validation/conversion |
-| `geopf-file-download` | curl and standard-library Python feed inspection | Reader matching the archive (Python can test ZIP); GDAL for spatial content checks |
-| `geopf-geocoding` | HTTP client; curl for examples | Standard-library Python for CSV helpers; jq or existing Python for JSON; GDAL for conversion |
-| `geopf-raster-download` | GDAL CLI with the requested WMS/WMTS support | Only missing drivers for the selected input/output formats |
-| `geopf-wfs-download` | GDAL CLI with WFS and output driver; curl for discovery | Standard-library Python for the GeoPackage audit; Arrow/Parquet driver only for GeoParquet |
-| `geoserver-cql-filter` | Service metadata to compose a filter; no local GeoServer | HTTP client for requests; downstream extraction tool for the requested delivery |
+| Skill | Base route | Conditional additions | Network |
+| --- | --- | --- | --- |
+| `apicarto-query` | Python 3 standard library for pagination; curl for manual requests | GDAL for the documented spatial validation/conversion | API Carto; a key only for the wine appellation module (`aoc`) |
+| `geopf-file-download` | curl and standard-library Python feed inspection | Reader matching the archive (Python can test ZIP); GDAL for spatial content checks | Géoplateforme Download API |
+| `geopf-geocoding` | HTTP client; curl for examples | Standard-library Python for CSV helpers; jq or existing Python for JSON; GDAL for conversion | Géoplateforme geocoding API; none to review existing results |
+| `geopf-raster-download` | GDAL CLI with the requested WMS/WMTS support | Only missing drivers for the selected input/output formats | Géoplateforme WMTS and WMS-R |
+| `geopf-wfs-download` | GDAL CLI with WFS and output driver; curl for discovery | Standard-library Python for the GeoPackage audit; Arrow/Parquet driver only for GeoParquet | Géoplateforme WFS |
+| `geoserver-cql-filter` | Service metadata to compose a filter; no local GeoServer | HTTP client for requests; downstream extraction tool for the requested delivery | The GeoServer you query |
 
 A transfer can succeed before spatial validation is possible. Report outstanding checks;
 do not declare the dataset validated just because an optional later stage was skipped.
+
+The requests documented by these skills use public endpoints without credentials; only the
+API Carto `aoc` module needs a key. Some other Géoplateforme APIs (extraction, standards
+validation, usage statistics) require authentication: `geopf-service-selection` describes them, and
+the agent leaves any login to you. It never installs a missing tool either: it gives you
+the command to run.
 
 ## Also relevant
 

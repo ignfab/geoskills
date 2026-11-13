@@ -4,6 +4,8 @@ This is a dated snapshot written for [issue #30](https://github.com/ignfab/geosk
 study the other geospatial skill collections and propose a target for this repository. Star
 counts, skill counts and dates were observed on 2026-10-27 and are not kept up to date. The
 proposed target in the last sections is a proposal for the maintainers, not a decision.
+Skill names below are those in use on each recorded date; seven skills were renamed on
+2026-11-13, and the [naming guide](skill-naming.md) gives the current names.
 
 Implementation follow-up (2026-10-29): the repository now includes the intake, file-download,
 altimetry and routing skills, raster quality checks, and shared output-report conventions.

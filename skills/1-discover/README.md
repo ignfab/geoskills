@@ -11,15 +11,25 @@ models and attribute meanings before choosing fields.
 | [geopf-service-selection](geopf-service-selection/README.md) | Choose a Géoplateforme API for dataset discovery, maps, vector features, downloads, geocoding and geographic calculations. |
 | [bdtopo-schema-guide](bdtopo-schema-guide/README.md) | Understand versioned BD TOPO building/road classes, field meanings and format mappings using sourced offline references. |
 
-## Runtime dependencies
+## Choose between them
+
+- To decide which Géoplateforme service answers a need (dataset discovery, map display,
+  vector features, downloads, geocoding or calculations), use `geopf-service-selection`. It explains
+  and recommends; an access or calculation skill then does the work.
+- To understand what a BD TOPO class or field means for a given version, including its
+  special values, use `bdtopo-schema-guide`. It reads bundled, sourced references offline;
+  layer and field identifiers still come from the live service metadata.
+- Both answer before anything is downloaded; neither downloads data.
+
+## What they need
 
 Reuse existing tools and check only the selected operation. Installing this family does
 not install a GIS stack; see the [dependency guide](../../docs/dependencies.md).
 
-| Skill | Base route | Conditional additions |
-| --- | --- | --- |
-| `bdtopo-schema-guide` | Bundled Markdown/JSON; no runtime needed to read it | Python 3 standard library for the lookup helper; HTTP client for current online sources |
-| `geopf-service-selection` | Documentation and service metadata; no local GIS runtime | Existing browser/HTTP client for discovery; curl for CLI examples |
+| Skill | Base route | Conditional additions | Network |
+| --- | --- | --- | --- |
+| `bdtopo-schema-guide` | Bundled Markdown/JSON; no runtime needed to read it | Python 3 standard library for the lookup helper; HTTP client for current online sources | None |
+| `geopf-service-selection` | Documentation and service metadata; no local GIS runtime | Existing browser/HTTP client for discovery; curl for CLI examples | Official guides and service metadata |
 
 ## Also relevant
 

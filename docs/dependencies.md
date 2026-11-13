@@ -33,12 +33,12 @@ The family pages list every skill's base requirements and conditional additions.
 
 | Family | Starting point | Add only for the selected operation |
 | --- | --- | --- |
-| [Discover](../skills/1-discover/README.md#runtime-dependencies) | Bundled documentation; no GIS runtime | Standard-library Python lookup or HTTP client for live metadata |
-| [Access](../skills/2-access/README.md#runtime-dependencies) | HTTP client/standard-library helpers for APIs; GDAL CLI for WFS and raster extraction | Matching archive reader, requested format driver and spatial validation tools |
-| [Prepare](../skills/3-prepare/README.md#runtime-dependencies) | Existing GDAL/PROJ, or the relevant Python route | Requested drivers, transformation grids, advanced quality checks or Python GDAL utilities |
-| [Analyze](../skills/4-analyze/README.md#runtime-dependencies) | HTTP tools for services, Pandas for CSV, GeoPandas for vector analysis | PyArrow for GeoParquet; rasterstats for raster zonal statistics; spatial checks for API geometries |
-| [Publish](../skills/5-publish/README.md#runtime-dependencies) | One renderer: Python static, Python HTML or existing QGIS; Mapshaper for simplification | Numeric HTML colours, raster preview or external web assets when selected |
-| [Workflows](../skills/6-workflows/README.md#runtime-dependencies) | GeoPandas for the building portrait; GDAL/Python/NumPy for terrain screening | Online acquisition and QGIS delivery only when required |
+| [Discover](../skills/1-discover/README.md#what-they-need) | Bundled documentation; no GIS runtime | Standard-library Python lookup or HTTP client for live metadata |
+| [Access](../skills/2-access/README.md#what-they-need) | HTTP client/standard-library helpers for APIs; GDAL CLI for WFS and raster extraction | Matching archive reader, requested format driver and spatial validation tools |
+| [Prepare](../skills/3-prepare/README.md#what-they-need) | Existing GDAL/PROJ, or the relevant Python route | Requested drivers, transformation grids, advanced quality checks or Python GDAL utilities |
+| [Analyze](../skills/4-analyze/README.md#what-they-need) | HTTP tools for services, Pandas for CSV, GeoPandas for vector analysis | PyArrow for GeoParquet; rasterstats for raster zonal statistics; spatial checks for API geometries |
+| [Publish](../skills/5-publish/README.md#what-they-need) | One renderer: Python static, Python HTML or existing QGIS; Mapshaper for simplification | Numeric HTML colours, raster preview or external web assets when selected |
+| [Workflows](../skills/6-workflows/README.md#what-they-need) | GeoPandas for the building portrait; GDAL/Python/NumPy for terrain screening | Online acquisition and QGIS delivery only when required |
 
 ## Packages that should stay conditional
 
