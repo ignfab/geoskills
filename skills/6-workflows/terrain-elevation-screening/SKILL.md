@@ -11,6 +11,20 @@ requested. This workflow owns the common extent, grid, vertical reference and mi
 rules across acquisition, filtering and delivery. Related skills are optional helpers;
 the [local recipe](references/local-processing.md) works with GDAL alone.
 
+## MCP servers
+
+Optional. A connected [Geocontext](https://github.com/ignfab/geocontext) MCP server (tools
+often prefixed `mcp__geocontext__`) helps only around the screening. Use `geocode` and
+`adminexpress` first to identify a named municipality, whose boundary `geopf-wfs-download`
+then retrieves as the AOI. The first `geocode` candidate can be a namesake elsewhere or
+another object of the right municipality: check `fulltext` and `kind` as well as `city`
+and `zipcode`. When they do not match, add the postcode to the text, not the department
+name, or take another candidate. `altitude` (one point per call) can spot-check a few cell
+values, as an indication only: it states neither its elevation resource nor its vertical
+reference. Never build the elevation grid from `altitude` calls. Without Geocontext, or
+when a call fails, proceed as written. Never install, configure or start an MCP server
+yourself.
+
 ## Prerequisites
 
 Check `gdalinfo --version`, `ogrinfo --version`, `gdaldem --help`,

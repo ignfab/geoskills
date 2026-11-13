@@ -11,6 +11,39 @@ API Carto answers "what lies here?" questions on French reference data. The base
 there, not from memory. Responses are GeoJSON `FeatureCollection`s in WGS84
 longitude/latitude, with `numberMatched` and `numberReturned`.
 
+## MCP servers
+
+Optional. When the [Geocontext](https://github.com/ignfab/geocontext) MCP server is
+connected (tools often prefixed `mcp__geocontext__`), use it first for a question about
+**one point**; this route needs no local tool. When the user names a place, get the
+coordinates with `geocode`. The first `geocode` candidate can be a namesake elsewhere or
+another object of the right municipality: check `fulltext` and `kind` as well as `city`
+and `zipcode`. When they do not match, add the postcode to the text, not the department
+name, or take another candidate.
+
+| Question at a point | Geocontext tool | What it returns |
+| --- | --- | --- |
+| Parcel, cadastral sheet, municipality | `cadastre` | The nearest cadastral objects within 10 m, at most one per type; nothing beyond that distance |
+| Urban-planning document, zone, prescriptions | `urbanisme` | Géoportail de l'Urbanisme objects at or near the point, including the zone of the plan |
+| Public-utility easements (SUP) | `assiette_sup` | Easement areas at or near the point |
+| Municipality, department, region, EPCI | `adminexpress` | The administrative units covering the point, with their INSEE codes |
+
+`cadastre`, `urbanisme` and `assiette_sup` give a `distance` in metres between the point
+and each object: **report it**, and say that an object is near the point, not at it, when
+the distance is above 0. A `cadastre` result without a `parcelle` object means that no
+parcel lies within 10 m, as on a road or a public space, where the municipality and the
+cadastral sheet are still returned: say so, and query API Carto with a small area if a
+parcel is still needed. An empty `urbanisme` result does not mean that no rule applies:
+query `gpu/municipality` with API Carto and report `is_rnu` (national rules) before
+answering.
+
+Use API Carto, below, for an area, a whole municipality or section, parcels by code,
+complete paginated listings, protected natural areas, RPG parcels and file outputs. Check
+an answer before reporting it (no error returned, objects in the municipality requested);
+the reporting rules of this skill apply to both routes. Without Geocontext, or when a call
+fails, use API Carto for every case. Never install, configure or start an MCP server
+yourself.
+
 ## Prerequisites
 
 Check only the selected stage: the pagination helper uses Python 3's standard library;

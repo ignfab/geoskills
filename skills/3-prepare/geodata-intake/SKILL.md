@@ -10,6 +10,25 @@ the files the user supplied; do not recursively scan unrelated directories. Grou
 Shapefile sidecars as one dataset. List archive members before extracting selected data
 into a separate directory; reject absolute paths and `..` traversal.
 
+## MCP servers
+
+Optional. When the delivery is a PostGIS database, or the user asks what a database
+contains, and a PostGIS MCP server is connected (a server giving SQL access to that
+database; its name or tools mention `postgis`, `postgres` or `sql`, and tool names differ
+between servers, so read the tool list), inventory it through that server first: list the
+schemas and tables, then read `geometry_columns` for geometry types and SRIDs, the column
+types, and the row counts where an exact count is cheap; otherwise give the estimate of
+`pg_class.reltuples` and label it as an estimate (`-1` or `0` there, as for a view or a
+table never analyzed, means unknown, not empty). Run read-only queries: `SELECT` without
+`INTO`, and no function that changes data, schema or SRID. Aggregate in the database and
+bound exploratory queries with `LIMIT`. In `geometry_columns`, SRID 0 or type `GEOMETRY`
+only means that the column declares none, as in a view: read `ST_SRID` and `GeometryType`
+from the rows. An SRID of 0 on the rows is an unknown CRS: report it, never set one. For
+files, use the commands below. Without such a server, or when a query fails, ask the user
+for an export and inventory it with the commands below; never ask for database
+credentials, and never take them from a configuration file or the environment to connect
+another way. Never install, configure or start an MCP server yourself.
+
 ## Prerequisites
 
 Check `ogrinfo --version` for vectors, `gdalinfo --version` for rasters, and Python 3 for

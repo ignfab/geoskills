@@ -10,6 +10,23 @@ Discover `https://data.geopf.fr/altimetrie/resources`, then inspect the chosen
 vertical reference from metadata. A catalogue bounding box does not guarantee coverage
 at every point. Never treat terrain altitude as an ellipsoidal GNSS height.
 
+## MCP servers
+
+Optional. When the [Geocontext](https://github.com/ignfab/geocontext) MCP server is
+connected (tools often prefixed `mcp__geocontext__`), use its `altitude` tool first for
+the **elevation of one point or a few points**; this route needs no local tool. It takes
+one point per call (`lon`, `lat` in WGS84) and returns the altitude in metres and an
+`accuracy` text. It names neither the elevation resource, nor the vertical reference, nor
+whether the height is terrain or surface, and does not let you choose them: report the
+source as "Geocontext `altitude`, resource not stated", report the vertical reference and
+terrain or surface as not stated, and do not attribute the value to a product. A value of
+`-99999`, or an error, is missing data, never a height.
+
+Use the Elevation API below when the resource or the vertical reference matters, for more
+than about ten points, CSV joins, profiles and missing-value handling. Without Geocontext,
+or when a call fails, use the API for every case. Never install, configure or start an MCP
+server yourself.
+
 ## Prerequisites
 
 Check `curl --version` and `python3 --version`. If missing, give the user

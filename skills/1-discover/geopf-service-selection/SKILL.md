@@ -12,6 +12,33 @@ not evidence that a particular dataset is available. Work on files already on di
 no service: use `crs-reprojection-france` to reproject them and `gdal-vector-processing` or
 `gdal-raster-processing` to convert them.
 
+## MCP servers
+
+Optional. Check your tool list before choosing a command-line route: a connected MCP
+server answers some requests directly, without any local tool.
+
+- **Geocontext** ([ignfab/geocontext](https://github.com/ignfab/geocontext)) queries the
+  Géoplateforme with read-only tools, often prefixed (`mcp__geocontext__geocode`). When it
+  is connected, use it first for answers that need no file: the coordinates of a place
+  (`geocode`), the elevation of a point (`altitude`), what lies at or near a point
+  (`adminexpress`, `cadastre`, `urbanisme`, `assiette_sup`), and finding, describing,
+  counting or reading WFS types (`gpf_search_types`, `gpf_describe_type`,
+  `gpf_count_features`, `gpf_get_features`).
+- Keep the services of the table below, through their skills, for file exports, complete
+  or bulk datasets, rasters, elevation profiles, route geometries and reachable areas.
+- Tool and parameter names change between Geocontext versions: read the
+  [Geocontext reference](references/geocontext.md) and the tool list of the connected
+  server before calling a tool.
+- Check each answer before reporting it: no error returned, the right place or object and
+  a plausible value. The first `geocode` candidate can be a namesake elsewhere or another
+  object of the right municipality: check `fulltext` and `kind` as well as `city` and
+  `zipcode`. When they do not match, add the postcode to the text, not the department
+  name, or take another candidate. Name the tool used and the date.
+
+Without Geocontext, or when a call fails, continue with the table below and say so; you
+may tell the user that Geocontext can be connected for such questions. Never install,
+configure or start an MCP server yourself.
+
 ## Prerequisites
 
 No local software is needed for an explanation. Use web access to read the official
@@ -125,3 +152,5 @@ explicit. An advice-only request needs no fabricated file or validation result.
 - [Data delivery](references/data-delivery.md): WMS-R/V, WMTS, TMS, WFS, downloads and extraction.
 - [Search, calculations and validation](references/search-and-processing.md): CSW, dataset
   search, geocoding, elevation, navigation, validation, usage statistics and access.
+- [Geocontext MCP server](references/geocontext.md): tools by need, their limits, names by
+  version and the skill to use instead.

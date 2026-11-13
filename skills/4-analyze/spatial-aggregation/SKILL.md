@@ -9,6 +9,40 @@ Produce one row per zone, including empty zones. Use `geospatial-descriptive-sta
 for one-table summaries and `gdal-raster-processing` or `geopandas-vector-analysis` for raster zonal
 statistics. This skill does not redistribute populations or repair input geometry.
 
+## MCP servers
+
+Optional. Use a connected MCP server first when it already holds the data.
+
+- **PostGIS:** when both layers are tables of a PostGIS database and a PostGIS MCP server
+  is connected (a server giving SQL access to that database; its name or tools mention
+  `postgis`, `postgres` or `sql`, and tool names differ between servers, so read the tool
+  list), aggregate there instead of exporting the tables. Read the schemas, geometry
+  columns, SRIDs and row counts first. Express the predicate and the assignment policy
+  chosen in step 3 in SQL (`ST_Within`, `ST_Intersects`), keep empty zones with a left
+  join from the zones, count missing and non-finite measures apart, and run the
+  reconciliation of *Validate the output* on the query result. Run read-only queries:
+  `SELECT` without `INTO`, and no function that changes data, schema or SRID. Aggregate in
+  the database and bound exploratory queries with `LIMIT`. Create a result table only on
+  request, under a name you checked is unused; never drop, replace, alter or update an
+  existing table.
+- **Geocontext** ([ignfab/geocontext](https://github.com/ignfab/geocontext), tools often
+  prefixed `mcp__geocontext__`): for a single count of Géoplateforme reference objects in
+  one administrative unit, with no file output. Get the `feature_ref` of the unit with
+  `geocode` then `adminexpress`, checking that it is the unit requested, find the type
+  with `gpf_search_types`, then count with `gpf_count_features` filtered by intersection
+  with that `feature_ref`. In Geocontext 0.9 the same tools are `gpf_wfs_search_types` and
+  `gpf_wfs_get_features` with `result_type: "hits"` and
+  `spatial_operator: "intersects_feature"`: read the input schema of the connected server.
+  Say that it counts the objects sharing an area with the unit, including those that cross
+  its boundary; objects that only touch it were left out on 2026-11-13. Name the type and
+  the date. Geocontext gives only that single count: several zones with a border policy,
+  sums, means or ratios need the PostGIS route above or the helper.
+
+For files, use the helper below. Without these servers, or when a call fails, use the
+helper on files: get Géoplateforme layers with `geopf-wfs-download`, and ask the user for
+an export of database tables; never ask for database credentials. Never install, configure
+or start an MCP server yourself.
+
 ## Prerequisites
 
 Check `python3 -c "import geopandas, pandas, shapely; print(geopandas.__version__, pandas.__version__, shapely.__version__)"`.

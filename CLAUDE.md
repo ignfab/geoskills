@@ -90,6 +90,17 @@ description: Downloads WFS data from the French Géoplateforme ... Use when the 
 - `SKILL.md` and `references/` never link outside the skill folder, because the installed
   copy is flat. Name other skills in backticks (`geopf-wfs-download`). Only the skill
   `README.md` may link to other skills or to `tests/`.
+- When a connected MCP server can do part of the work, say so in a `## MCP servers` section
+  placed before `## Prerequisites`: the server, the tools for each step, their limits and
+  the fallback. Start it with `Optional.`, say what to do without the server or when a
+  call fails (`Without …, or when a call fails, …`) and end with
+  `Never install, configure or start an MCP server yourself.` (a QGIS skill adds
+  `or a QGIS plugin`). A PostGIS route also states
+  ``Run read-only queries: `SELECT` without `INTO`, and no function that changes data, schema or SRID.``
+  and `never ask for database credentials`; a QGIS route says that the user's project
+  changes only when asked. A section that names Geocontext tools names the version or
+  tells the agent to read the tool list of the connected server. See
+  [Agent conduct](#agent-conduct) and [docs/mcp-servers.md](docs/mcp-servers.md).
 
 ## Skill README
 
@@ -103,6 +114,7 @@ in this order, and take every statement from the skill's own files and tests:
 | `## When to use another skill` | Each boundary, with the skill to use instead, from the description and the negative scenarios |
 | `## What you get` | Outputs and the checks run before reporting, from `## Validate the output` |
 | `## Requirements` | Tools, minimum versions, check commands, user-run install commands, network services and keys |
+| `## MCP servers` | Only when `SKILL.md` has that section: the optional server, what the agent does first with it, and what stays with the commands |
 | `## Installation` | The `npx skills add` command for the skill and for its family |
 | `## Example` | An example request in English, then a command or code block taken from `SKILL.md` |
 | `## Contents` | `SKILL.md`, each reference and each script, with its purpose |
@@ -151,6 +163,13 @@ these rules, and states them where they apply:
   magnitude.
 - **Keep long commands visible.** Run downloads in the foreground (with `-progress` where
   available); do not pipe them through `head` or `tail`.
+- **Prefer a connected MCP server, never require one.** When Geocontext (Géoplateforme
+  reference data), a PostGIS server (data in a database) or a QGIS server (the user's open
+  session) is connected and covers a step, the agent uses it first, within the limits the
+  skill states. Otherwise it uses the documented commands and may mention the server. It
+  never installs, configures or starts a server. The rules above apply through a server
+  too: read its tool list instead of guessing tool names, change nothing unless a change
+  was requested, and validate before reporting.
 
 ## Checklist for a new skill
 
@@ -172,6 +191,9 @@ these rules, and states them where they apply:
 - [ ] `npx skills add <path-to-this-repo>` lists the skill without a warning
 - [ ] `SKILL.md` has `## Prerequisites` and `## Validate the output` sections, and its
   prerequisites follow the agent conduct rules above
+- [ ] if a connected MCP server (Geocontext, PostGIS, QGIS) can do part of the work,
+  `SKILL.md` and the skill `README.md` each have a `## MCP servers` section, and the skill
+  has a row in the table of [docs/mcp-servers.md](docs/mcp-servers.md)
 - [ ] `tests/<skill-name>.md` with French scenario prompts, including at least one negative
   scenario, each with an `**Expected skill:**` line and a checklist, and a row in the
   `Coverage by skill` table of `tests/README.md`
@@ -195,6 +217,11 @@ prompt, expected skill or checklist, or when the matrix, score table or run coun
 `tests/ab-testing.md` no longer matches the scenario files. `tests/test_skill_robustness.py`
 fails when a description lacks its `Use …` clause or names a skill vaguely, or when a skill
 excluded by a negative scenario does not name the alternative.
+`tests/test_mcp_sections.py` fails when a `## MCP servers` section breaks the convention
+above (optional, fallback, closing rule, no setup step, read-only database, QGIS project
+changed only when asked, Geocontext version or tool list), when a skill mentions an MCP
+server outside that section, or when the skill READMEs and `docs/mcp-servers.md` do not
+list the same skills.
 Install the Python validation dependency with `python3 -m pip install -r tests/requirements.txt`.
 
 Discovery by the Skills CLI and agent skill selection remain separate checks; see

@@ -12,6 +12,33 @@ IGN services. Neither is an installation dependency.
 For an image export of existing data/project or a small interactive HTML map, use
 `map-illustration`.
 
+## MCP servers
+
+Optional. A QGIS MCP server drives the QGIS session the user has open. Its tools mention
+QGIS (for example `get_project_info`, `get_layers`, `load_project`, `render_map`), and
+their names differ between servers, so read the tool list. When one is connected, use it
+first to list the layers loaded in the user's project when the request is to package what
+they have open. Its tools may return names and types without the sources, the CRSs or the
+order: then read them from the saved project file named by the project information, or ask
+the user; never guess a path. Then inspect those sources as in step 1. Report a layer
+without a file source (memory, database, remote service) as not packaged, by its name and
+provider only: never copy its connection string, which can hold a password or a key, into
+a message, a manifest or a project.
+
+Build the project file with the helper below whenever standalone PyQGIS runs: it checks
+the sources, the relative paths and the reopening.
+
+Creating or loading a project through the server replaces the project the user has open
+and discards its unsaved changes without a prompt: do it only when asked, for example to
+show the verified project, after telling the user so and getting their agreement; never
+save over their project, and say what you changed. A tool that executes code runs anything
+in the user's QGIS: use it only with the user's agreement. If only the session is
+available to build the project, say that it will turn the open session into the new
+project and get the user's agreement first; then assemble it with the server's tools, save
+it to a new path, reopen it and apply the checks of *Validate the output* by hand. Without
+a QGIS MCP server, or when a call fails, use the helper only. Never install, configure or
+start an MCP server or a QGIS plugin yourself.
+
 ## Prerequisites
 
 Check installed PyQGIS with `python3 -c "from qgis.core import Qgis; print(Qgis.QGIS_VERSION)"`.
