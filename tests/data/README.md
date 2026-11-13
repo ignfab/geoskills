@@ -38,6 +38,14 @@ values were supplied with the scenarios and rechecked against the stored fixture
 
 ## Additional synthetic fixtures
 
+- `terrain_screening.asc` and `terrain_screening_aoi.geojson`: invented 7 × 7 terrain grid
+  and its 70 × 70 m AOI (repository MIT license). Confirmed EPSG:2154, 10 m cells, metre
+  elevations in an arbitrary synthetic vertical reference, not real ground/aviation data.
+  No `.prj` is supplied; this metadata authorizes CRS assignment on a copy. The left four
+  columns are 100 m except a valid zero at the northwest corner and nodata at the southwest
+  corner; the right three columns are 200 m. The interval [0, 100] retains 27 of 48 valid
+  cells (2,700 m²); Horn slope ≤ 5 degrees additionally retains 8 cells (800 m²). Without
+  a halo, 25 cells have unknown slope, including edges and the nodata neighbourhood.
 - `geocoded_synthetic.csv`: seven invented API rows; policy 0.7 score / 0.1 margin,
   expected INSEE code and housenumber yields 1 accepted, 5 review and 1 unmatched.
 - `elevation_points.csv` and `elevations_synthetic.json`: two invented points/results,

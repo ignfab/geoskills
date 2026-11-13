@@ -166,3 +166,17 @@ with few or no skills and the chains behind business needs. Runs are recorded in
 - **Expected skills:** `municipality-building-profile`
 - **Watch:** A common population for counts/height/usage, union footprint rather than summed overlaps, explicit boundary and sentinel policy, real reopened/moved QGIS project when PyQGIS exists, unchanged sources. Specialized styling/project skills are optional.
 - **Status:** open
+
+## XP-15 — Terrain candidates for a helicopter study
+
+> Avec `data/terrain_screening.asc`, `data/terrain_screening_aoi.geojson` et les
+> métadonnées de `data/README.md`, prépare une présélection de terrain pour une étude
+> d’atterrissage d’hélicoptère. Mes critères d’étude sont une altitude de 0 à 100 mètres
+> inclus, une pente maximale de 5 degrés et une surface continue d’au moins 500 m².
+> Fournis les rasters, les polygones candidats et un bilan des données manquantes et des
+> vérifications restantes. Ne télécharge rien et ne modifie pas les sources.
+
+- **Family:** `6-workflows`
+- **Expected skills:** `terrain-elevation-screening`
+- **Watch:** Synthetic data only, valid zero and nodata preserved, Horn degree slopes without interpolated edges, 8/16/25 selected/rejected/unknown cells and one 800 m² candidate. Reopened outputs, unchanged sources and explicit unresolved operational assessment. Thresholds are study inputs, not aviation recommendations.
+- **Status:** open

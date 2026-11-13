@@ -15,6 +15,8 @@ geometry quality, so that the next step works on consistent inputs.
 
 ## Also relevant
 
+- [terrain-elevation-screening](../6-workflows/terrain-elevation-screening/README.md)
+  prepares a common terrain grid before altitude/slope screening and polygon delivery.
 - [geopf-geocoding](../2-access/geopf-geocoding/README.md) reviews an already geocoded CSV
   (scores, ambiguity, unmatched rows) without sending new requests.
 - [geopandas-basics](../4-analyze/geopandas-basics/README.md) reads, writes and reprojects

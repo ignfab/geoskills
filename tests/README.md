@@ -91,7 +91,7 @@ that file: `-01`, `-02`… for positive scenarios and `-N1`, `-N2`… for negati
 | `mapshaper-simplify` | [MS](mapshaper-simplify.md): 4 + 2 | `test_mapshaper.py` | — |
 | `geodata-intake` | [INT](geodata-intake.md): 2 + 1 | `test_raster_quality.py` (intake recipes) | — |
 | `geopf-download-files` | [DLF](geopf-download-files.md): 2 + 1 | `test_enrichment.py` (catalogue pages), `test_download_transfers.py` | `test_live.py`, `test_live_enrichment.py` |
-| `geopf-altimetry` | [ALT](geopf-altimetry.md): 2 + 1 | `test_enrichment.py` (joins, missing values) | `test_live_enrichment.py` |
+| `geopf-altimetry` | [ALT](geopf-altimetry.md): 2 + 2 | `test_enrichment.py` (joins, missing values) | `test_live_enrichment.py` |
 | `geopf-routing` | [RTE](geopf-routing.md): 2 + 1 | `test_enrichment.py` (GeoJSON export) | `test_live.py`, `test_live_enrichment.py` |
 | `gdal-vector-basics` | [GVB](gdal-vector-basics.md): 4 + 2 | `test_gdal_vector.py` | — |
 | `apicarto` | [APC](apicarto.md): 3 + 1 | `test_apicarto.py` | `test_live_apicarto.py` |
@@ -101,11 +101,18 @@ that file: `-01`, `-02`… for positive scenarios and `-N1`, `-N2`… for negati
 | `bdtopo-schema-guide` | [BTS](bdtopo-schema-guide.md): 2 + 2 | `test_bdtopo_schema_guide.py` | — |
 | `qgis-project-builder` | [QPB](qgis-project-builder.md): 2 + 1 | `test_qgis_project_builder.py` (needs PyQGIS) | — |
 | `municipality-building-profile` | [MBP](municipality-building-profile.md): 3 + 3 | `test_municipality_building_profile.py` (GeoPandas) | — |
+| `terrain-elevation-screening` | [TES](terrain-elevation-screening.md): 3 + 2 | `test_terrain_elevation_screening.py` (GDAL recipes) | — |
 
 `geopf-services` and `geopf-wms-wmts` have no offline test: their value is advice and
 remote requests, so only the live tests and the agent scenarios exercise them.
 
 ## Offline tests
+
+The terrain workflow's [recipe tests](test_terrain_elevation_screening.py) execute the
+documented commands on synthetic rasters: inclusive and negative altitudes, valid zero,
+nodata and slope borders, empty outputs, holes, connectivity, exact AOI clipping before
+area filtering and source preservation. The GDAL Python utilities must be available
+alongside the GDAL CLI. These numerical checks do not validate helicopter landing sites.
 
 Many offline tests do not copy commands: they **execute the code blocks of the skill
 files** through [skill_examples.py](skill_examples.py) (`read_example` for Bash,

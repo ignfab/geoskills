@@ -75,10 +75,10 @@ WFS-01 WFS-02 WFS-04 WFS-05 WFS-06 WFS-07 CQL-01 CQL-02 CQL-03 CQL-04
 GPD-01 GPD-02 GPD-03 GPD-04 VDQ-01 VDQ-02 VDQ-03 MS-01 MS-02 MS-03 MS-04
 INT-01 INT-02 DLF-01 DLF-02 ALT-01 ALT-02 RTE-01 RTE-02
 GVB-01 GVB-02 GVB-03 GVB-04 APC-01 APC-02 APC-03 GDS-01 GDS-02
-QLS-01 QLS-02 SPA-01 SPA-02 BTS-01 BTS-02 QPB-01 QPB-02 MBP-01 MBP-02 MBP-03"
+QLS-01 QLS-02 SPA-01 SPA-02 BTS-01 BTS-02 QPB-01 QPB-02 MBP-01 MBP-02 MBP-03 TES-01 TES-02 TES-03"
 NEGATIVE="GSV-N1 GSV-N2 GEO-N1 CRS-N1 RAS-N1 WMS-N1 WFS-N1 CQL-N1 CQL-N2 GPD-N1 VDQ-N1 VDQ-N2
 MS-N1 MS-N2 INT-N1 DLF-N1 ALT-N1 RTE-N1 GVB-N1 GVB-N2 APC-N1 GDS-N1 GDS-N2
-QLS-N1 SPA-N1 SPA-N2 BTS-N1 BTS-N2 QPB-N1 MBP-N1 MBP-N2 MBP-N3"
+QLS-N1 SPA-N1 SPA-N2 BTS-N1 BTS-N2 QPB-N1 MBP-N1 MBP-N2 MBP-N3 ALT-N2 TES-N1 TES-N2"
 
 # Print the French prompt of a scenario or an experimental prompt (XP-NN), read from
 # tests/*.md, then tests/prompts/*.md.
@@ -416,9 +416,9 @@ source ab.sh
 AB_DRY=1 ab_campaign 1
 ```
 
-Then set `export AB=/path/to/a/new/campaign` for actual agent calls. One repetition has **186 runs**:
-77 positive scenarios in both modes and 32 negatives in A. At the example budget of $2 per
-run, the caps total $372 per repetition and $1116 for three repetitions. Starting the paid
+Then set `export AB=/path/to/a/new/campaign` for actual agent calls. One repetition has **195 runs**:
+80 positive scenarios in both modes and 35 negatives in A. At the example budget of $2 per
+run, the caps total $390 per repetition and $1170 for three repetitions. Starting the paid
 campaign is a separate user decision; a dry run does not authorize it.
 
 Smoke pass, one repetition:
@@ -601,6 +601,7 @@ All CQL scenarios use supplied metadata and require no live service.
 | ALT-01 | A + B | NET | source discovery, profile sampling, nodata and vertical datum |
 | ALT-02 | A + B | — | count/order checked; sentinel not a height; IDs preserved |
 | ALT-N1 | A | — | local DEM mosaic bypasses elevation API |
+| ALT-N2 | A | GDAL | `terrain-elevation-screening` selects 27 terrain cells and 2,700 m²; no point API |
 
 ### [geopf-routing](geopf-routing.md)
 
@@ -684,6 +685,16 @@ All CQL scenarios use supplied metadata and require no live service.
 | MBP-N2 | A | PY | `geospatial-descriptive-statistics` loaded; mean 382.5 and median 260 without clipping |
 | MBP-N3 | A | QGIS | `qgis-project-builder` loaded; existing layers assembled, no indicators |
 
+### [terrain-elevation-screening](terrain-elevation-screening.md)
+
+| Scenario | Modes | Needs | Watch in B |
+| --- | --- | --- | --- |
+| TES-01 | A + B | GDAL | inclusive interval, valid zero, 27 selected / 21 rejected / 1 unknown cells; 2,700 m² and unchanged inputs |
+| TES-02 | A + B | GDAL | degree slope, 8 selected / 16 rejected / 25 unknown cells, 800 m²; terrain candidates without landing suitability claims |
+| TES-03 | A + B | GDAL | empty layer retains CRS/schema; 48 valid rejected cells distinguished from missing coverage |
+| TES-N1 | A | NET | `geopf-altimetry` retrieves points; no area workflow |
+| TES-N2 | A | GDAL | `gdal-raster-basics` clips only; no threshold or site analysis |
+
 ## Score a run
 
 For each row of `report.md`, in the run directory:
@@ -740,7 +751,8 @@ Summarize per skill over the three repetitions:
 | bdtopo-schema-guide | /6 | /6 | | | |
 | qgis-project-builder | /6 | /6 | | | |
 | municipality-building-profile | /9 | /9 | | | |
-| Negative scenarios (A only) | /96 | — | — | — | |
+| terrain-elevation-screening | /9 | /9 | | | |
+| Negative scenarios (A only) | /105 | — | — | — | |
 
 ## Model sensitivity
 
@@ -771,9 +783,9 @@ for model in $AB_MODELS; do AB="$AB/models/$model" ab_report; done
 ab_sensitivity
 ```
 
-`ab_panel` lists **44 scenarios**, the first positive and the first negative of each skill:
-**132 runs** per repetition with the 3 models of `AB_MODELS`, capped at $264. A full sweep
-runs all 109 scenarios: 327 runs, capped at $654 per repetition. Starting a paid sweep is a
+`ab_panel` lists **46 scenarios**, the first positive and the first negative of each skill:
+**138 runs** per repetition with the 3 models of `AB_MODELS`, capped at $276. A full sweep
+runs all 115 scenarios: 345 runs, capped at $690 per repetition. Starting a paid sweep is a
 separate user decision; a dry run does not authorize it.
 
 `$AB/sensitivity.md` has four tables:

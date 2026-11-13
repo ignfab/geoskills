@@ -17,6 +17,8 @@ Handle raster data with the GDAL tools that cover most needs:
 
 For the elevation of a few points, call the Elevation API with `geopf-altimetry` instead
 of downloading and sampling a DEM.
+For a workflow selecting candidate areas by altitude and optional slope/area criteria,
+use `terrain-elevation-screening`.
 
 ## Prerequisites
 
