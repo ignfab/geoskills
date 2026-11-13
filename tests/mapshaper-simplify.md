@@ -77,7 +77,7 @@ features, recommends comparing parts/holes, and does not promise complete preser
 
 > Réduis la résolution de mon modèle numérique de terrain de 1 mètre à 10 mètres.
 
-**Expected skill:** `gdal-raster-basics`, not `mapshaper-simplify`.
+**Expected skill:** `gdal-raster-processing`, not `mapshaper-simplify`.
 
 - [ ] resamples the raster with `gdalwarp -tr 10 10` and an aggregating method such as
   `average`

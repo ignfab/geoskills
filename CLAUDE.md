@@ -20,6 +20,17 @@ skills/<family>/
 `<skill-name>` is lowercase with hyphens, matches the `name` in the frontmatter, and is
 unique across families.
 
+Name the tool or domain and its operation or result, for example `geopf-file-download`
+or `municipality-building-profile`. Avoid a bare service name or a vague suffix such as
+`basics`. Keep clear existing names; do not prepend a family name or number. Display the
+family at the top of each skill README:
+
+```markdown
+**Family:** [<family title>](../README.md).
+```
+
+See [the naming guide](docs/skill-naming.md) for the current inventory and past renames.
+
 Keeping skills under `skills/` matters for discovery: the
 [Vercel Skills CLI](https://github.com/vercel-labs/skills) scans the repository root only
 one level deep, whereas `skills/` is a known container walked up to three levels, so
@@ -117,7 +128,8 @@ these rules, and states them where they apply:
   in the family whose question its main output answers
 - [ ] `description` says what the skill does and when to use it, in English only
 - [ ] long-form content moved to `references/` and linked from `SKILL.md`
-- [ ] `skills/<family>/<skill-name>/README.md` with requirements, install command and contents
+- [ ] `skills/<family>/<skill-name>/README.md` with the family, requirements, install command
+  and contents
 - [ ] row added to the table of `skills/<family>/README.md`, and `Also relevant` entries on
   the pages of the other families it serves
 - [ ] skill linked from its family row in the `Skills` table of the root `README.md`, and

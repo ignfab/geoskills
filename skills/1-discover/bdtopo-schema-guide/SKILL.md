@@ -7,7 +7,7 @@ description: Explain versioned IGN BD TOPO classes, attribute meanings, types an
 
 Answer semantic model questions with a class, fields, source version/revision and explicit
 unknowns. This is a curated **buildings and roads** subset, not every BD TOPO class.
-Downloads belong to `geopf-wfs-download` or `geopf-download-files`; local counts belong to
+Downloads belong to `geopf-wfs-download` or `geopf-file-download`; local counts belong to
 `spatial-aggregation`. No network call is needed for the offline path.
 
 ## Prerequisites

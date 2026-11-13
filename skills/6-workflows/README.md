@@ -15,10 +15,10 @@ skills remain independently useful for narrower requests.
 
 | Use case | Building blocks available today |
 | --- | --- |
-| Territorial diagnosis | `geopf-wfs-download` (boundaries, BD TOPO), `apicarto` (urban planning, protected areas), `geopf-altimetry`, `geopandas-basics` (overlays), `spatial-aggregation` (territorial indicators), `geospatial-descriptive-statistics` (attribute distributions) |
-| Accessibility | `geopf-geocoding` (starting points), `geopf-routing` (isochrones), `geopandas-basics` (overlay with the area of interest) |
-| Exposure | `geopf-geocoding`, `apicarto` (zones, easements, protected areas), `geopandas-basics` (spatial joins) |
-| Change monitoring | `geopf-download-files` (editions), `vector-data-quality`, `geopandas-basics` (comparison) |
+| Territorial diagnosis | `geopf-wfs-download` (boundaries, BD TOPO), `apicarto-query` (urban planning, protected areas), `geopf-altimetry`, `geopandas-vector-analysis` (overlays), `spatial-aggregation` (territorial indicators), `geospatial-descriptive-statistics` (attribute distributions) |
+| Accessibility | `geopf-geocoding` (starting points), `geopf-routing` (isochrones), `geopandas-vector-analysis` (overlay with the area of interest) |
+| Exposure | `geopf-geocoding`, `apicarto-query` (zones, easements, protected areas), `geopandas-vector-analysis` (spatial joins) |
+| Change monitoring | `geopf-file-download` (editions), `vector-data-quality`, `geopandas-vector-analysis` (comparison) |
 
 These broader chains are explored with the business-need prompts of the
 [experimental prompt catalog](../../tests/prompts/catalog.md); their runs are logged in

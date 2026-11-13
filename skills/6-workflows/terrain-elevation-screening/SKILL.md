@@ -1,6 +1,6 @@
 ---
 name: terrain-elevation-screening
-description: Screen an area of interest by terrain elevation, optionally slope and contiguous area, from DEM discovery and clipping to candidate polygons and a coverage report. Use when the user wants elevations over an area and zones above, below or between altitude thresholds, including preliminary helicopter landing-site terrain screening. This does not establish landing suitability. For point elevations or profiles use geopf-altimetry; for raster clipping or conversion alone use gdal-raster-basics.
+description: Screen an area of interest by terrain elevation, optionally slope and contiguous area, from DEM discovery and clipping to candidate polygons and a coverage report. Use when the user wants elevations over an area and zones above, below or between altitude thresholds, including preliminary helicopter landing-site terrain screening. This does not establish landing suitability. For point elevations or profiles use geopf-altimetry; for raster clipping or conversion alone use gdal-raster-processing.
 ---
 
 # Terrain elevation screening
@@ -33,13 +33,13 @@ Online discovery also needs `curl` (user-run command: `sudo apt install curl`).
    square metres. State which criteria were actually applied.
 3. Prefer supplied terrain data. Otherwise follow [source selection](references/sources.md):
    discover a numeric terrain model covering the AOI and, for slope, a surrounding halo.
-   Use `geopf-download-files` for tiles or `geopf-wms-wmts` for a verified numeric extract.
+   Use `geopf-file-download` for tiles or `geopf-raster-download` for a verified numeric extract.
    Use `geopf-altimetry` for a few points or a profile, not a dense grid of API requests.
 4. Inspect the DEM and AOI with `gdalinfo` and `ogrinfo`. Verify terrain versus surface,
    edition, horizontal CRS, vertical datum, units, scale/offset, resolution and nodata.
    Use `crs-reprojection-france` for an appropriate projected metre CRS or a justified
    vertical conversion. A horizontal reprojection alone does not establish matching
-   height references. Prepare one common grid with `gdal-raster-basics` if needed.
+   height references. Prepare one common grid with `gdal-raster-processing` if needed.
 5. Run the [local processing recipe](references/local-processing.md) in a new output
    directory, in the foreground. It clips elevations, optionally derives slope before
    clipping, applies explicit thresholds and vectorizes selected cells with four-neighbour

@@ -1,5 +1,7 @@
 # spatial-aggregation
 
+**Family:** [4. Analyze and derive](../README.md).
+
 Vector objects to polygon-zone indicators, with explicit assignment and reconciliation.
 
 ## Requirements
@@ -23,6 +25,6 @@ npx skills add ignfab/geoskills --skill spatial-aggregation
 
 Outputs keep zone IDs and geometry and add indicators; source datasets remain unchanged.
 Existing output directories are refused. No raster processing, automatic repair or areal
-interpolation. [geopandas-basics](../geopandas-basics/README.md) covers general spatial
+interpolation. [geopandas-vector-analysis](../geopandas-vector-analysis/README.md) covers general spatial
 operations; [geospatial-descriptive-statistics](../geospatial-descriptive-statistics/README.md)
 covers one-table distributions. Neither is a runtime dependency.

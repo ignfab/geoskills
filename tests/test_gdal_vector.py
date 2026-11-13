@@ -12,10 +12,10 @@ import unittest
 from skill_examples import read_example
 from test_workflows import DATA, GDALCase
 
-SKILL = "gdal-vector-basics/SKILL.md"
-FORMATS = "gdal-vector-basics/references/formats-and-encodings.md"
-FILTERS = "gdal-vector-basics/references/filters-sql-and-merge.md"
-CLI = "gdal-vector-basics/references/gdal-vector-cli.md"
+SKILL = "gdal-vector-processing/SKILL.md"
+FORMATS = "gdal-vector-processing/references/formats-and-encodings.md"
+FILTERS = "gdal-vector-processing/references/filters-sql-and-merge.md"
+CLI = "gdal-vector-processing/references/gdal-vector-cli.md"
 NAMES = {"94067": "Saint-Mandé", "94038": "L'Haÿ-les-Roses", "02201": "Cœuvres-et-Valsery"}
 ZONE = {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"name": "zone"},
         "geometry": {"type": "Polygon", "coordinates": [[[2.35975, 48.82932], [2.35998, 48.82932],

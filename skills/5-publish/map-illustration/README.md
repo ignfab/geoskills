@@ -1,5 +1,7 @@
 # map-illustration
 
+**Family:** [5. Represent and publish](../README.md).
+
 Static-first cartographic illustrations, with optional interactive HTML. Reuse QGIS when
 its styles or project are already useful; otherwise use a small Python rendering path.
 No application server, web build pipeline or mandatory QGIS installation.

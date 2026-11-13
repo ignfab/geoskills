@@ -63,7 +63,7 @@
 > Le raster est en Lambert-93, confirmé par `data/README.md`. Je veux un GeoTIFF, sans
 > filtre d’altitude ni recherche de zones.
 
-**Expected skill:** `gdal-raster-basics`, not `terrain-elevation-screening`.
+**Expected skill:** `gdal-raster-processing`, not `terrain-elevation-screening`.
 
 **Checks:**
 - [ ] Uses confirmed source CRS, reads nodata and validates the clipped raster.

@@ -23,7 +23,7 @@ def helper(skill, filename):
 
 EXPORT = helper("geopf-wfs-download", "check_export.py")
 CLASSIFY = helper("geopf-geocoding", "classify_results.py")
-FEED = helper("geopf-download-files", "inspect_feed.py")
+FEED = helper("geopf-file-download", "inspect_feed.py")
 
 
 class ExportCompletenessTests(unittest.TestCase):

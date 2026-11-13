@@ -10,10 +10,10 @@ with few or no skills and the chains behind business needs. Runs are recorded in
 > l'IGN choisir, à quelle résolution, et par quel service le récupérer ? Ne télécharge rien.
 
 - **Family:** `1-discover`
-- **Expected skills:** `geopf-services`
+- **Expected skills:** `geopf-service-selection`
 - **Watch:** products, coverage and resolutions taken from discovery requests rather than
   memory; a justified choice between products; a hand-off to `geopf-altimetry`,
-  `geopf-wms-wmts` or `geopf-download-files` named but not run; nothing downloaded.
+  `geopf-raster-download` or `geopf-file-download` named but not run; nothing downloaded.
 - **Status:** open
 
 ## XP-02 — Choose the boundary edition for a statistics year
@@ -23,7 +23,7 @@ with few or no skills and the chains behind business needs. Runs are recorded in
 > correspondent ? Justifie ce choix et ne télécharge rien.
 
 - **Family:** `1-discover`
-- **Expected skills:** `geopf-download-files`
+- **Expected skills:** `geopf-file-download`
 - **Watch:** the edition chosen for its reference date, not because it is the latest; the
   choice justified from the feed, which describes ADMIN EXPRESS COG as the annual edition
   following the INSEE official geographic code at 1 January (on 2026-11-09 the 2024
@@ -62,7 +62,7 @@ with few or no skills and the chains behind business needs. Runs are recorded in
 > mairie ? Enregistre la zone accessible et le calcul dans `output/`.
 
 - **Family:** `6-workflows`
-- **Expected skills:** `geopf-geocoding`, `geopf-routing`, then `geopandas-basics`
+- **Expected skills:** `geopf-geocoding`, `geopf-routing`, then `geopandas-vector-analysis`
 - **Watch:** the town hall geocoded, not guessed; pedestrian profile and time unit taken from
   the service capabilities; areas computed in Lambert-93 against `data/saint_mande.geojson`
   (about 90.6 ha); both areas reported with the share.
@@ -75,7 +75,7 @@ with few or no skills and the chains behind business needs. Runs are recorded in
 > `output/` qui garde toutes les lignes, y compris celles qui n'ont pas pu être géocodées.
 
 - **Family:** `6-workflows`
-- **Expected skills:** `geopf-geocoding`, then `apicarto`
+- **Expected skills:** `geopf-geocoding`, then `apicarto-query`
 - **Watch:** eight rows kept, unmatched and empty ones included; both Natura 2000 networks
   queried; every page of each API Carto response read; municipalities without a digital
   urban plan reported, not guessed.
@@ -88,8 +88,8 @@ with few or no skills and the chains behind business needs. Runs are recorded in
 > source avec sa date.
 
 - **Family:** `6-workflows`
-- **Expected skills:** `geopf-wfs-download`, `geopf-altimetry` or `gdal-raster-basics`, then
-  `apicarto`
+- **Expected skills:** `geopf-wfs-download`, `geopf-altimetry` or `gdal-raster-processing`, then
+  `apicarto-query`
 - **Watch:** boundary and area taken from ADMIN EXPRESS, not from memory; elevation
   statistics from a named resource and resolution; an empty protected-area result reported
   as zero; source editions cited.
@@ -102,8 +102,8 @@ with few or no skills and the chains behind business needs. Runs are recorded in
 > écarts de surface.
 
 - **Family:** `6-workflows`
-- **Expected skills:** `geopf-wfs-download` or `geopf-download-files`, then
-  `geopandas-basics`
+- **Expected skills:** `geopf-wfs-download` or `geopf-file-download`, then
+  `geopandas-vector-analysis`
 - **Watch:** available editions discovered, not assumed; both geometries in Lambert-93
   before the comparison; the symmetric difference area reported; no national archive
   downloaded when a filtered request is enough.

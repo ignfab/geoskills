@@ -1,5 +1,7 @@
 # municipality-building-profile
 
+**Family:** [6. Solve a business need](../README.md).
+
 The first business workflow in geoskills: a reproducible building portrait for one
 municipality, from local inputs or bounded IGN extraction to indicators and optional QGIS.
 

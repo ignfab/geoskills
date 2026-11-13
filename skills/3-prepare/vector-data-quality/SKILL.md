@@ -8,7 +8,7 @@ description: "Audits and repairs vector geospatial data quality with GeoPandas, 
 Audit and repair vector data before joins, overlays, statistics or publication. Keep the
 original file unchanged, record each decision, and validate the repaired output.
 
-Use `geopandas-basics` for general vector processing and `crs-reprojection-france` when the
+Use `geopandas-vector-analysis` for general vector processing and `crs-reprojection-france` when the
 problem is a missing, wrong or unsuitable CRS rather than bad geometry.
 
 ## Prerequisites

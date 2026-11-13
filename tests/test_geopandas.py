@@ -20,7 +20,7 @@ class GeoPandasTests(GDALCase):
         rows = pd.read_csv(DATA / "points.csv")
         points = gpd.GeoDataFrame(rows, geometry=gpd.points_from_xy(rows.lon, rows.lat), crs=4326)
         commune = gpd.read_file(DATA / "saint_mande.geojson").to_crs(points.crs)
-        joined = run_example("geopandas-basics/references/spatial-operations.md",
+        joined = run_example("geopandas-vector-analysis/references/spatial-operations.md",
             "## Spatial join", {"gpd": gpd, "points": points, "communes": commune})["joined"]
         self.assertEqual(len(joined), 3)
         self.assertEqual(joined.loc[joined.index_right.notna(), "id"].tolist(), [1])
@@ -37,7 +37,7 @@ class GeoPandasTests(GDALCase):
         communes = gpd.GeoDataFrame({"code_insee": ["001", "002"], "nom_officiel": ["A", "B"]},
             geometry=[box(0, 0, 4, 4), box(2, 0, 6, 4)], crs=2154)
         communes.index.name = "municipality_row"
-        joined = run_example("geopandas-basics/references/spatial-operations.md",
+        joined = run_example("geopandas-vector-analysis/references/spatial-operations.md",
             "## Spatial join", {"gpd": gpd, "points": points, "communes": communes})["joined"]
         self.assertEqual(len(joined), 5)
         self.assertEqual(joined.groupby("id").size().to_dict(),
@@ -57,7 +57,7 @@ class GeoPandasTests(GDALCase):
             geometry=[Point(650000, 6860000), Point(650300, 6860400)], crs=2154)
         stations = gpd.GeoDataFrame({"station": ["near", "far"]},
             geometry=[Point(650000, 6860000), Point(660000, 6860000)], crs=2154)
-        result = run_example("geopandas-basics/references/spatial-operations.md",
+        result = run_example("geopandas-vector-analysis/references/spatial-operations.md",
             "## Spatial join", {"gpd": gpd, "points": points, "gares": stations}, example=1)["nearest"]
         self.assertEqual(result["id"].tolist(), ["a", "b"])
         self.assertEqual(result["station"].tolist(), ["near", "near"])
@@ -69,7 +69,7 @@ class GeoPandasTests(GDALCase):
 
         zones = gpd.GeoDataFrame({"zone_id": ["001"]}, geometry=[box(0, 0, 4, 4)], crs=2154)
         communes = gpd.GeoDataFrame({"code_insee": ["002"]}, geometry=[box(2, 0, 6, 4)], crs=2154)
-        result = run_example("geopandas-basics/references/spatial-operations.md",
+        result = run_example("geopandas-vector-analysis/references/spatial-operations.md",
             "## Overlay", {"gpd": gpd, "zones": zones, "communes": communes})
         for key, area in (("inter", 8), ("diff", 8), ("union", 24)):
             with self.subTest(operation=key):
@@ -86,9 +86,9 @@ class GeoPandasTests(GDALCase):
 
         source = gpd.GeoDataFrame({"id": ["001"], "note": [None]},
                                   geometry=[Point(2.35, 48.85)], crs=4326)
-        result = run_example("geopandas-basics/references/spatial-operations.md",
+        result = run_example("geopandas-vector-analysis/references/spatial-operations.md",
                              "## Buffer", {"gdf": source})
-        result = run_example("geopandas-basics/references/spatial-operations.md",
+        result = run_example("geopandas-vector-analysis/references/spatial-operations.md",
                              "## Buffer", result, example=1)["tampon"]
         self.assertEqual(result.crs.to_epsg(), 2154)
         self.assertEqual(result["id"].tolist(), ["001"])
@@ -148,7 +148,7 @@ class GeoPandasTests(GDALCase):
             crs=2154, index=[7, 7, 42, 0])
         stats = zonal_stats(zones, raster, affine=Affine(1, 0, 0, 0, -1, 2), nodata=-9999,
                             stats=["mean", "min", "max", "count"])
-        result = run_example("geopandas-basics/references/zonal-stats.md", "## Basic usage",
+        result = run_example("geopandas-vector-analysis/references/zonal-stats.md", "## Basic usage",
                              {"communes": zones, "stats": stats}, example=1)["communes"]
         self.assertEqual(result["id"].tolist(), ["zero", "nodata", "outside", "all"])
         self.assertEqual(result.index.tolist(), [7, 7, 42, 0])
@@ -168,7 +168,7 @@ class GeoPandasTests(GDALCase):
         original = zones.copy(deep=True)
         for stats in ([], [{"mean": 1}, {"mean": 2}]):
             with self.subTest(stats=stats), self.assertRaises(AssertionError):
-                run_example("geopandas-basics/references/zonal-stats.md", "## Basic usage",
+                run_example("geopandas-vector-analysis/references/zonal-stats.md", "## Basic usage",
                             {"communes": zones, "stats": stats}, example=1)
             assert_geodataframe_equal(zones, original)
 
@@ -179,7 +179,7 @@ class GeoPandasTests(GDALCase):
         commune = gpd.read_file(DATA / "saint_mande.geojson").to_crs(2154)
         commune.index = pd.Index([42], name="source_row")
         stats = zonal_stats(commune, self.mosaic(), stats=["mean", "min", "max", "count"])
-        result = run_example("geopandas-basics/references/zonal-stats.md", "## Basic usage",
+        result = run_example("geopandas-vector-analysis/references/zonal-stats.md", "## Basic usage",
                              {"communes": commune, "stats": stats}, example=1)["communes"]
         self.assertEqual(result.index.tolist(), [42])
         self.assertEqual(result.loc[42, "count"], 9046)
@@ -200,7 +200,7 @@ class GeoPandasTests(GDALCase):
             crs=2154, index=pd.Index([42, 42], name="source_row"))
         stats = zonal_stats(zones, self.mosaic(), stats=["mean", "count"])
         self.assertNotEqual(stats[0]["mean"], stats[1]["mean"])
-        result = run_example("geopandas-basics/references/zonal-stats.md", "## Basic usage",
+        result = run_example("geopandas-vector-analysis/references/zonal-stats.md", "## Basic usage",
                              {"communes": zones, "stats": stats}, example=1)["communes"]
         self.assertEqual(len(result), 2)
         self.assertEqual(result.index.tolist(), [42, 42])
@@ -214,7 +214,7 @@ class GeoPandasTests(GDALCase):
         zones = gpd.read_file(DATA / "saint_mande.geojson")
         zones["mean"] = "source attribute"
         with self.assertRaises(AssertionError):
-            run_example("geopandas-basics/references/zonal-stats.md", "## Basic usage",
+            run_example("geopandas-vector-analysis/references/zonal-stats.md", "## Basic usage",
                         {"communes": zones, "stats": [{"mean": 50}]}, example=1)
         self.assertEqual(zones["mean"].tolist(), ["source attribute"])
 

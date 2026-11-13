@@ -37,7 +37,7 @@ same values on the bundled helper.
 
 > Calcule l’altitude moyenne d’un raster par commune et joins-la aux polygones.
 
-**Expected skill:** `gdal-raster-basics` or `geopandas-basics`, not
+**Expected skill:** `gdal-raster-processing` or `geopandas-vector-analysis`, not
 `geospatial-descriptive-statistics`: raster zonal statistics are not a summary of one
 table.
 

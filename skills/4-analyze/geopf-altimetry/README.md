@@ -1,5 +1,7 @@
 # Retrieve point elevations and profiles
 
+**Family:** [4. Analyze and derive](../README.md).
+
 Discover terrain/surface resources, preserve missing elevations, join CSV rows and sample profiles.
 
 ## Requirements

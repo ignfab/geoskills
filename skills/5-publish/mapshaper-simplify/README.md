@@ -1,5 +1,7 @@
 # mapshaper-simplify
 
+**Family:** [5. Represent and publish](../README.md).
+
 Simplify administrative polygons for cartographic display and smaller web-map files,
 keeping shared borders consistent. Includes percentage-based and metric-distance recipes,
 GeoJSON/TopoJSON exports, and checks for feature loss and geometric changes.

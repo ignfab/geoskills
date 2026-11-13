@@ -15,7 +15,7 @@ file is not proof of an empty building stock. Keep source data and sidecars unto
 
 ## When online extraction is needed
 
-Use `geopf-services` and `geopf-wfs-download` if available. The fallback discovery entry is:
+Use `geopf-service-selection` and `geopf-wfs-download` if available. The fallback discovery entry is:
 
 ```bash
 curl --fail --show-error --location --max-time 60 --get https://data.geopf.fr/wfs/ows --data-urlencode SERVICE=WFS --data-urlencode VERSION=2.0.0 --data-urlencode REQUEST=GetCapabilities --output capabilities.xml
@@ -40,7 +40,7 @@ exact municipal boundary. Do not compare those different populations as though t
 should have equal counts. Unstable counts, failed pages or `-limit` imply a partial or
 unknown inventory. Record the evidence instead of labelling a successful command complete.
 
-Use dated deliveries (`geopf-download-files`) when an exact historical edition is needed;
+Use dated deliveries (`geopf-file-download`) when an exact historical edition is needed;
 do not relabel current WFS data as a historical edition. Record differing boundary and
 building dates and their interpretation limits. Run transfers in the foreground with
 visible progress; stop on persistent errors instead of silently switching source or scope.

@@ -60,7 +60,7 @@ class LiveNewSkillTests(unittest.TestCase):
 
     def test_catalogue_script_on_advertised_page(self):
         # Run curl separately: the entry block also invokes the skill-relative helper.
-        code = read_example("geopf-download-files/SKILL.md", "## Discover before downloading",
+        code = read_example("geopf-file-download/SKILL.md", "## Discover before downloading",
                             language="bash").split("python3 scripts/", 1)[0]
         result = subprocess.run(["bash", "-eu", "-c", code], cwd=self.output,
                                 capture_output=True, text=True, timeout=70)

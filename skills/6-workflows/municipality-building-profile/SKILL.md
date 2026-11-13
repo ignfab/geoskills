@@ -24,7 +24,7 @@ and `curl` (user-run Debian/Ubuntu command: `sudo apt install gdal-bin curl`). Q
 
 1. Identify the municipality by its **string identifier**, resolving ambiguous names.
    Prefer supplied local files. Otherwise follow [discovery and acquisition](references/acquisition.md)
-   with `geopf-services` and `geopf-wfs-download`. Retrieve **whole building polygons**
+   with `geopf-service-selection` and `geopf-wfs-download`. Retrieve **whole building polygons**
    covering the boundary; do not clip them before this workflow. Record source, edition or
    unknown, access date and extraction completeness evidence.
 2. Inspect local layers, fields, CRSs and geometry (`geodata-intake`, `vector-data-quality`).
@@ -48,7 +48,7 @@ python3 scripts/build_profile.py profile-input.json output/building-profile
 The output directory must be new. Empty inputs and partial extracts are reported explicitly;
 zero observed buildings does not prove that the municipality contains no buildings.
 For additional distributions use `geospatial-descriptive-statistics`; generic multi-zone
-assignment belongs to `spatial-aggregation`, and overlays to `geopandas-basics`.
+assignment belongs to `spatial-aggregation`, and overlays to `geopandas-vector-analysis`.
 6. If requested, follow [delivery and QGIS](references/delivery.md): optional
    `qgis-layer-styling` creates QML and `qgis-project-builder` consumes the generated
    `qgis-project.json`. These skills are not hard installation dependencies. Finish the

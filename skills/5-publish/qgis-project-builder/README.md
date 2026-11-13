@@ -1,5 +1,7 @@
 # qgis-project-builder
 
+**Family:** [5. Represent and publish](../README.md).
+
 Assemble existing geodata into verified QGZ/QGS projects with explicit relative-path scope.
 
 ## Requirements

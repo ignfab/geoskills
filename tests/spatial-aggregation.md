@@ -47,7 +47,7 @@ counted as missing, not as 0. Reference computed with `aggregate.py --predicate 
 
 > Calcule la valeur moyenne d’un MNT par polygone, sans couche de points ou de bâtiments.
 
-**Expected skill:** `gdal-raster-basics` or `geopandas-basics`, not `spatial-aggregation`:
+**Expected skill:** `gdal-raster-processing` or `geopandas-vector-analysis`, not `spatial-aggregation`:
 averaging a raster per polygon is a zonal statistic, not a vector aggregation.
 
 - [ ] treats the request as raster zonal statistics
