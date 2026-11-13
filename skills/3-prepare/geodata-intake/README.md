@@ -63,6 +63,13 @@ Check only the relevant tools with `ogrinfo --version`, `gdalinfo --version` and
 The skill works on local files and needs no network service or API key. It does not fetch
 remote VRT sources or open database connections merely to inventory local files.
 
+## MCP servers
+
+Optional. When the delivery is a PostGIS database and a PostGIS MCP server is connected,
+the agent first inventories it through that server: tables, geometry types, SRIDs and row
+counts, with read-only queries. Files are inventoried as documented. Without such a
+server, nothing changes. See [MCP servers](../../../docs/mcp-servers.md).
+
 ## Installation
 
 ```bash

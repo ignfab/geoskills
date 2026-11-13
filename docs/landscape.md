@@ -21,6 +21,12 @@ and portable QGIS projects. The [five-skill review](../tests/review-2026-11-11.m
 their completed issues and merged PRs and records functional checks and representative
 agent pilots. The repository now contains 21 skills; the full A/B campaign remains pending.
 
+Implementation follow-up (2026-11-13): open question 3 below ("Skills and MCP") is answered
+by a `## MCP servers` section in the skills concerned, not by a new skill. They use a
+connected Geocontext, PostGIS or QGIS server first and keep their commands as the
+fallback; see [MCP servers](mcp-servers.md). Agent behavior with a connected server has
+not been measured yet.
+
 The comparisons, counts and proposed gaps below retain their original snapshot date.
 
 ## Scope and method

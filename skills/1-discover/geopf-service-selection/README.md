@@ -63,6 +63,16 @@ first page is never reported as a complete dataset.
   access. The skill does not automate account creation or interactive login; the user
   completes authentication outside the agent.
 
+## MCP servers
+
+Optional. With the [Geocontext](https://github.com/ignfab/geocontext) MCP server
+connected, the agent first uses its tools for answers that need no file: a place, an
+elevation, what lies at a point, a count or the attributes of a WFS type. It still
+recommends the services of this skill for file exports, bulk data, rasters, profiles and
+routes. [references/geocontext.md](references/geocontext.md) maps the tools to needs,
+limits and skills. Without the server, nothing changes. See
+[MCP servers](../../../docs/mcp-servers.md).
+
 ## Installation
 
 ```bash
@@ -96,9 +106,11 @@ curl --fail --show-error --location --max-time 60 \
 | [SKILL.md](SKILL.md) | Service selection, discovery, handoff and validation |
 | [references/data-delivery.md](references/data-delivery.md) | Map images, tiles, vector features, file downloads and extraction |
 | [references/search-and-processing.md](references/search-and-processing.md) | CSW, dataset search, geocoding, elevation, navigation, validation and usage statistics |
+| [references/geocontext.md](references/geocontext.md) | The optional Geocontext MCP server: tools by need, their limits, names by version and the skill to use instead |
 
-The references are an original summary of the official guides, checked on 2026-10-27,
-not a frozen API specification. Resource availability, permissions and limits must be
+The first two references are an original summary of the official guides, checked on
+2026-10-27, not a frozen API specification; the Geocontext reference was checked on
+2026-11-13. Resource availability, permissions and limits must be
 checked at use time.
 
 ## Tests

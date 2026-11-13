@@ -62,6 +62,14 @@ Network: the Géoplateforme Elevation API (`https://data.geopf.fr/altimetrie/`);
 documented requests use no API key. Batches stay within the documented limit (presently
 5,000 points), transient retries are capped at two and `Retry-After` is honored.
 
+## MCP servers
+
+Optional. With the [Geocontext](https://github.com/ignfab/geocontext) MCP server
+connected, the agent first uses its `altitude` tool for one point or a few points, and
+reports that the tool does not state the elevation resource. The Elevation API remains the
+route for a chosen resource, many points, CSV joins and profiles. Without the server,
+nothing changes. See [MCP servers](../../../docs/mcp-servers.md).
+
 ## Installation
 
 ```bash

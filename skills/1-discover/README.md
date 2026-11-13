@@ -31,6 +31,11 @@ not install a GIS stack; see the [dependency guide](../../docs/dependencies.md).
 | `bdtopo-schema-guide` | Bundled Markdown/JSON; no runtime needed to read it | Python 3 standard library for the lookup helper; HTTP client for current online sources | None |
 | `geopf-service-selection` | Documentation and service metadata; no local GIS runtime | Existing browser/HTTP client for discovery; curl for CLI examples | Official guides and service metadata |
 
+**Optional MCP server.** With [Geocontext](https://github.com/ignfab/geocontext)
+connected, both skills use it first: to answer simple questions without a file, and to
+read the properties of a WFS type from the schema catalogue bundled with that server. See
+[MCP servers](../../docs/mcp-servers.md).
+
 ## Also relevant
 
 - [municipality-building-profile](../6-workflows/municipality-building-profile/README.md)

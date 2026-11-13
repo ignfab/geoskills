@@ -44,6 +44,14 @@ Reuse installed packages; see the [dependency guide](../../docs/dependencies.md)
 | `geospatial-descriptive-statistics` | Pandas for CSV summaries | GeoPandas/Shapely for vector inputs and geometry measurements | None |
 | `spatial-aggregation` | GeoPandas with its vector I/O and geometry dependencies | No plotting, raster or QGIS packages for the analytic outputs | None |
 
+**Optional MCP servers.** With [Geocontext](https://github.com/ignfab/geocontext)
+connected, `geopf-altimetry` uses it first for the elevation of a point, `geopf-routing`
+to locate places and, from Geocontext 0.10, for a distance or a travel time, and
+`spatial-aggregation` for a single count of reference objects in one administrative unit.
+With a PostGIS MCP server connected and the data in the database,
+`geopandas-vector-analysis`, `geospatial-descriptive-statistics` and `spatial-aggregation`
+compute there first, with read-only queries. See [MCP servers](../../docs/mcp-servers.md).
+
 ## Also relevant
 
 - [terrain-elevation-screening](../6-workflows/terrain-elevation-screening/README.md)
@@ -65,6 +73,8 @@ Reuse installed packages; see the [dependency guide](../../docs/dependencies.md)
 - Change detection between two editions of a dataset.
 - Network analysis on local data: `geopf-routing` relies on the IGN service only.
 - Terrain derivatives beyond the `gdaldem` one-liners.
+- Processing inside a PostGIS database as a skill of its own: the analysis skills only
+  say how to use a connected PostGIS MCP server.
 
 ## Install this family
 

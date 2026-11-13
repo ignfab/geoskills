@@ -39,6 +39,10 @@ family does not require all routes; see the [dependency guide](../../docs/depend
 | `gdal-raster-processing` | GDAL CLI and requested raster drivers | Matching Python bindings for Python utilities/full COG validation; newer GDAL for zonal stats | None, except for remote rasters |
 | `vector-data-quality` | GeoPandas/Shapely or the relevant GDAL CLI recipe | Higher GeoPandas/Shapely versions only for coverage/advanced repair; no need for both routes | None |
 
+**Optional MCP server.** When the data is in a PostGIS database and a PostGIS MCP server
+is connected, `geodata-intake` and `vector-data-quality` inventory and audit it there
+first, with read-only queries. See [MCP servers](../../docs/mcp-servers.md).
+
 ## Also relevant
 
 - [terrain-elevation-screening](../6-workflows/terrain-elevation-screening/README.md)

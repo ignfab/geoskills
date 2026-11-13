@@ -37,6 +37,11 @@ install their entire families. See the [dependency guide](../../docs/dependencie
 Local inputs avoid acquisition dependencies. Missing optional QGIS leaves the analytic
 bundle usable; report the requested cartographic delivery as outstanding if it cannot run.
 
+**Optional MCP server.** With [Geocontext](https://github.com/ignfab/geocontext)
+connected, both workflows use it first to identify the municipality when it is named, and
+the building portrait also uses it to find the layer and to cross-check its count. See
+[MCP servers](../../docs/mcp-servers.md).
+
 ## Further workflow candidates
 
 | Use case | Building blocks available today |

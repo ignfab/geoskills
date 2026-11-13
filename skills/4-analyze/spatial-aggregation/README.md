@@ -59,6 +59,17 @@ GeoPandas ≥ 1.0, pandas, Shapely and a functioning vector I/O engine. Check wi
 The user can run `python3 -m pip install 'geopandas>=1.0,<2'` if needed; agents never
 install software. No network service is used.
 
+## MCP servers
+
+Optional. When both layers are tables of a PostGIS database and a PostGIS MCP server is
+connected, the agent first aggregates there in SQL, with the chosen predicate and policy,
+read-only queries and the same reconciliation, including several zones, sums, means and
+ratios. With the [Geocontext](https://github.com/ignfab/geocontext) MCP server connected,
+a single count of Géoplateforme reference objects in one administrative unit is answered
+directly, as a count of the objects sharing an area with it. Files use the helper. Without
+these servers, or when a call fails, nothing changes. See
+[MCP servers](../../../docs/mcp-servers.md).
+
 ## Installation
 
 ```bash

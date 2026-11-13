@@ -60,6 +60,16 @@ Network: the Géoplateforme Navigation API (`https://data.geopf.fr/navigation/`)
 documented requests use no API key. Requests run in the foreground, transient retries are
 capped at two, `Retry-After` is honored and an unreachable point is not retried repeatedly.
 
+## MCP servers
+
+Optional. With the [Geocontext](https://github.com/ignfab/geocontext) MCP server
+connected, the agent first locates named places with its `geocode` tool. In version 0.10
+or later it also uses `distance` for a distance or a travel time between two points,
+saying which profile was used, and a travel-time filter to count or list the objects
+reachable from a point. The Navigation API remains the route for route geometries,
+isochrones, resources and constraints. Without the server, or when a call fails, nothing
+changes. See [MCP servers](../../../docs/mcp-servers.md).
+
 ## Installation
 
 ```bash

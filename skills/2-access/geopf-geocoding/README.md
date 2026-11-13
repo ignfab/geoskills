@@ -66,6 +66,16 @@ Network service: `https://data.geopf.fr/geocodage`. Bulk files must be UTF-8 and
 50 MB and 200,000 rows per request. Stay under 50 requests per second per IP address for
 geocoding and 10 for autocomplete. Reviewing an existing CSV needs no network access.
 
+## MCP servers
+
+Optional. With the [Geocontext](https://github.com/ignfab/geocontext) MCP server
+connected, the agent first uses its `geocode` tool to locate one place or address. Because
+the tool returns no score, it checks the label, the type, the city and the postcode of
+each candidate, and reports a street returned for a house number as a street. The
+geocoding API remains the route for CSV files, reverse geocoding, parcels, filters, scores
+and the quality review. Without the server, or when a call fails, nothing changes. See
+[MCP servers](../../../docs/mcp-servers.md).
+
 ## Installation
 
 ```bash

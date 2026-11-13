@@ -61,6 +61,17 @@ If QGIS is absent, the user can install it (for configured Debian/Ubuntu reposit
 `sudo apt install qgis python3-qgis`). The agent never installs software or runs
 interactive setup.
 
+## MCP servers
+
+Optional. With a QGIS MCP server connected to the QGIS session you have open, the agent
+first uses it to find the layer in your project, and asks you for its source file when the
+server does not give it. The `.qml` is still created and validated by the helper whenever
+standalone PyQGIS runs. The agent loads the finished style on your layer only when you ask
+to see it, after telling you that it replaces the whole current style and getting your
+agreement. It never edits data through the server, and does not save, replace or close
+your project or add or remove layers unless asked. Without such a server, or when a call
+fails, nothing changes. See [MCP servers](../../../docs/mcp-servers.md).
+
 ## Installation
 
 ```bash

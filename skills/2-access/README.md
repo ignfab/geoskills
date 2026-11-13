@@ -51,6 +51,11 @@ validation, usage statistics) require authentication: `geopf-service-selection` 
 the agent leaves any login to you. It never installs a missing tool either: it gives you
 the command to run.
 
+**Optional MCP server.** With [Geocontext](https://github.com/ignfab/geocontext)
+connected, `geopf-wfs-download`, `apicarto-query` and `geopf-geocoding` use it first for
+discovery, counts and questions about one point or one place. Downloads, bulk queries and
+file outputs keep the documented commands. See [MCP servers](../../docs/mcp-servers.md).
+
 ## Also relevant
 
 - [bdtopo-schema-guide](../1-discover/bdtopo-schema-guide/README.md) clarifies model meanings

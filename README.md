@@ -22,6 +22,10 @@ styling, QGIS projects and map illustrations, and business workflows such as a m
 building portrait or a terrain screening.
 Each skill states its prerequisites, limits and output checks. Agents use existing tools,
 discover schemas before querying and validate results before reporting success.
+When an MCP server is connected ([Geocontext](https://github.com/ignfab/geocontext) for
+Géoplateforme data, a PostGIS server, a QGIS server), the skills use it first and keep
+their documented commands as the fallback. No server is required, and the agent never
+installs or configures one: see [MCP servers](docs/mcp-servers.md).
 
 Start with the [documentation guide](docs/README.md): how the skills work, installation,
 choosing a skill, the tools each one needs, checking results, troubleshooting and
@@ -197,6 +201,12 @@ Les prompts expérimentaux qui servent à tester et à valider les compétences 
 dans `tests/prompts/` : un catalogue des prompts et un journal de leurs exécutions.
 Les tests automatisés et les essais d’agents sont documentés ; la campagne comparative
 complète reste à mener. L’installation des compétences n’installe pas les logiciels SIG.
+
+Lorsqu’un serveur MCP est connecté ([Geocontext](https://github.com/ignfab/geocontext) pour
+les données de la Géoplateforme, un serveur PostGIS, un serveur QGIS), les compétences
+l’utilisent en priorité et gardent leurs commandes documentées comme solution de repli.
+Aucun serveur n’est obligatoire, et l’agent n’en installe ni n’en configure jamais :
+voir `docs/mcp-servers.md`.
 
 Le contenu des compétences est rédigé en anglais — les outils couverts (GDAL, PROJ, WFS)
 sont internationaux, même si les données le sont moins.

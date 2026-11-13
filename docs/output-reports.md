@@ -38,6 +38,10 @@ Issues      none
 When a check could not run, say so under Validation rather than leaving it out; when a
 result is a sample or a first page, say so under Issues.
 
+When a result came through an MCP server, record it under Source: the server and its
+version when known, the tool, the type or table, the filter and the access date. A capped
+or sampled answer (for example Geocontext's 5,000-object limit) goes under Issues.
+
 ## Evidence by output type
 
 Keep the shared fields above, then add the checks that make the specific output usable.

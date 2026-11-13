@@ -58,6 +58,13 @@ install dependencies. CSV summaries do not need a GIS stack or plotting librarie
 
 Check with `python3 -c "import pandas; print(pandas.__version__)"`; inspect GeoPandas/Shapely only for vector inputs. No network service is used.
 
+## MCP servers
+
+Optional. When the table is in a PostGIS database and a PostGIS MCP server is connected,
+the agent first computes the summary in SQL there, with the conventions of the helper and
+read-only queries. Files use the helper. Without such a server, nothing changes. See
+[MCP servers](../../../docs/mcp-servers.md).
+
 ## Installation
 
 ```bash

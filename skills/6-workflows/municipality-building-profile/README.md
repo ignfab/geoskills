@@ -70,6 +70,18 @@ metropolitan-France default, not a required input/output CRS.
 
 Agents never install software or run interactive setup; a missing tool is a reported limitation.
 
+## MCP servers
+
+Optional. Local files you supply come first. When online discovery is needed and the
+[Geocontext](https://github.com/ignfab/geocontext) MCP server is connected, the agent
+first uses it to identify the municipality, to find the building layer and its fields, and
+to count the buildings intersecting the municipality as a cross-check of the helper's
+selected count. The buildings are still downloaded with
+[`geopf-wfs-download`](../../2-access/geopf-wfs-download/README.md), whose own count
+remains the completeness evidence, and the portrait is computed by the helper. Without the
+server, or when a call fails, nothing changes. See
+[MCP servers](../../../docs/mcp-servers.md).
+
 ## Installation
 
 ```bash
