@@ -17,7 +17,7 @@ remain stable across renames so historical results can still be matched to the s
 4. [Coverage by skill](#coverage-by-skill)
 5. [Offline tests](#offline-tests) and [QGIS integration](#qgis-integration)
 6. [Live tests](#live-tests)
-7. [Agent scenarios](#agent-scenarios)
+7. [Agent scenarios](#agent-scenarios), including [MCP servers](#mcp-servers)
 8. [Fixtures](#fixtures)
 9. [Add or change a test](#add-or-change-a-test)
 10. [Reviews and reports](#reviews-and-reports)
@@ -42,7 +42,7 @@ Start from what you changed or want to know:
 
 | You changed, or want to check | Run | What it catches |
 | --- | --- | --- |
-| A `SKILL.md` description or body | `python3 .github/validate-skills.py`, then `test_skill_robustness.py` and `test_scenarios.py` | Broken metadata and links, a missing `Use when …` clause, vague skill names, a tested boundary that the skill does not state |
+| A `SKILL.md` description or body | `python3 .github/validate-skills.py`, then `test_skill_robustness.py`, `test_mcp_sections.py` and `test_scenarios.py` | Broken metadata and links, a missing `Use when …` clause, vague skill names, a tested boundary that the skill does not state, an MCP section that makes a server mandatory |
 | A command or code block in a skill | The offline test of that skill, from [Coverage by skill](#coverage-by-skill) | Many tests execute the documented block itself, so a broken recipe fails |
 | A helper script under `scripts/` | The offline test of that skill | Wrong values, unsafe overwrites, lost identifiers |
 | A scenario file or `ab-testing.md` | `test_scenarios.py` and `test_ab_runner.py` | Missing prompt, expected skill or checklist; numbering gaps; missing fixtures; A/B lists, matrix and run counts out of date |
@@ -197,6 +197,7 @@ representative workflows, not every documented command.
 | [test_municipality_building_profile.py](test_municipality_building_profile.py) | `municipality-building-profile` | `build_profile.py` checked against independent area and count oracles: overlapping buildings counted once in the union, border-crossing and border-touching buildings, height and usage semantics, missing or partial inputs, string codes, sources unchanged and GeoPackage/CSV/JSON report round trips (GeoPandas). |
 | [test_terrain_elevation_screening.py](test_terrain_elevation_screening.py) | `terrain-elevation-screening` | The documented GDAL commands on synthetic rasters: inclusive and negative altitudes, a valid zero, nodata and slope borders, empty outputs, holes, connectivity, exact AOI clipping before area filtering and unchanged sources. Needs the GDAL Python utilities next to the GDAL CLI. These numerical checks do not validate helicopter landing sites. |
 | [test_skill_robustness.py](test_skill_robustness.py) | every skill | The wording that keeps selection from depending on the model: each description says when to use the skill, stays within 1024 characters and names other skills exactly (not "the WFS skill"); each boundary tested by a negative scenario is written in the skill to exclude. See [Model sensitivity](#model-sensitivity). |
+| [test_mcp_sections.py](test_mcp_sections.py) | skills with an MCP route | Each `## MCP servers` section keeps the server optional: it starts with `Optional.`, says what to do without the server or when a call fails, ends with the rule against installing or configuring one and has no setup step, comes before `## Prerequisites`, names the Geocontext version or the tool list when it names Geocontext tools, keeps a database read-only and the user's QGIS project unchanged unless asked. No skill mentions an MCP server outside that section, and the skill READMEs and [docs/mcp-servers.md](../docs/mcp-servers.md) list the same skills. It reads files only: see [MCP servers](#mcp-servers). |
 | [test_validation.py](test_validation.py) | the validator | [validate-skills.py](../.github/validate-skills.py): YAML, required sections, family layout, unique names, complete indexes, links that stay inside a skill. |
 | [test_scenarios.py](test_scenarios.py) | every scenario | Each scenario has a French prompt, an `**Expected skill:**` line and a checklist; numbering has no gap; fixtures named in prompts exist; the lists, matrix, score table and run count of `ab-testing.md` follow the scenario files. |
 | [test_ab_runner.py](test_ab_runner.py) | the A/B runner | The runner of `ab-testing.md` with a fake `claude`: every scenario prepared in isolation, prerequisite outputs copied, reruns refused, failures and contamination reported; the model sweep calls each model in its own campaign and `ab_sensitivity` scores selection, hand results and the spread threshold. No paid call. |
@@ -351,6 +352,17 @@ layers check this:
   and `opus`), scores skill selection automatically and flags the skills whose score
   differs between models.
 
+### MCP servers
+
+Some skills tell the agent to use a connected MCP server first (Geocontext, a PostGIS
+server, a QGIS server) and their commands otherwise; [docs/mcp-servers.md](../docs/mcp-servers.md)
+lists them. The scenarios and the A/B runner provide no MCP tool, so they score the
+command route, which stays valid for every skill. Whether an agent uses a connected
+server as written is not measured yet. To try it, connect the server yourself in the
+client used for the run, send one of the prompts XP-18 to XP-21 of the
+[experimental catalog](prompts/catalog.md), and log the run with the server and its
+version in the notes.
+
 ### Clean up
 
 Offline tests remove their temporary directories. After a manual run, remove only the
@@ -428,6 +440,7 @@ for live services.
 | [review-2026-11-11.md](review-2026-11-11.md) | Five new skills: executed fixtures, QGIS integration, family discovery and agent pilots (not a full A/B evaluation) |
 | [review-2026-11-12.md](review-2026-11-12.md) | Audit of the scenarios and tests: standard scenario format, fixtures now tested, structure checks, model-sensitivity checks and sweep |
 | [review-municipality-building-profile-2026-11-12.md](review-municipality-building-profile-2026-11-12.md) | First workflow: municipal indicator regressions and an independent portable-QGIS forward pilot |
+| [review-mcp-servers-2026-11-13.md](review-mcp-servers-2026-11-13.md) | Optional MCP routes: checks against the live Geocontext service, paper simulations with a small model, defects fixed and limits |
 | [reports/](reports/) | Machine-readable summaries of agent runs: the 2026-10-28 pilot, the 2026-11-11 five-skill pilots and the 2026-11-12 municipal building profile pilot, with environments and discovery checks |
 
 ## Glossary
