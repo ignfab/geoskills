@@ -56,13 +56,7 @@ List available skills before selecting them:
 npx skills add ignfab/geoskills --list
 ```
 
-Install all skills:
-
-```bash
-npx skills add ignfab/geoskills
-```
-
-Install a single skill:
+Start with a single skill:
 
 ```bash
 npx skills add ignfab/geoskills --skill geopf-wfs-download
@@ -77,6 +71,12 @@ npx skills add https://github.com/ignfab/geoskills/tree/main/skills/2-access
 Family folders only organize this repository: every skill is installed in its own folder,
 `<agent>/skills/<skill-name>/`.
 
+To select from the entire collection:
+
+```bash
+npx skills add ignfab/geoskills
+```
+
 Target a specific agent (`claude-code`, `cursor`, `opencode`, ...):
 
 ```bash
@@ -87,8 +87,10 @@ Skills are installed in the current project by default; add `-g` to install them
 whole user account.
 
 Installing a skill copies its instructions and supporting files. It does not install
-GDAL, GeoPandas, QGIS or other GIS software. Check the selected skill's README for runtime
-requirements and commands the user can run if a dependency is missing.
+GDAL, GeoPandas, QGIS or other GIS software. A family does not require installing all its
+tools. Reuse an existing environment and add only the selected operation's missing
+dependencies. Each family lists base and conditional requirements; the
+[dependency guide](docs/dependencies.md) explains the choices and shared environments.
 
 ## Contributing
 

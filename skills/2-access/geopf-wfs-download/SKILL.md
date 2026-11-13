@@ -17,7 +17,8 @@ images, use `geopf-raster-download`.
 - Working **GDAL** CLI tools (`ogr2ogr` and `ogrinfo`) from the same environment, with
   WFS read support and an output driver that can create the requested vector format.
 - `curl` for discovery/count requests; Python 3 for the optional GeoPackage completeness
-  helper (standard library only). User install command: `sudo apt install curl python3`.
+  helper (standard library only). If missing, user-run commands are `sudo apt install curl`
+  and, only for the helper, `sudo apt install python3`.
 - Check capabilities before downloading. For GeoParquet, use the following commands;
   replace `Parquet` with the requested driver for other formats (e.g. `GPKG`, `GeoJSON`):
 
@@ -30,10 +31,12 @@ ogrinfo --format Parquet
 The output driver must report vector support and `Create()` capability, not merely
 appear in the driver list. A GDAL version number alone does not prove driver availability.
 
-Install: `sudo apt install gdal-bin` (Ubuntu/Debian) or `conda install -c conda-forge gdal`.
-Distribution packages may omit Parquet. For that driver, offer
-`conda install -c conda-forge gdal libgdal-arrow-parquet` or the
-[GDAL container option](references/formats.md#missing-gdal-or-parquet-support).
+Install: `sudo apt install gdal-bin` (Ubuntu/Debian) or
+`conda install -c conda-forge libgdal-core` for native CLI tools.
+For a requested GeoParquet export with a missing driver, offer only the corresponding
+plugin: `conda install -c conda-forge libgdal-arrow-parquet` in the compatible environment.
+Reuse an existing capable GDAL before proposing a
+[full container](references/formats.md#missing-gdal-or-parquet-support).
 
 ## Tooling rule
 

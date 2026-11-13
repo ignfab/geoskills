@@ -15,13 +15,20 @@ Use GeoPandas when the workflow is scripted, iterative or mixes analysis steps.
 
 ## Prerequisites
 
-- **geopandas** ≥ 1.0 (`pyogrio` I/O engine included). For GeoParquet: **pyarrow**.
-  For zonal statistics: **rasterstats**.
+Check the existing Python environment and only the operation's dependencies:
 
-Install: `pip install geopandas pyarrow rasterstats` or
-`conda install -c conda-forge geopandas pyarrow rasterstats`.
-If a package is missing, give the user the install command and let them run it; do not
-install software or run interactive setup yourself.
+| Operation | Required packages | User-run command if missing |
+| --- | --- | --- |
+| Vector I/O, reprojection, joins, overlay, buffers | GeoPandas ≥ 1.0, with Pyogrio and pyproj | `python3 -m pip install 'geopandas>=1.0,<2'` |
+| GeoParquet I/O | Also PyArrow | `python3 -m pip install pyarrow` |
+| Raster zonal statistics | Also rasterstats | `python3 -m pip install rasterstats` |
+
+For an existing Conda environment, the vector base is
+`conda install -c conda-forge 'geopandas-base>=1.0,<2' pyogrio pyproj`;
+add `pyarrow` or `rasterstats` only for their operations. The Conda `geopandas` package
+also brings plotting extras. Use one environment and package-manager route, not both.
+Never install software or run interactive setup yourself; give the user only the missing
+packages. Do not require raster or plotting libraries for vector operations.
 
 ## Inspect first
 

@@ -26,6 +26,19 @@ These broader chains are explored with the business-need prompts of the
 [mapshaper-simplify](../5-publish/mapshaper-simplify/README.md): download boundaries with
 `geopf-wfs-download`, audit them with `vector-data-quality`, then simplify them.
 
+## Runtime dependencies
+
+Check only the workflow stages that will run; referenced skills are not a requirement to
+install their entire families. See the [dependency guide](../../docs/dependencies.md).
+
+| Skill | Base route | Conditional additions |
+| --- | --- | --- |
+| `municipality-building-profile` | GeoPandas ≥ 1.0 with Shapely/Pyogrio for the analytic bundle | GDAL + curl for online extraction; existing QGIS/PyQGIS only for a requested project |
+| `terrain-elevation-screening` | GDAL ≥ 3.3, matching Python bindings/utilities and NumPy | curl for online acquisition; existing QGIS/PyQGIS only for a requested map/project |
+
+Local inputs avoid acquisition dependencies. Missing optional QGIS leaves the analytic
+bundle usable; report the requested cartographic delivery as outstanding if it cannot run.
+
 ## Also relevant
 
 - [map-illustration](../5-publish/map-illustration/README.md) turns existing workflow

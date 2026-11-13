@@ -17,7 +17,9 @@ skill instead. To process a downloaded raster (clip, mosaic, resample, COG) see
 - **GDAL** with the WMTS and WMS drivers (`gdalinfo`, `gdal_translate`, `gdalwarp`).
 - Check driver support: `gdalinfo --formats | grep -iE "WMTS|WMS"`.
 
-Install: `sudo apt install gdal-bin` (Ubuntu/Debian) or `conda install -c conda-forge gdal`.
+Install: `sudo apt install gdal-bin` (Ubuntu/Debian) or
+`conda install -c conda-forge libgdal-core` for native CLI tools. Python bindings and QGIS
+are not required for these extraction commands.
 If a tool is missing, give the user the install command and let them run it; do not
 install software yourself.
 

@@ -13,8 +13,18 @@ No application server, web build pipeline or mandatory QGIS installation.
 - Existing QGIS project export: QGIS/PyQGIS 3.34–3.x and Qt.
 - Optional raster preview without QGIS: Rasterio and Matplotlib.
 
-For Python rendering the user can run `python3 -m pip install geopandas matplotlib folium`;
-for QGIS on configured Debian/Ubuntu systems, `sudo apt install qgis python3-qgis`.
+Check the selected route only. If missing, give the user the matching command:
+
+| Output | User-run installation example |
+| --- | --- |
+| Static vector image (default) | `python3 -m pip install 'geopandas>=1.0,<2' 'matplotlib>=3.7,<4'` |
+| Uniform interactive vector map | `python3 -m pip install 'geopandas>=1.0,<2' 'folium>=0.16,<1'` |
+| Numeric colours in interactive HTML | Also `python3 -m pip install 'matplotlib>=3.7,<4'` |
+| Raster preview without QGIS | `python3 -m pip install rasterio 'matplotlib>=3.7,<4'` |
+| QGIS project rendering | Use QGIS's own Python; if absent, `sudo apt install qgis python3-qgis` on configured Debian/Ubuntu systems |
+
+A static image does not need Folium; a uniform HTML map does not need Matplotlib.
+QGIS rendering reuses its own environment without the separate GeoPandas rendering stack.
 Agents check existing environments and never install dependencies themselves.
 
 ## Install

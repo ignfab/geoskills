@@ -11,6 +11,16 @@ models and attribute meanings before choosing fields.
 | [geopf-service-selection](geopf-service-selection/README.md) | Choose a Géoplateforme API for dataset discovery, maps, vector features, downloads, geocoding and geographic calculations. |
 | [bdtopo-schema-guide](bdtopo-schema-guide/README.md) | Understand versioned BD TOPO building/road classes, field meanings and format mappings using sourced offline references. |
 
+## Runtime dependencies
+
+Reuse existing tools and check only the selected operation. Installing this family does
+not install a GIS stack; see the [dependency guide](../../docs/dependencies.md).
+
+| Skill | Base route | Conditional additions |
+| --- | --- | --- |
+| `bdtopo-schema-guide` | Bundled Markdown/JSON; no runtime needed to read it | Python 3 standard library for the lookup helper; HTTP client for current online sources |
+| `geopf-service-selection` | Documentation and service metadata; no local GIS runtime | Existing browser/HTTP client for discovery; curl for CLI examples |
+
 ## Also relevant
 
 - [municipality-building-profile](../6-workflows/municipality-building-profile/README.md)

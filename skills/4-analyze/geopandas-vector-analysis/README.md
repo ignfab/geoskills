@@ -13,9 +13,19 @@ a CRS).
 
 ## Requirements
 
-Python with `geopandas` ≥ 1.0; `pyarrow` for GeoParquet and `rasterstats` for zonal
-statistics (`pip install geopandas pyarrow rasterstats`, or
-`conda install -c conda-forge geopandas pyarrow rasterstats`).
+Reuse an existing Python environment with GeoPandas ≥ 1.0, Pyogrio and pyproj for vector
+I/O, reprojection, joins, overlay and buffers. If absent, the user can run
+`python3 -m pip install 'geopandas>=1.0,<2'`.
+
+Add `pyarrow` only for GeoParquet (`python3 -m pip install pyarrow`), or `rasterstats`
+only for raster zonal statistics (`python3 -m pip install rasterstats`). Neither is a
+prerequisite for ordinary vector processing; plotting libraries are also optional.
+
+For Conda users, `conda install -c conda-forge 'geopandas-base>=1.0,<2' pyogrio pyproj`
+provides the vector route without the plotting extras of the Conda `geopandas` package.
+Choose the command matching the existing environment; do not run both Pip and Conda
+recipes. The agent never installs software itself. See the
+[dependency guide](../../../docs/dependencies.md) for shared environments and package sources.
 
 ## Installation
 

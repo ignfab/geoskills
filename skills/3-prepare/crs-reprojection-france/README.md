@@ -8,11 +8,14 @@ pyproj, without the usual pitfalls.
 
 ## Requirements
 
-GDAL and PROJ (`sudo apt install gdal-bin proj-bin`, or `conda install -c conda-forge gdal`).
-The optional Python workflow uses `pyproj` (`python3 -m pip install pyproj`).
-These installation commands are for the user; the agent does not install software.
-Accurate NTF and altitude transformations also need the IGN grids (`projsync --source-id fr_ign`
-or `PROJ_NETWORK=ON`).
+Choose an existing route: GDAL for vector/raster files (`sudo apt install gdal-bin`),
+PROJ for CLI coordinate operations (`sudo apt install proj-bin`), or pyproj for Python
+points (`python3 -m pip install pyproj`). These user-run commands are alternatives by
+task; metadata inspection may also use `projinfo`. The agent never installs software.
+
+Accurate datum/altitude transformations may need grids: inspect the selected operation,
+then download only its missing grid files, not the entire IGN collection or `proj-data`.
+See [targeted downloads](references/pitfalls.md#3-ntf--rgf93-legacy-lambert-i-ii-iii-iv).
 
 ## Installation
 

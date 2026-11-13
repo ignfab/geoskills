@@ -19,7 +19,10 @@ Process local vector files with the GDAL command-line tools:
 - Check that a driver is available before using it: `ogrinfo --formats`. GeoParquet needs a
   GDAL built with Arrow/Parquet support.
 - Install: `sudo apt install gdal-bin` (Debian/Ubuntu) or
-  `conda install -c conda-forge gdal libgdal-arrow-parquet`.
+  `conda install -c conda-forge libgdal-core` for the native CLI tools.
+- Only a requested GeoParquet operation with a missing driver needs the Conda plugin
+  `conda install -c conda-forge libgdal-arrow-parquet`. Python's `pyarrow` does not add
+  this driver to GDAL. Do not add it for GeoPackage, GeoJSON or Shapefile operations.
 - If GDAL is missing, give the user the install command and let them run it; **never
   install software yourself**.
 

@@ -1,4 +1,6 @@
-# Optional Python implementations; GDAL CLI tools are installed separately.
+# Optional broad contributor/CI environment for tests across several skills.
+# Not a runtime dependency bundle for one skill or family: see docs/dependencies.md.
+# GDAL CLI tools are installed separately.
 geopandas>=1.0,<2
 pyarrow>=14
 rasterstats>=0.20,<1

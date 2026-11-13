@@ -17,10 +17,13 @@ and the `structure` repair method. GDAL ≥ 3.1 is optional for the `ogr2ogr -ma
 workflow, and GDAL ≥ 3.12 for `gdal vector check-geometry`, `check-coverage` and
 `make-valid`.
 
-For the complete Python workflow, the user can run
-`python3 -m pip install 'geopandas>=1.1' 'shapely>=2.1'`; optional CLI tools can be
-installed with `sudo apt install gdal-bin` (Debian/Ubuntu). Check the installed GDAL
-version before choosing a recipe. The agent never installs software itself.
+Choose the Python or CLI route that covers the requested checks; both are not required.
+The base Python command is `python3 -m pip install 'geopandas>=1.0,<2'` if missing.
+Only coverage checks or advanced repair methods need the higher versions above:
+`python3 -m pip install 'geopandas>=1.1,<2' 'shapely>=2.1'` if necessary.
+The CLI route uses `sudo apt install gdal-bin` (Debian/Ubuntu). Check existing versions
+before selecting a recipe; do not upgrade for unused features. These commands are for
+the user; the agent never installs software itself.
 
 ## Installation
 

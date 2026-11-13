@@ -16,13 +16,15 @@ If dependencies are absent, give the corresponding command for the user to run:
 
 | Route | Check | User-run installation example |
 | --- | --- | --- |
-| Static without QGIS | `python3 -c "import geopandas, matplotlib, PIL"` | `python3 -m pip install geopandas matplotlib` |
-| Interactive without QGIS | `python3 -c "import geopandas, folium"` | `python3 -m pip install geopandas folium` |
+| Static without QGIS | `python3 -c "import geopandas, matplotlib, PIL"` | `python3 -m pip install 'geopandas>=1.0,<2' 'matplotlib>=3.7,<4'` |
+| Interactive without QGIS | `python3 -c "import geopandas, folium"` | `python3 -m pip install 'geopandas>=1.0,<2' 'folium>=0.16,<1'` |
 | Existing QGIS map | `python3 -c "from qgis.core import Qgis; print(Qgis.QGIS_VERSION)"` | `sudo apt install qgis python3-qgis` on configured Debian/Ubuntu repositories |
-| Raster without QGIS | `python3 -c "import rasterio, matplotlib"` | `python3 -m pip install rasterio matplotlib` |
+| Raster without QGIS | `python3 -c "import rasterio, matplotlib"` | `python3 -m pip install rasterio 'matplotlib>=3.7,<4'` |
 
 Helpers use GeoPandas ≥ 1.0, Matplotlib ≥ 3.7, Folium ≥ 0.16, or QGIS 3.34–3.x as relevant.
-Numeric colours in HTML also use Matplotlib; a uniform HTML map does not need it.
+Numeric colours in HTML also use Matplotlib (if missing, user-run
+`python3 -m pip install 'matplotlib>=3.7,<4'`); a uniform HTML map does not need it.
+Static images do not need Folium. Add only missing packages, not all rendering routes.
 QGIS runs use its own Python environment and `QT_QPA_PLATFORM=offscreen` when headless.
 
 ## Choose and render

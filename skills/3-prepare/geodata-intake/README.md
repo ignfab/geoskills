@@ -6,12 +6,12 @@ Read-only inventory of formats, layers, metadata and missing CRS evidence.
 
 ## Requirements
 
-GDAL/OGR and Python 3. The user installs missing software; the agent does not.
-For Debian/Ubuntu, a user-run installation command is:
-
-```bash
-sudo apt install gdal-bin python3
-```
+GDAL/OGR CLI for vector/raster metadata and Python 3's standard library for CSV/JSON
+recipes. CSV-only inspection needs no GDAL. No GeoPandas, QGIS or GDAL Python bindings
+are required. Reuse existing tools. If absent, user-run Debian/Ubuntu commands are
+`sudo apt install gdal-bin` or `sudo apt install python3`, only for the selected inputs.
+For Conda, the corresponding packages are `libgdal-core` and `python`.
+The agent never installs software itself.
 
 ## Install the skill
 

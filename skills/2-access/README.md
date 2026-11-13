@@ -16,6 +16,23 @@ areas) are in [4. Analyze and derive](../4-analyze/README.md).
 | [apicarto-query](apicarto-query/README.md) | Query API Carto for parcels, urban-planning zones and easements, protected areas and RPG parcels at a point, in an area or by code, with complete pagination. |
 | [geopf-geocoding](geopf-geocoding/README.md) | Geocode addresses, POIs and parcels, and review CSV matches, ambiguity and unmatched rows. |
 
+## Runtime dependencies
+
+Reuse existing tools and check only the selected operation. Installing this family does
+not require every tool below; see the [dependency guide](../../docs/dependencies.md).
+
+| Skill | Base route | Conditional additions |
+| --- | --- | --- |
+| `apicarto-query` | Python 3 standard library for pagination; curl for manual requests | GDAL for the documented spatial validation/conversion |
+| `geopf-file-download` | curl and standard-library Python feed inspection | Reader matching the archive (Python can test ZIP); GDAL for spatial content checks |
+| `geopf-geocoding` | HTTP client; curl for examples | Standard-library Python for CSV helpers; jq or existing Python for JSON; GDAL for conversion |
+| `geopf-raster-download` | GDAL CLI with the requested WMS/WMTS support | Only missing drivers for the selected input/output formats |
+| `geopf-wfs-download` | GDAL CLI with WFS and output driver; curl for discovery | Standard-library Python for the GeoPackage audit; Arrow/Parquet driver only for GeoParquet |
+| `geoserver-cql-filter` | Service metadata to compose a filter; no local GeoServer | HTTP client for requests; downstream extraction tool for the requested delivery |
+
+A transfer can succeed before spatial validation is possible. Report outstanding checks;
+do not declare the dataset validated just because an optional later stage was skipped.
+
 ## Also relevant
 
 - [bdtopo-schema-guide](../1-discover/bdtopo-schema-guide/README.md) clarifies model meanings

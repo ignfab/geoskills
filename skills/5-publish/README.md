@@ -12,6 +12,21 @@ delivery formats, maps, styles and metadata.
 | [qgis-layer-styling](qgis-layer-styling/README.md) | Create and reload reusable vector QML: single symbols, categorized fields and graduated numeric classes. |
 | [qgis-project-builder](qgis-project-builder/README.md) | Assemble existing vector/raster data into reopenable QGIS projects, with relative paths, QML inputs and optional verified public basemaps. |
 
+## Runtime dependencies
+
+Choose one rendering or simplification route. Installing this family does not require
+QGIS, Python plotting and Node together; see the [dependency guide](../../docs/dependencies.md).
+
+| Skill | Base route | Conditional additions |
+| --- | --- | --- |
+| `map-illustration` | Static vectors: GeoPandas + Matplotlib; uniform HTML: GeoPandas + Folium; existing QGIS project: its own PyQGIS environment | Matplotlib for numeric HTML colours; Rasterio + Matplotlib for a raster preview without QGIS |
+| `mapshaper-simplify` | Existing Node.js and Mapshaper CLI | GeoPandas/Shapely only for the documented additional Python validation |
+| `qgis-layer-styling` | Existing QGIS/PyQGIS and matching Qt | No separate GeoPandas or plotting stack |
+| `qgis-project-builder` | Existing QGIS/PyQGIS, matching Qt and its GDAL bindings | Network access only for requested remote layers/basemaps |
+
+Static images need no browser libraries at viewing time. HTML external assets and tile
+requests are a separate delivery choice: disclose them when an interactive map is requested.
+
 ## Also relevant
 
 - [municipality-building-profile](../6-workflows/municipality-building-profile/README.md)

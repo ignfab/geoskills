@@ -12,15 +12,19 @@ or `gdal-raster-processing`. No imputation, causal conclusions or automatic char
 ## Prerequisites
 
 Check the selected Python environment: `python3 -c "import pandas; print(pandas.__version__)"`.
-Vector inputs additionally need GeoPandas and Shapely; inspect their versions. Never install
-software or run interactive setup. If missing, give the user the command
-`python3 -m pip install pandas geopandas` to run in their chosen environment, then stop.
+CSV summaries need only Pandas: if missing, give the user `python3 -m pip install pandas`.
+For vector inputs or geometry measurements, also check GeoPandas and Shapely; the user-run
+command is `python3 -m pip install 'geopandas>=1.0,<2'` (includes Pandas and Shapely).
+Never install software or run interactive setup. Only a missing dependency of the chosen
+input/workflow blocks execution; do not require GeoPandas, GDAL or QGIS for a CSV summary.
 
 ## Inspect and summarize
 
-1. Discover actual layer names (`geopandas.list_layers(path)`), fields, types, CRS and row
-   count. Record source, edition if known and units from metadata; unknown units stay
-   unknown. Load only the selected layer. Preserve string IDs and zeroes.
+1. For CSV, inspect headers and rows with Pandas or Python's `csv` module; no layer
+   discovery or GeoPandas is needed. For vector files, discover actual layer names
+   (`geopandas.list_layers(path)`), fields, types, CRS and row count, then load only the
+   selected layer. Record source, edition if known and units from metadata; unknown
+   units stay unknown. Preserve string IDs and zeroes.
 2. Choose requested numeric/categorical fields explicitly. Numeric strings may be parsed,
    but invalid text and infinities must be counted separately from missing values.
    For geometry measurements first read [geometry units](references/geometry-units.md).

@@ -14,12 +14,14 @@ For bulk national layers, see [geopf-wfs-download](../geopf-wfs-download/README.
 
 ## Requirements
 
-curl and Python 3 (standard library only); GDAL to inspect and convert the GeoJSON
-results. For Debian/Ubuntu, a user-run installation command is:
+Python 3's standard library is sufficient for the pagination helper; curl runs the
+manual HTTP examples. Reuse existing GDAL for the documented spatial checks and GeoJSON
+conversion. Metadata queries do not require a GIS stack, and missing GDAL does not block
+the helper's download/count checks; it leaves the spatial validation outstanding.
 
-```bash
-sudo apt install curl python3 gdal-bin
-```
+If missing, the user can install only the tool needed for the selected stage:
+`sudo apt install python3`, `sudo apt install curl` or `sudo apt install gdal-bin`
+(Debian/Ubuntu).
 
 The user installs missing software; the agent does not. No API key is needed, except for
 the wine appellation module.

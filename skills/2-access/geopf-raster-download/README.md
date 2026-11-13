@@ -14,7 +14,7 @@ skill. To process the downloaded rasters (clip, mosaic, COG), see
 ## Requirements
 
 GDAL with the WMTS and WMS drivers (`sudo apt install gdal-bin`, or
-`conda install -c conda-forge gdal`).
+`conda install -c conda-forge libgdal-core` for native CLI tools).
 
 ## Installation
 

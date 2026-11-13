@@ -16,9 +16,14 @@ To download vector layers from the Géoplateforme, see
 ## Requirements
 
 GDAL 3.4 or later (`sudo apt install gdal-bin`, or
-`conda install -c conda-forge gdal libgdal-arrow-parquet`). `ogrinfo -json` needs
-GDAL ≥ 3.7, and the optional `gdal vector` commands GDAL ≥ 3.12. GeoParquet needs a GDAL
-built with Arrow/Parquet support. The user installs missing software; the agent does not.
+`conda install -c conda-forge libgdal-core` for native CLI tools). `ogrinfo -json` needs
+GDAL ≥ 3.7, and the optional `gdal vector` commands GDAL ≥ 3.12. Check existing versions
+and drivers before selecting a recipe.
+
+Only GeoParquet needs Arrow/Parquet support: if the driver is absent in the selected
+Conda environment, the user can add `conda install -c conda-forge libgdal-arrow-parquet`.
+GeoPackage, GeoJSON and Shapefile workflows do not need that plugin, Python's PyArrow
+or GDAL Python bindings. The user installs missing software; the agent does not.
 
 ## Installation
 

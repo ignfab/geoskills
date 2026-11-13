@@ -12,8 +12,13 @@ example is still available. The API describes modelled network travel, not live 
 
 ## Prerequisites
 
-Check `curl --version` and `python3 --version`. GDAL or GeoPandas can inspect/export the
-result. If missing, give the user `sudo apt install curl python3 gdal-bin` (Debian/Ubuntu).
+Check curl for HTTP examples and Python 3's standard library for response/GeoJSON handling.
+Reuse either GDAL or GeoPandas for geometry validity, metric snapping/area and final spatial
+validation; do not require both. If missing, give the user only the needed command:
+`sudo apt install curl`, `sudo apt install python3`, `sudo apt install gdal-bin`
+(Debian/Ubuntu), or `python3 -m pip install 'geopandas>=1.0,<2'` for the Python GIS route.
+Discovery and raw response retrieval do not require a GIS stack. If it is unavailable,
+report outstanding spatial checks; do not claim fully validated geometry.
 **Never install software yourself.** Do not run interactive login/setup commands.
 
 ## Discover and calculate a route

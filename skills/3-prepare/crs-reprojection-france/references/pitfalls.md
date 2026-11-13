@@ -60,14 +60,26 @@ further 1–2 m.
 projinfo -s EPSG:27572 -t EPSG:2154 -o PROJ --hide-ballpark   # shows which grids are used
 ```
 
-If the grid is missing, PROJ silently falls back to a less accurate transformation. Get the
-grids in one of these ways:
+If the grid is missing, PROJ can fall back to a less accurate transformation. Select the
+operation for the actual CRS pair and area first. Set `GRID_FILE` to the complete missing
+filename reported by `projinfo`, then preview the targeted download:
 
 ```bash
-projsync --source-id fr_ign                 # download the IGN grids once
-export PROJ_NETWORK=ON                      # or fetch them on demand from cdn.proj.org
-conda install -c conda-forge proj-data      # or install every grid
+projsync --file "$GRID_FILE" --dry-run
+projsync --file "$GRID_FILE"
 ```
+
+PROJ ≥ 7 provides `projsync`. Its `--file` filter matches substrings: use the complete
+filename and check the preview. The preview can retrieve the small grid catalogue but
+does not download grid files. Reuse cached grids; do not request all `fr_ign` resources
+or install the complete `proj-data` package for one operation. These are transformation
+data, not additional GIS software. Run downloads visibly, then rerun `projinfo` in the
+environment performing the transformation and check the control point.
+
+Alternatively, if on-demand network access is appropriate, scope `PROJ_NETWORK=ON` to
+the transformation command rather than exporting it for the whole session. Report that
+the operation may fetch and cache remote grid data; leave networking off for offline work.
+See the [official projsync options](https://proj.org/en/stable/apps/projsync.html).
 
 Check the result on a known point: `600000 2428000` in EPSG:27572 gives about
 `651313.03 6861349.81` in EPSG:2154 with the grid, and `651311.67 6861349.50` without it.

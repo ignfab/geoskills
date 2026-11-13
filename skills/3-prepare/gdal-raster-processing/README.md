@@ -12,7 +12,10 @@ processes rasters you already have. To download them from the Géoplateforme, se
 ## Requirements
 
 GDAL 3.1 or later for the basic recipes (`sudo apt install gdal-bin`, or
-`conda install -c conda-forge gdal`). The optional `gdal raster zonal-stats` command
+`conda install -c conda-forge libgdal-core` for native CLI tools). Python utilities or
+bindings additionally need matching `python3-gdal` (system) or `gdal` (Conda), with NumPy
+for array calculations. Reuse existing tools and add only the selected recipe's missing
+packages. The optional `gdal raster zonal-stats` command
 requires GDAL ≥ 3.12; some options require 3.13 as noted in its reference.
 Full structural COG validation requires GDAL ≥ 3.13 with matching Python bindings;
 see [quality checks](references/quality-checks.md#structural-cog-validation).

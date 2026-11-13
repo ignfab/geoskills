@@ -112,6 +112,12 @@ these rules, and states them where they apply:
 
 - **Never install software.** When a tool is missing, `## Prerequisites` gives the install
   command for the user to run; the agent does not run `sudo apt`, `conda` or `pip` itself.
+- **Keep dependencies specific to the operation.** Reuse a compatible existing environment.
+  Separate the base route from optional formats, rendering and workflow stages; give only
+  the missing packages for the selected route. Do not require every tool in a family or
+  offer an all-extras install by default. Preserve required validation checks and keep the
+  skill README and family dependency table consistent with `## Prerequisites`. See
+  [runtime dependencies](docs/dependencies.md); skill instructions stay self-contained.
 - **No interactive commands.** Do not run a command that waits for input (a login, a setup
   wizard); ask the user to run it.
 - **Discover before querying.** Take layer names, field names and CRSs from the service or

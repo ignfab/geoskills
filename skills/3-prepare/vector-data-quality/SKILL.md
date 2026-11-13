@@ -20,10 +20,19 @@ problem is a missing, wrong or unsuitable CRS rather than bad geometry.
 - Check existing versions; if a tool is missing, give the user the install command but do
   not install it or run interactive setup yourself.
 
-Install: `python3 -m pip install 'geopandas>=1.1' 'shapely>=2.1'` for Python;
-`sudo apt install gdal-bin` (Ubuntu/Debian) for the optional CLI.
+Choose the Python or CLI route for the requested checks; do not require both.
+User-run base Python command: `python3 -m pip install 'geopandas>=1.0,<2'`.
+Only coverage checks or the advanced repair methods require
+`python3 -m pip install 'geopandas>=1.1,<2' 'shapely>=2.1'` if existing versions are too old.
+For the CLI route: `sudo apt install gdal-bin` (Ubuntu/Debian). Keep an existing version
+that supports the chosen recipe; do not upgrade it for unused features.
 
 ## Audit first
+
+The examples below use Python. For a CLI-only geometry audit/repair, use `ogrinfo` for
+metadata and the [GDAL checks](references/geometry-validity.md), then repeat those checks
+on the output. Use that route only when it covers the requested checks; it does not require
+running the Python examples as well.
 
 List the layers with `gpd.list_layers("input.gpkg")` and read the intended layer explicitly
 when there is more than one. Inspect columns and CRS before adapting the examples: `id`
@@ -131,6 +140,8 @@ identifier, schema, duplicate and completeness checks.
 ## Validate the output
 
 Write to a **new** file, reopen it, and repeat the audit:
+
+For the Python route:
 
 ```python
 clean.to_file("repaired.gpkg", layer="features")

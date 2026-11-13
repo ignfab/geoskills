@@ -16,6 +16,19 @@ not a subset of an existing dataset.
 | [geospatial-descriptive-statistics](geospatial-descriptive-statistics/README.md) | Summarize numeric attributes, categories and missingness in one layer with explicit units and statistical conventions. |
 | [spatial-aggregation](spatial-aggregation/README.md) | Compute vector object-to-zone counts, sums, means and ratios with explicit border/overlap policies and audited totals. |
 
+## Runtime dependencies
+
+Choose the service, tabular or spatial route; these do not require a combined environment.
+Reuse installed packages; see the [dependency guide](../../docs/dependencies.md).
+
+| Skill | Base route | Conditional additions |
+| --- | --- | --- |
+| `geopandas-vector-analysis` | GeoPandas with Pyogrio and pyproj for vectors | PyArrow for GeoParquet; rasterstats for raster zonal statistics |
+| `geopf-altimetry` | curl and Python 3 standard library | Existing GDAL/PROJ or pyproj only for input reprojection |
+| `geopf-routing` | curl and Python 3 standard library for API responses | Either GDAL or GeoPandas for final spatial validation and metric checks |
+| `geospatial-descriptive-statistics` | Pandas for CSV summaries | GeoPandas/Shapely for vector inputs and geometry measurements |
+| `spatial-aggregation` | GeoPandas with its vector I/O and geometry dependencies | No plotting, raster or QGIS packages for the analytic outputs |
+
 ## Also relevant
 
 - [terrain-elevation-screening](../6-workflows/terrain-elevation-screening/README.md)

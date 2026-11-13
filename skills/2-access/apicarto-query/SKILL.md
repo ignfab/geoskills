@@ -13,11 +13,14 @@ longitude/latitude, with `numberMatched` and `numberReturned`.
 
 ## Prerequisites
 
-Check `curl --version` and `python3 --version`; GDAL (`ogrinfo --version`) converts and
-validates the results. If missing, give the user `sudo apt install curl python3 gdal-bin`
-(Debian/Ubuntu) to run. **Never install software yourself.** No API key is needed, except
-for the wine appellation module (`aoc`): ask the user to provide a key outside the chat
-and never print it in commands or logs.
+Check only the selected stage: the pagination helper uses Python 3's standard library;
+the manual HTTP examples use curl. Reuse existing GDAL (`ogrinfo --version`) for the
+documented spatial validation and format conversion. If missing, give the user the
+corresponding Debian/Ubuntu command: `sudo apt install python3`, `sudo apt install curl`
+or `sudo apt install gdal-bin`. Do not require GDAL just to inspect API metadata or run
+the helper; without it, report the outstanding spatial checks before claiming validation.
+**Never install software yourself.** No API key is needed, except for the wine appellation
+module (`aoc`): ask the user to provide a key outside the chat and never print it in logs.
 
 ## Choose the module
 

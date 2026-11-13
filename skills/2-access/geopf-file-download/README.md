@@ -6,12 +6,16 @@ Paginated Atom discovery, edition selection, foreground transfers, safe resume a
 
 ## Requirements
 
-curl, Python 3, GDAL and an archive reader matching the delivery. The user installs missing software; the agent does not.
-For Debian/Ubuntu, a user-run installation command is:
+curl for transfers and Python 3's standard library for the catalogue helper. Reuse GDAL
+for spatial content checks and only the archive reader matching the selected delivery.
+ZIP checks can use existing Python's `zipfile` module or `unzip`; 7z needs `7zz`.
+Direct GeoTIFF/GeoPackage files do not need an archive reader. Missing spatial/archive
+checks must be reported; a downloaded file alone is not a validated dataset.
 
-```bash
-sudo apt install curl python3 gdal-bin unzip
-```
+User-run Debian/Ubuntu commands, only when the corresponding stage needs a missing tool:
+`sudo apt install curl`, `sudo apt install python3`, `sudo apt install gdal-bin`,
+`sudo apt install unzip` or `sudo apt install 7zip` (recent releases).
+The agent never installs software itself.
 
 ## Install the skill
 

@@ -73,15 +73,16 @@ Offer these choices and let the user select an environment. The commands that in
 software or download an image are for the **user** to run. The agent does not execute
 them. Afterwards, use the same environment for discovery, conversion and validation.
 
-- **Conda / Mamba:** in the intended environment, the user can run
-  `conda install -c conda-forge gdal libgdal-arrow-parquet` (or replace `conda` with
+- **Conda / Mamba:** reuse an existing capable environment first. If the requested
+  Parquet driver is missing, the user can run
+  `conda install -c conda-forge libgdal-core libgdal-arrow-parquet` (or replace `conda` with
   `mamba`). The plugin and GDAL must be compatible; do not mix a Conda plugin with the
   distribution's `ogr2ogr`. Recheck `ogr2ogr --version`, `ogrinfo --format WFS` and
   `ogrinfo --format Parquet` after the user selects the environment.
 - **Distribution packages:** the user can run `sudo apt install gdal-bin` on
   Ubuntu/Debian, but only use that installation if it provides the required driver and
   creation options. Reinstalling the same build does not add an omitted driver.
-- **Docker:** with Docker already available, offer the official OSGeo **ubuntu-full**
+- **Docker:** as a larger fallback with Docker already available, offer the official OSGeo **ubuntu-full**
   image. The documented **ubuntu-small** image lacks Parquet. Check the chosen image's
   capabilities rather than assuming that every driver is included. This keeps GDAL in
   the container, without replacing the host installation.

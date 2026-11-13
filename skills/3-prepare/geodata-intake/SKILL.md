@@ -12,9 +12,12 @@ into a separate directory; reject absolute paths and `..` traversal.
 
 ## Prerequisites
 
-Check `ogrinfo --version`, `gdalinfo --version` and `python3 --version`. If unavailable,
-give the user `sudo apt install gdal-bin python3` (Debian/Ubuntu) or
-`conda install -c conda-forge gdal python` to run. **Never install software yourself.**
+Check `ogrinfo --version` for vectors, `gdalinfo --version` for rasters, and Python 3 for
+the CSV/JSON recipes. A CSV-only inventory uses Python's standard library without GDAL.
+If unavailable, give the user `sudo apt install gdal-bin` or `sudo apt install python3`
+(Debian/Ubuntu); Conda equivalents are `libgdal-core` and `python`, only as needed in
+the chosen environment. No GeoPandas, QGIS or GDAL Python bindings are required.
+**Never install software yourself.**
 Do not launch interactive setup or login commands.
 
 ## Inspect metadata first
