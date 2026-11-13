@@ -8,6 +8,7 @@ description: Create and validate reusable QGIS QML styles for an existing local 
 Deliver a `.qml` and a renderer report for an existing layer. Project assembly belongs to
 `qgis-project-builder`; geometry simplification belongs to `mapshaper-simplify`. Do not
 edit geometries/attributes or promise labels, rule engines, SLD, layouts or atlases.
+For a rendered map image or interactive HTML deliverable, use `map-illustration`.
 
 ## Prerequisites
 

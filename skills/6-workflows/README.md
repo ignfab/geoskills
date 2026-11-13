@@ -28,6 +28,8 @@ These broader chains are explored with the business-need prompts of the
 
 ## Also relevant
 
+- [map-illustration](../5-publish/map-illustration/README.md) turns existing workflow
+  outputs into report images or small interactive maps, with QGIS optional.
 - [bdtopo-schema-guide](../1-discover/bdtopo-schema-guide/README.md) resolves building/road
   concepts and special values before data extraction or statistics.
 - [spatial-aggregation](../4-analyze/spatial-aggregation/README.md) produces reconciled
