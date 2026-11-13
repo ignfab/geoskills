@@ -5,6 +5,10 @@
 Agent skills for discovering, retrieving, preparing, analyzing and publishing geospatial
 data, with a focus on the IGN Géoplateforme, French coordinate systems and open-source GIS.
 
+The skills are created by [IGN](https://www.ign.fr/), the French national mapping agency
+(Institut national de l'information géographique et forestière). The repository aims to
+serve as a reference collection of agent skills for geomatics and geospatial data processing.
+
 The repository contains **22 independently installable skills**. It remains experimental:
 automated checks and agent pilots are available, but a full comparative evaluation has not
 yet established the stability of every skill.
@@ -106,6 +110,10 @@ the tested versions and fixtures; they are not a guarantee of current live-servi
 ## Résumé (FR)
 
 Ce projet est en phase exploratoire. La stabilité des compétences n’est pas encore garantie.
+
+Les compétences de ce dépôt sont créées par l’[IGN](https://www.ign.fr/) (Institut national
+de l’information géographique et forestière). Le dépôt a pour but de servir de référence
+pour les compétences de géomatique et de traitement de données géographiques.
 
 `geoskills` est un ensemble expérimental de compétences pour agents de code, destinées à
 travailler la donnée géographique. Elles sont regroupées en six familles, une par question.
