@@ -15,8 +15,10 @@ with the IGN Géoplateforme geocoding API. No API key is needed.
 - Optional: `jq` to extract fields, GDAL (`ogr2ogr`) to convert the results.
 - If a tool is missing, give the user the install command and let them run it; do not install software yourself.
 
-Install: `sudo apt install curl python3` (Ubuntu/Debian); optional tools:
-`sudo apt install jq gdal-bin`. Do not run interactive setup. Inspect the input CSV
+User-run commands, only for missing tools used by the chosen route: `sudo apt install curl`
+for HTTP examples, `sudo apt install python3` for CSV helpers, `sudo apt install jq` for
+jq recipes or `sudo apt install gdal-bin` for conversion (Ubuntu/Debian). Existing Python
+can inspect JSON without jq; do not require both. Do not run interactive setup. Inspect the input CSV
 headers and `/getcapabilities` before choosing columns or index-specific filters.
 
 ## Endpoints

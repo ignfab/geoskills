@@ -26,12 +26,18 @@ delivery formats, maps, styles and metadata.
 
 ## What they need
 
-| Skill | Local tools | Network |
-| --- | --- | --- |
-| `map-illustration` | Depends on the route: GeoPandas and Matplotlib (static image), Folium (HTML), rasterio (raster) or PyQGIS (existing QGIS map) | None for the files; an HTML map may load browser resources or tiles |
-| `mapshaper-simplify` | Mapshaper CLI (0.7.83 tested) and Node.js ≥ 20.11 | None |
-| `qgis-layer-styling` | PyQGIS from QGIS 3.34–3.x | None |
-| `qgis-project-builder` | PyQGIS from QGIS 3.34–3.x | Only for an optional public basemap |
+Choose one rendering or simplification route. Installing this family does not require
+QGIS, Python plotting and Node together; see the [dependency guide](../../docs/dependencies.md).
+
+| Skill | Base route | Conditional additions | Network |
+| --- | --- | --- | --- |
+| `map-illustration` | Static vectors: GeoPandas + Matplotlib; uniform HTML: GeoPandas + Folium; existing QGIS project: its own PyQGIS environment | Matplotlib for numeric HTML colours; Rasterio + Matplotlib for a raster preview without QGIS | None for the files; an HTML map may load browser resources or tiles |
+| `mapshaper-simplify` | Existing Node.js and Mapshaper CLI | GeoPandas/Shapely only for the documented additional Python validation | None |
+| `qgis-layer-styling` | Existing QGIS/PyQGIS and matching Qt | No separate GeoPandas or plotting stack | None |
+| `qgis-project-builder` | Existing QGIS/PyQGIS, matching Qt and its GDAL bindings | Network access only for requested remote layers/basemaps | Only for an optional public basemap |
+
+Static images need no browser libraries at viewing time. HTML external assets and tile
+requests are a separate delivery choice: disclose them when an interactive map is requested.
 
 Use the Python supplied with QGIS; on a machine without a display, set
 `QT_QPA_PLATFORM=offscreen`.

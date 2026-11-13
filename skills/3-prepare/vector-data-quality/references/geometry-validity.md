@@ -103,7 +103,7 @@ first and validate the expected one-to-many relationship.
 ## Valid but suspicious
 
 Valid geometries can still be errors. Flag them for review; do not delete them. Measure in a
-projected CRS (Lambert-93 for metropolitan France; see `crs-reprojection-france` elsewhere)
+projected CRS (keep a suitable requested CRS; Lambert-93 is a metropolitan-France fallback)
 and adapt the thresholds to the scale of the data:
 
 ```python

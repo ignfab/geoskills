@@ -17,11 +17,18 @@ skill instead. To process a downloaded raster (clip, mosaic, resample, COG) see
 - **GDAL** with the WMTS and WMS drivers (`gdalinfo`, `gdal_translate`, `gdalwarp`).
 - Check driver support: `gdalinfo --formats | grep -iE "WMTS|WMS"`.
 
-Install: `sudo apt install gdal-bin` (Ubuntu/Debian) or `conda install -c conda-forge gdal`.
+Install: `sudo apt install gdal-bin` (Ubuntu/Debian) or
+`conda install -c conda-forge libgdal-core` for native CLI tools. Python bindings and QGIS
+are not required for these extraction commands.
 If a tool is missing, give the user the install command and let them run it; do not
 install software yourself.
 
 ## Endpoints
+
+Use the requested output CRS when suitable and supported; otherwise preserve an appropriate
+source grid. Discover service CRSs/axis order, and transform the AOI accordingly. EPSG:2154
+below is a metropolitan-France example, not a required target. Pixel sizes use target CRS
+units; numeric elevations have their own vertical units/datum.
 
 - **WMTS** (pre-rendered tile pyramid, cached, fastest): `https://data.geopf.fr/wmts`.
   GDAL needs the full GetCapabilities URL: `WMTS:https://data.geopf.fr/wmts` alone fails

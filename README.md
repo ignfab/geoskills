@@ -48,6 +48,10 @@ it, and names the gaps. Each skill README also displays its family. Names identi
 or domain and its operation or result; the [naming guide](docs/skill-naming.md) records the
 convention and the correspondence with earlier names.
 
+Skills preserve suitable existing or requested coordinate systems. Lambert-93 is a
+conditional default for metropolitan-France tasks, not a required CRS; see
+[CRS handling](docs/crs-handling.md) for units, service constraints and delivery choices.
+
 ## Installation
 
 Skills are installed with the [Vercel Skills CLI](https://github.com/vercel-labs/skills),
@@ -59,13 +63,7 @@ List available skills before selecting them:
 npx skills add ignfab/geoskills --list
 ```
 
-Install all skills:
-
-```bash
-npx skills add ignfab/geoskills
-```
-
-Install a single skill:
+Start with a single skill:
 
 ```bash
 npx skills add ignfab/geoskills --skill geopf-wfs-download
@@ -80,6 +78,12 @@ npx skills add https://github.com/ignfab/geoskills/tree/main/skills/2-access
 Family folders only organize this repository: every skill is installed in its own folder,
 `<agent>/skills/<skill-name>/`.
 
+To select from the entire collection:
+
+```bash
+npx skills add ignfab/geoskills
+```
+
 Target a specific agent (`claude-code`, `cursor`, `opencode`, ...):
 
 ```bash
@@ -89,9 +93,11 @@ npx skills add ignfab/geoskills -a claude-code
 Skills are installed in the current project by default; add `-g` to install them for the
 whole user account.
 
-Installing a skill adds its instructions and supporting files to the agent. It does not
-install GDAL, GeoPandas, QGIS or other GIS software. Check the selected skill's README for runtime
-requirements and commands the user can run if a dependency is missing.
+Installing a skill copies its instructions and supporting files. It does not install
+GDAL, GeoPandas, QGIS or other GIS software. A family does not require installing all its
+tools. Reuse an existing environment and add only the selected operation's missing
+dependencies. Each family lists base and conditional requirements; the
+[dependency guide](docs/dependencies.md) explains the choices and shared environments.
 
 ## Contributing
 

@@ -25,11 +25,19 @@ use `terrain-elevation-screening`.
 - **GDAL** 3.1 or later (the COG driver was added in 3.1).
 - Optional: GDAL ≥ 3.12 for `gdal raster zonal-stats`; GDAL ≥ 3.13 with matching Python
   bindings for `gdal driver cog validate`. Check command availability before using it.
-- Install: `sudo apt install gdal-bin` (Ubuntu/Debian) or `conda install -c conda-forge gdal`.
+- User-run native CLI command: `sudo apt install gdal-bin` (Ubuntu/Debian) or
+  `conda install -c conda-forge libgdal-core`. Only recipes using Python utilities or
+  bindings additionally need matching `python3-gdal` (system) or `gdal` (Conda); array
+  calculations also need NumPy. Do not upgrade GDAL for an unused optional command.
 - If GDAL is missing, give the user the install command and let them run it; do not install
   software yourself.
 
 ## Inspect first
+
+Preserve a suitable source grid for clipping, mosaics and conversion. Honour a suitable
+requested target CRS; Lambert-93 is only a metropolitan-France fallback when a new
+projection is needed. Read pixel units from the CRS, including non-metre units. Transform
+zones to the raster CRS for statistics instead of resampling the raster to EPSG:2154.
 
 Always run `gdalinfo` before processing, to learn the CRS, resolution and nodata value:
 
@@ -40,7 +48,8 @@ gdalinfo -stats mnt.tif          # also compute min/max/mean/stddev
 
 ## Most common commands
 
-Reproject to Lambert-93 and clip to a bounding box expressed in the **target** CRS:
+Metropolitan-France example: reproject to Lambert-93 and clip to a bounding box in the
+**target** CRS. Adapt the target and bounds together for another territory/request:
 
 ```bash
 gdalwarp -t_srs EPSG:2154 -te 650000 6860000 660000 6870000 \

@@ -40,6 +40,9 @@ Online discovery also needs `curl` (user-run command: `sudo apt install curl`).
    Use `crs-reprojection-france` for an appropriate projected metre CRS or a justified
    vertical conversion. A horizontal reprojection alone does not establish matching
    height references. Prepare one common grid with `gdal-raster-processing` if needed.
+   Preserve an already suitable requested/source grid; Lambert-93 is only a conditional
+   metropolitan-France fallback. This recipe's metre requirement is for slope/area units,
+   not a required EPSG code. Keep a separate requested delivery CRS explicit.
 5. Run the [local processing recipe](references/local-processing.md) in a new output
    directory, in the foreground. It clips elevations, optionally derives slope before
    clipping, applies explicit thresholds and vectorizes selected cells with four-neighbour

@@ -94,6 +94,19 @@ class SummaryTests(unittest.TestCase):
             run_example('geospatial-descriptive-statistics/references/geometry-units.md',
                         '# Geometry measurements', {'gdf': source, 'metric_crs': 4326})
 
+    def test_geometry_recipe_converts_foot_units_to_square_metres(self):
+        if importlib.util.find_spec('geopandas') is None:
+            self.skipTest('GeoPandas is not installed')
+        import geopandas as gpd
+        from shapely.geometry import box
+        from skill_examples import run_example
+        crs = '+proj=tmerc +lat_0=48.85 +lon_0=2.35 +k=1 +ellps=GRS80 +units=us-ft +type=crs'
+        source = gpd.GeoDataFrame(geometry=[box(0, 0, 10, 10)], crs=crs)
+        result = run_example('geospatial-descriptive-statistics/references/geometry-units.md',
+                             '# Geometry measurements', {'gdf': source, 'metric_crs': crs})
+        self.assertEqual(result['measured'].crs, source.crs)
+        self.assertAlmostEqual(result['measured'].area_m2.iloc[0], 100*(1200/3937)**2)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -57,8 +57,10 @@ for weak or ambiguous matches, unexpected municipalities or match types, and unm
 and quality-review helpers; they use only the standard library. `jq` and GDAL are optional,
 for processing the results.
 
-The user can install these tools with `sudo apt install curl python3` (Debian/Ubuntu),
-and optionally `sudo apt install jq gdal-bin`. The agent never installs software itself.
+On Debian/Ubuntu, the user can install only the missing tool for the selected route:
+`sudo apt install curl`, `sudo apt install python3` (CSV helpers), `sudo apt install jq`
+(jq recipes) or `sudo apt install gdal-bin` (conversion). Existing Python can inspect
+JSON without jq. The agent never installs software itself.
 
 Network service: `https://data.geopf.fr/geocodage`. Bulk files must be UTF-8 and stay below
 50 MB and 200,000 rows per request. Stay under 50 requests per second per IP address for

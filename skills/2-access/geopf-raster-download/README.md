@@ -51,7 +51,7 @@ GeoTIFF, or elevation values.
 - GDAL with the WMTS and WMS drivers (`gdalinfo`, `gdal_translate`, `gdalwarp`). Check
   driver support with `gdalinfo --formats | grep -iE "WMTS|WMS"`.
 - The user can install GDAL with `sudo apt install gdal-bin` (Debian/Ubuntu), or
-  `conda install -c conda-forge gdal`. The agent never installs software itself.
+  `conda install -c conda-forge libgdal-core`. The agent never installs software itself.
 - Network: the public Géoplateforme WMTS (`https://data.geopf.fr/wmts`) and WMS-R
   (`https://data.geopf.fr/wms-r/wms`) services; the documented requests carry no API key. GDAL needs the full
   WMTS GetCapabilities URL: `WMTS:https://data.geopf.fr/wmts` alone fails with HTTP 400.

@@ -50,21 +50,31 @@ WFS counts and source IDs.
 
 ## Requirements
 
-- GDAL CLI tools (`ogr2ogr`, `ogrinfo`) from one environment, with WFS read support **and a
-  driver that can create the requested output format**. Check `ogr2ogr --version`,
-  `ogrinfo --format WFS` and `ogrinfo --format <output-driver>` before downloading: the
-  driver must report vector support and `Create()` capability.
-- `curl` for discovery/count requests; Python 3 (standard library only) for the optional
-  completeness helper, which audits an export while downloads still use `ogr2ogr`.
-- User-run installs: `sudo apt install gdal-bin` or `conda install -c conda-forge gdal`,
-  and `sudo apt install curl python3`. GeoParquet may need
-  `conda install -c conda-forge gdal libgdal-arrow-parquet`; distribution builds do not
-  necessarily include it. An official GDAL `ubuntu-full` container is another option; see
-  [missing-driver options](references/formats.md#missing-gdal-or-parquet-support).
-- The agent never installs software itself (including packages pulled by `uv` or a
-  container image) and asks for an environment choice when a capability is missing.
-- Network: the Géoplateforme WFS 2.0 endpoint `https://data.geopf.fr/wfs/ows`; the documented
-  requests carry no API key.
+Working GDAL CLI tools with WFS read support **and a driver that can create the requested
+output format**. Check `ogr2ogr --version`, `ogrinfo --format WFS` and
+`ogrinfo --format <output-driver>` before downloading.
+
+The user can install distribution GDAL with `sudo apt install gdal-bin`, or Conda GDAL
+with `conda install -c conda-forge libgdal-core` for native CLI tools. Only a requested
+GeoParquet export may need the additional plugin:
+`conda install -c conda-forge libgdal-arrow-parquet`. Distribution builds do not
+necessarily include it. Reuse an existing capable environment first. An official GDAL
+`ubuntu-full` container is a larger fallback, not a default dependency; see
+[missing-driver options](references/formats.md#missing-gdal-or-parquet-support).
+
+The agent uses `ogr2ogr`, never installs software itself and asks for an environment
+choice when a capability is missing. It does not silently switch to Python or another
+format. GeoParquet exports use one file per layer.
+
+The discovery/count requests use `curl`. The optional GeoPackage completeness helper
+uses Python 3 and its standard library: user-run commands are `sudo apt install curl`
+and `sudo apt install python3`, only if the selected route needs them.
+This helper audits an export; downloads and conversions
+still use `ogr2ogr`.
+
+The output driver must report vector support and `Create()` capability. The agent does not pull packages with `uv` or download a container image automatically.
+
+Network: the public Géoplateforme WFS at `https://data.geopf.fr/wfs/ows`; the documented requests carry no API key.
 
 ## Installation
 

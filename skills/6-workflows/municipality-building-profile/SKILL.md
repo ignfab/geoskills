@@ -29,8 +29,10 @@ and `curl` (user-run Debian/Ubuntu command: `sudo apt install gdal-bin curl`). Q
    unknown, access date and extraction completeness evidence.
 2. Inspect local layers, fields, CRSs and geometry (`geodata-intake`, `vector-data-quality`).
    Do not guess a CRS, convert an ambiguous ID, repair geometry or deduplicate silently.
-   Choose a suitable projected metre CRS using `crs-reprojection-france`; Lambert-93 is
-   suitable for metropolitan France, not a default for overseas municipalities.
+   Preserve a suitable requested/existing projected analysis CRS with known linear units.
+   The helper converts squared units to m², including feet; it accepts custom definitions.
+   Lambert-93 is only a fallback for suitable metropolitan-France tasks. Use
+   `crs-reprojection-france` for French/overseas choices; do not force it on other regions.
 3. Prepare the [input manifest](references/manifest.md) from that metadata. Verify height
    units, missing-value codes and usage definitions before selecting fields. For BD TOPO,
    use `bdtopo-schema-guide` when its versioned subset applies; otherwise consult the
@@ -57,7 +59,8 @@ assignment belongs to `spatial-aggregation`, and overlays to `geopandas-vector-a
 ## Validate the output
 
 Reopen `profile.gpkg`: municipality, selected buildings and union footprint must have the
-declared metric CRS; the municipality layer has one row even for an empty building set.
+declared analysis CRS with correctly converted m² fields; the municipality layer has one
+row even for an empty building set.
 Reconcile selected + touch-only + outside objects with input count, height status counts
 and usage frequencies with selected count. Check union area ≤ summed clipped areas and
 municipality area; coverage must lie in [0, 100]. The helper reopens every layer and the

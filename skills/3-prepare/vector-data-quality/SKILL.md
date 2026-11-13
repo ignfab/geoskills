@@ -20,10 +20,19 @@ problem is a missing, wrong or unsuitable CRS rather than bad geometry.
 - Check existing versions; if a tool is missing, give the user the install command but do
   not install it or run interactive setup yourself.
 
-Install: `python3 -m pip install 'geopandas>=1.1' 'shapely>=2.1'` for Python;
-`sudo apt install gdal-bin` (Ubuntu/Debian) for the optional CLI.
+Choose the Python or CLI route for the requested checks; do not require both.
+User-run base Python command: `python3 -m pip install 'geopandas>=1.0,<2'`.
+Only coverage checks or the advanced repair methods require
+`python3 -m pip install 'geopandas>=1.1,<2' 'shapely>=2.1'` if existing versions are too old.
+For the CLI route: `sudo apt install gdal-bin` (Ubuntu/Debian). Keep an existing version
+that supports the chosen recipe; do not upgrade it for unused features.
 
 ## Audit first
+
+The examples below use Python. For a CLI-only geometry audit/repair, use `ogrinfo` for
+metadata and the [GDAL checks](references/geometry-validity.md), then repeat those checks
+on the output. Use that route only when it covers the requested checks; it does not require
+running the Python examples as well.
 
 List the layers with `gpd.list_layers("input.gpkg")` and read the intended layer explicitly
 when there is more than one. Inspect columns and CRS before adapting the examples: `id`
@@ -59,12 +68,18 @@ data lie inside the area of use of their CRS (a custom CRS may have none: compar
 bounds with the expected area instead):
 
 ```python
-west, south, east, north = src.crs.area_of_use.bounds
-lon_min, lat_min, lon_max, lat_max = src.loc[comparable_geometry].to_crs(4326).total_bounds
-outside_crs_area = not (west <= lon_min <= lon_max <= east
-                        and south <= lat_min <= lat_max <= north)
+outside_crs_area = None
+if src.crs.area_of_use is not None:
+    west, south, east, north = src.crs.area_of_use.bounds
+    lon_min, lat_min, lon_max, lat_max = src.loc[comparable_geometry].to_crs(4326).total_bounds
+    outside_crs_area = not (west <= lon_min <= lon_max <= east
+                            and south <= lat_min <= lat_max <= north)
 print("Outside the CRS area of use:", outside_crs_area)
 ```
+
+`None` means this catalogue check was unavailable, as can happen for custom WKT. Validate
+against the documented study extent/control points instead; do not substitute EPSG:2154.
+For an area crossing the antimeridian, use a wrap-aware extent check instead of this local box recipe.
 
 Data outside that area usually have a wrong CRS: use `crs-reprojection-france` before any
 repair or measurement. This coarse check does not catch swapped longitude and latitude
@@ -131,6 +146,8 @@ identifier, schema, duplicate and completeness checks.
 ## Validate the output
 
 Write to a **new** file, reopen it, and repeat the audit:
+
+For the Python route:
 
 ```python
 clean.to_file("repaired.gpkg", layer="features")

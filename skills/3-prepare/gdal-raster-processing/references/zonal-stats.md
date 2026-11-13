@@ -53,12 +53,14 @@ GEOS ≥ 3.14. These options were checked against the official GDAL documentatio
 
 Unlike `gdalwarp -cutline`, `zonal-stats` does **not** reproject the zones to the raster
 CRS. With mismatched CRS it only emits `Warning 1: Inputs and zones do not have the same
-SRS` and returns empty statistics (`count = 0`). Reproject the zones first:
+SRS` and returns empty statistics (`count = 0`). Reproject the zones first. Set
+`RASTER_CRS` to the definition discovered with `gdalinfo`/`gdalsrsinfo`; it may be an
+authority code or full WKT, not necessarily EPSG:2154:
 
 ```bash
-ogr2ogr -t_srs EPSG:2154 communes_l93.gpkg communes_4326.geojson
+ogr2ogr -t_srs "$RASTER_CRS" communes_aligned.gpkg communes.geojson
 gdal raster zonal-stats --stat mean \
-  --zones communes_l93.gpkg -f GPKG mnt_l93.tif stats.gpkg
+  --zones communes_aligned.gpkg -f GPKG mnt.tif stats.gpkg
 ```
 
 ## Pitfall: undeclared nodata

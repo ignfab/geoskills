@@ -50,11 +50,13 @@ bundled helper writes the summary as JSON, a long-form CSV and Markdown in a new
 
 ## Requirements
 
-Python 3 and pandas; GeoPandas and Shapely for vector data and metric geometry work. Check
-with `python3 -c "import pandas; print(pandas.__version__)"` and inspect the GeoPandas and
-Shapely versions for vector inputs. If missing, the user can run
-`python3 -m pip install pandas geopandas` in their chosen environment; agents never install
-dependencies. No network service is used.
+Python 3.9+ and Pandas for CSV summaries (`python3 -m pip install pandas` if missing).
+Only vector inputs and metric geometry work additionally need GeoPandas/Shapely:
+`python3 -m pip install 'geopandas>=1.0,<2'` includes those and Pandas. Use a Python version
+supported by the selected package release. Agents reuse existing environments and never
+install dependencies. CSV summaries do not need a GIS stack or plotting libraries.
+
+Check with `python3 -c "import pandas; print(pandas.__version__)"`; inspect GeoPandas/Shapely only for vector inputs. No network service is used.
 
 ## Installation
 

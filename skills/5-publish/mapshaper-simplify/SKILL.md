@@ -57,8 +57,10 @@ hole counts and use a less aggressive setting; do not promise preservation from 
 
 ## Simplify with a metric tolerance
 
-For data confirmed to be in **mainland France**, project to Lambert-93 and use
-Douglas-Peucker with a 100 m tolerance, then export longitude/latitude GeoJSON:
+Keep a suitable existing/requested CRS; otherwise choose one appropriate to the territory
+and tolerance units. For data confirmed to be in **mainland France**, Lambert-93 is a
+default option. The following example uses metre coordinates and
+Douglas-Peucker with a 100 m tolerance, then exports longitude/latitude GeoJSON:
 
 ```bash
 mapshaper units.geojson \
@@ -68,7 +70,8 @@ mapshaper units.geojson \
   -o format=geojson units-100m.geojson
 ```
 
-Choose a suitable metric CRS for other regions; Lambert-93 is not an overseas CRS.
+Use another suitable CRS when requested or outside that area. If its linear units are
+not metres, convert the tolerance explicitly. Lambert-93 is not a mandatory intermediate.
 `dp` gives the distance-based criterion; a weighted Visvalingam interval does not express
 the same error bound. Geographic input is simplified on a sphere by default. `planar`
 does not reproject coordinates and would treat longitude/latitude as flat degree units.

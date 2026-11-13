@@ -36,9 +36,12 @@ be verified, and explain why the corresponding indicators are absent. A requeste
 that does not exist is an error. Use `null` for unknown source dates/editions, not invented
 metadata. Never include authenticated URLs or credentials in provenance fields.
 
-Choose a suitable local projected CRS in metres. The helper rejects geographic CRSs,
-non-metre axes, EPSG:3857 and a municipality outside a known CRS area of use. This does
-not establish that every other metre projection is suitable; justify the choice.
+Set `analysis_crs` to a suitable existing/requested local projected CRS (authority code
+or WKT). The helper accepts known compatible linear units, including feet, and converts
+all area fields to m²; height units remain a separate requirement. It rejects geographic
+CRSs, EPSG:3857, unknown/incompatible axis units and a municipality outside a known area
+of use. This does not establish that every other projection is suitable; justify the
+choice. EPSG:2154 above is a metropolitan-France example, not a hard-coded default.
 
 `geometry_scope` must be `whole_objects`. Completeness is `complete`, `partial` or
 `unknown` (default). `complete` requires a nonempty evidence string, such as matching

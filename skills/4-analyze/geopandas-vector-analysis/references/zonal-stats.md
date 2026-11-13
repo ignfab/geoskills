@@ -6,12 +6,20 @@ Compute raster statistics (elevation, temperature, …) per polygon from Python,
 
 ## Basic usage
 
+Set `zones_path` and `raster_path` to the inspected inputs. Read the raster's actual CRS;
+neither its filename nor a Lambert-93 example establishes it. Keep the raster grid intact.
+
 ```python
 import geopandas as gpd
+import rasterio
 from rasterstats import zonal_stats
 
-communes = gpd.read_file("communes.geojson").to_crs(2154)   # match the raster CRS
-stats = zonal_stats(communes, "mnt_l93.tif",
+communes = gpd.read_file(zones_path)
+with rasterio.open(raster_path) as raster:
+    if raster.crs is None or communes.crs is None:
+        raise ValueError('Confirm both source CRSs before calculating statistics')
+    communes = communes.to_crs(raster.crs)
+stats = zonal_stats(communes, raster_path,
                     stats=["mean", "min", "max", "count"])
 # [{'mean': 50.15, 'min': 39.3, 'max': 54.08, 'count': 9046}, ...]
 ```
@@ -40,7 +48,7 @@ Available statistics: `count`, `min`, `max`, `mean`, `median`, `sum`, `std`, `ma
 
 ```python
 stats = zonal_stats(
-    communes, "mnt_l93.tif",
+    communes, raster_path,
     stats=["mean"],
     all_touched=True,        # include every touched pixel, not only centre-inside
     nodata=-9999,            # override when the raster does not declare its nodata
@@ -72,5 +80,9 @@ Sample a raster at point locations:
 
 ```python
 from rasterstats import point_query
-altitudes = point_query(points_l93, "mnt_l93.tif")
+with rasterio.open(raster_path) as raster:
+    if raster.crs is None or points.crs is None:
+        raise ValueError('Confirm point and raster CRSs')
+    points_aligned = points.to_crs(raster.crs)
+altitudes = point_query(points_aligned, raster_path)
 ```

@@ -57,6 +57,11 @@ Start from what you changed or want to know:
 
 From the repository root, with Python ≥ 3.9:
 
+Reuse an existing environment first. The geospatial requirements below are a broad,
+optional contributor/CI set spanning several skills, not an installation prerequisite
+for one skill or family. Focused checks need only their relevant packages; see the
+[runtime dependency guide](../docs/dependencies.md). Installation commands are for the user.
+
 ```bash
 python3 -m pip install -r tests/requirements.txt              # PyYAML, for the validator
 python3 -m pip install -r tests/requirements-geospatial.txt   # optional: GeoPandas, Matplotlib, Folium tests
@@ -117,9 +122,9 @@ the tests deliberately do not hide a broken installation.
 | `… need GDAL >= 3.12` | The `gdal vector …` and `gdal raster zonal-stats` commands | GDAL ≥ 3.12 |
 | `Full COG validation requires GDAL >= 3.13 …` | `gdal driver cog validate` and matching Python bindings | GDAL ≥ 3.13 |
 | `Needs GeoPandas >= 1.1 with Shapely >= 2.1` | Coverage functions | Newer GeoPandas and Shapely |
-| `Accurate NTF transformation needs an installed IGN grid` | `fr_ign_ntf_r93.tif` (or an equivalent NTF grid) | `projsync --source-id fr_ign` |
+| `Accurate NTF transformation needs an installed IGN grid` | `fr_ign_ntf_r93.tif` (or an equivalent NTF grid) | Inspect with `projinfo`, then fetch only that grid with `projsync --file <complete-grid-filename>` |
 | `PyQGIS is not installed; …` | QGIS 3.34–3.x with its Python bindings | The dedicated [QGIS workflow](../.github/workflows/qgis.yml) runs them; locally, `sudo apt install python3-qgis` |
-| `Vertical check needs the installed RAF18 grid` | `fr_ign_RAF18.tif` | `projsync --source-id fr_ign` |
+| `Vertical check needs the installed RAF18 grid` | `fr_ign_RAF18.tif` | `projsync --file fr_ign_RAF18.tif` |
 
 The tests use temporary directories, turn PROJ networking off and never modify the
 fixtures in `data/`.

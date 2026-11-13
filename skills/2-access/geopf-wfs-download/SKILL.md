@@ -17,7 +17,8 @@ images, use `geopf-raster-download`.
 - Working **GDAL** CLI tools (`ogr2ogr` and `ogrinfo`) from the same environment, with
   WFS read support and an output driver that can create the requested vector format.
 - `curl` for discovery/count requests; Python 3 for the optional GeoPackage completeness
-  helper (standard library only). User install command: `sudo apt install curl python3`.
+  helper (standard library only). If missing, user-run commands are `sudo apt install curl`
+  and, only for the helper, `sudo apt install python3`.
 - Check capabilities before downloading. For GeoParquet, use the following commands;
   replace `Parquet` with the requested driver for other formats (e.g. `GPKG`, `GeoJSON`):
 
@@ -30,10 +31,12 @@ ogrinfo --format Parquet
 The output driver must report vector support and `Create()` capability, not merely
 appear in the driver list. A GDAL version number alone does not prove driver availability.
 
-Install: `sudo apt install gdal-bin` (Ubuntu/Debian) or `conda install -c conda-forge gdal`.
-Distribution packages may omit Parquet. For that driver, offer
-`conda install -c conda-forge gdal libgdal-arrow-parquet` or the
-[GDAL container option](references/formats.md#missing-gdal-or-parquet-support).
+Install: `sudo apt install gdal-bin` (Ubuntu/Debian) or
+`conda install -c conda-forge libgdal-core` for native CLI tools.
+For a requested GeoParquet export with a missing driver, offer only the corresponding
+plugin: `conda install -c conda-forge libgdal-arrow-parquet` in the compatible environment.
+Reuse an existing capable GDAL before proposing a
+[full container](references/formats.md#missing-gdal-or-parquet-support).
 
 ## Tooling rule
 
@@ -112,7 +115,9 @@ Before reporting a download as complete:
 - Run `ogrinfo -so <output> <layer>`: the feature count must be non-zero, the CRS the one
   expected, and the extent must cover the requested area.
 - Compare with an order of magnitude you know. For polygons, compute the total area in
-  Lambert-93 (see *Selecting features inside a named area* in the options reference).
+  a suitable projected CRS with verified linear units, converting area to the reported
+  units. Lambert-93 is a fallback for suitable metropolitan-France data only (see
+  *Selecting features inside a named area* in the options reference).
 - Say explicitly when the result is a sample (`-limit`) or when pages failed.
 - Run long downloads in the foreground, with `-progress`. Do not pipe `ogr2ogr` through
   `head` or `tail`, which hides progress and can cut the output.

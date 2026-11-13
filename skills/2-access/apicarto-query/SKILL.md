@@ -13,11 +13,14 @@ longitude/latitude, with `numberMatched` and `numberReturned`.
 
 ## Prerequisites
 
-Check `curl --version` and `python3 --version`; GDAL (`ogrinfo --version`) converts and
-validates the results. If missing, give the user `sudo apt install curl python3 gdal-bin`
-(Debian/Ubuntu) to run. **Never install software yourself.** No API key is needed, except
-for the wine appellation module (`aoc`): ask the user to provide a key outside the chat
-and never print it in commands or logs.
+Check only the selected stage: the pagination helper uses Python 3's standard library;
+the manual HTTP examples use curl. Reuse existing GDAL (`ogrinfo --version`) for the
+documented spatial validation and format conversion. If missing, give the user the
+corresponding Debian/Ubuntu command: `sudo apt install python3`, `sudo apt install curl`
+or `sudo apt install gdal-bin`. Do not require GDAL just to inspect API metadata or run
+the helper; without it, report the outstanding spatial checks before claiming validation.
+**Never install software yourself.** No API key is needed, except for the wine appellation
+module (`aoc`): ask the user to provide a key outside the chat and never print it in logs.
 
 ## Choose the module
 
@@ -90,7 +93,8 @@ twice, a few seconds apart, and report it if it persists.
   summary), identifiers are unique and the geometries have the expected type.
 - Reopen the file: `ogrinfo -so -al parcelles.geojson` reports EPSG:4326 and an extent in
   France (metropolitan longitudes about −5 to 10, latitudes about 41 to 51.5). Overseas
-  data have their own ranges. For areas, reproject to Lambert-93 or the local CRS first.
+  data have their own ranges. For areas, use a suitable analysis CRS and verify units;
+  Lambert-93 is a metropolitan-France fallback, not an API/output requirement.
 - A GeoJSON whose `crs` member is `urn:ogc:def:crs:CRS::84` (nature module) makes GDAL print
   `crs not found: CRS:84`; the coordinates are still longitude/latitude. Check the extent.
 - For zoning, report the document (`partition`, `idurba`, `du_type`) and its approval date

@@ -130,10 +130,22 @@ these rules, and states them where they apply:
 
 - **Never install software.** When a tool is missing, `## Prerequisites` gives the install
   command for the user to run; the agent does not run `sudo apt`, `conda` or `pip` itself.
+- **Keep dependencies specific to the operation.** Reuse a compatible existing environment.
+  Separate the base route from optional formats, rendering and workflow stages; give only
+  the missing packages for the selected route. Do not require every tool in a family or
+  offer an all-extras install by default. Preserve required validation checks and keep the
+  skill README and family dependency table consistent with `## Prerequisites`. See
+  [runtime dependencies](docs/dependencies.md); skill instructions stay self-contained.
 - **No interactive commands.** Do not run a command that waits for input (a login, a setup
   wizard); ask the user to run it.
 - **Discover before querying.** Take layer names, field names and CRSs from the service or
   file metadata, not from memory.
+- **Keep CRS handling configurable.** Preserve a suitable existing or user-requested CRS.
+  Lambert-93 (EPSG:2154) is a fallback for suitable metropolitan-France tasks, never an
+  inferred source CRS or a mandatory intermediate. Distinguish source, analysis, service
+  and delivery CRSs; inspect units and area of use. Examples must label their CRS choices,
+  accept other valid definitions (including WKT without an EPSG code), and retain genuine
+  format/service and measurement constraints. See [CRS handling](docs/crs-handling.md).
 - **Validate before reporting.** Each `SKILL.md` has a `## Validate the output` section
   saying how to check that a result is non-empty, in the expected CRS and of a plausible
   magnitude.

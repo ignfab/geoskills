@@ -51,14 +51,18 @@ parent traversal or escaping links, and never executes downloaded scripts.
 
 ## Requirements
 
-curl, Python 3, GDAL and an archive reader matching the delivery. Check with
-`curl --version` and `python3 --version`. The user installs missing software; the agent
-does not, and it runs no interactive setup or login command. For Debian/Ubuntu, a user-run
-installation command is:
+curl for transfers and Python 3's standard library for the catalogue helper. Reuse GDAL
+for spatial content checks and only the archive reader matching the selected delivery.
+ZIP checks can use existing Python's `zipfile` module or `unzip`; 7z needs `7zz`.
+Direct GeoTIFF/GeoPackage files do not need an archive reader. Missing spatial/archive
+checks must be reported; a downloaded file alone is not a validated dataset.
 
-```bash
-sudo apt install curl python3 gdal-bin unzip
-```
+Check the required tools with `curl --version`, `python3 --version` and, for spatial checks, `ogrinfo --version`/`gdalinfo --version`. No interactive setup or login is run.
+
+User-run Debian/Ubuntu commands, only when the corresponding stage needs a missing tool:
+`sudo apt install curl`, `sudo apt install python3`, `sudo apt install gdal-bin`,
+`sudo apt install unzip` or `sudo apt install 7zip` (recent releases).
+The agent never installs software itself.
 
 For 7z archives, the corresponding user-run package is `7zip` on recent Debian/Ubuntu.
 The service is the Download API at `https://data.geopf.fr/telechargement/capabilities`;

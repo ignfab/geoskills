@@ -11,10 +11,15 @@ selects packages; it does not clip their contents to that polygon.
 
 ## Prerequisites
 
-Check `curl --version` and `python3 --version`; inspect downloaded geodata with existing
-GDAL tools and archives with an appropriate existing reader. If missing, give the user
-`sudo apt install curl python3 gdal-bin unzip` (Debian/Ubuntu; ZIP reader) to run.
-For 7z archives, the corresponding user-run package is `7zip` on recent Debian/Ubuntu.
+Check `curl --version` for transfers and Python 3 for the standard-library feed helper.
+Only the selected archive format needs a reader: ZIP can use existing Python
+(`python3 -m zipfile -t package.zip.part`) or `unzip`; 7z uses `7zz`.
+Reuse GDAL for the downloaded layers/tiles' spatial checks; catalogue discovery does not
+need it. If missing, give the user only the stage's Debian/Ubuntu command:
+`sudo apt install curl`, `sudo apt install python3`, `sudo apt install gdal-bin`,
+`sudo apt install unzip` or `sudo apt install 7zip` (recent releases).
+Do not require archive tools for a direct GeoTIFF/GeoPackage. Report pending content
+checks if a reader is unavailable; a successful transfer alone is not validated geodata.
 **Never install software yourself.** Do not launch interactive setup or login commands.
 
 ## Discover before downloading

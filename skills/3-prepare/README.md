@@ -28,13 +28,16 @@ geometry quality, so that the next step works on consistent inputs.
 
 ## What they need
 
-| Skill | Local tools | Network |
-| --- | --- | --- |
-| `geodata-intake` | GDAL, Python 3 | None |
-| `crs-reprojection-france` | GDAL and PROJ command-line tools, or pyproj; the IGN PROJ grids for accurate NTF and vertical transformations | None |
-| `gdal-vector-processing` | GDAL ≥ 3.4 (≥ 3.7 for `ogrinfo -json`) | None |
-| `gdal-raster-processing` | GDAL ≥ 3.1 (≥ 3.12 for `gdal raster zonal-stats`) | None, except for remote rasters |
-| `vector-data-quality` | GeoPandas ≥ 1.0 and Shapely ≥ 2.0; GDAL optional | None |
+Reuse existing tools and choose the route for the requested operation. Installing this
+family does not require all routes; see the [dependency guide](../../docs/dependencies.md).
+
+| Skill | Base route | Conditional additions | Network |
+| --- | --- | --- | --- |
+| `geodata-intake` | GDAL CLI for vector/raster metadata; standard-library Python for CSV/JSON | Reader matching any archive that must be opened; CSV-only inspection needs no GDAL | None |
+| `crs-reprojection-france` | GDAL for files, PROJ CLI or pyproj for point coordinates | Only the selected transformation's missing grids; operation inspection with projinfo or pyproj | Only to fetch a required missing grid |
+| `gdal-vector-processing` | GDAL native CLI and the requested vector drivers | Arrow/Parquet plugin only for GeoParquet; newer versions only for chosen commands | None |
+| `gdal-raster-processing` | GDAL CLI and requested raster drivers | Matching Python bindings for Python utilities/full COG validation; newer GDAL for zonal stats | None, except for remote rasters |
+| `vector-data-quality` | GeoPandas/Shapely or the relevant GDAL CLI recipe | Higher GeoPandas/Shapely versions only for coverage/advanced repair; no need for both routes | None |
 
 ## Also relevant
 

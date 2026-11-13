@@ -30,14 +30,20 @@ areas) are in [4. Analyze and derive](../4-analyze/README.md).
 
 ## What they need
 
-| Skill | Local tools | Network |
-| --- | --- | --- |
-| `geopf-file-download` | `curl`, Python 3, GDAL, an archive reader (`unzip`, `7z`) | Géoplateforme Download API |
-| `geopf-wfs-download` | GDAL with WFS support and the requested output driver, `curl` | Géoplateforme WFS |
-| `geopf-raster-download` | GDAL with the WMTS and WMS drivers | Géoplateforme WMTS and WMS-R |
-| `geoserver-cql-filter` | None to write a filter; `curl` to send it | The GeoServer you query |
-| `apicarto-query` | `curl`, Python 3; GDAL to convert and check results | API Carto; a key only for the wine appellation module (`aoc`) |
-| `geopf-geocoding` | `curl`; Python 3 for the helpers | Géoplateforme geocoding API; none to review existing results |
+Reuse existing tools and check only the selected operation. Installing this family does
+not require every tool below; see the [dependency guide](../../docs/dependencies.md).
+
+| Skill | Base route | Conditional additions | Network |
+| --- | --- | --- | --- |
+| `apicarto-query` | Python 3 standard library for pagination; curl for manual requests | GDAL for the documented spatial validation/conversion | API Carto; a key only for the wine appellation module (`aoc`) |
+| `geopf-file-download` | curl and standard-library Python feed inspection | Reader matching the archive (Python can test ZIP); GDAL for spatial content checks | Géoplateforme Download API |
+| `geopf-geocoding` | HTTP client; curl for examples | Standard-library Python for CSV helpers; jq or existing Python for JSON; GDAL for conversion | Géoplateforme geocoding API; none to review existing results |
+| `geopf-raster-download` | GDAL CLI with the requested WMS/WMTS support | Only missing drivers for the selected input/output formats | Géoplateforme WMTS and WMS-R |
+| `geopf-wfs-download` | GDAL CLI with WFS and output driver; curl for discovery | Standard-library Python for the GeoPackage audit; Arrow/Parquet driver only for GeoParquet | Géoplateforme WFS |
+| `geoserver-cql-filter` | Service metadata to compose a filter; no local GeoServer | HTTP client for requests; downstream extraction tool for the requested delivery | The GeoServer you query |
+
+A transfer can succeed before spatial validation is possible. Report outstanding checks;
+do not declare the dataset validated just because an optional later stage was skipped.
 
 The requests documented by these skills use public endpoints without credentials; only the
 API Carto `aoc` module needs a key. Some other Géoplateforme APIs (extraction, standards

@@ -6,11 +6,12 @@
 > Utilise les métadonnées de `data/README.md`. Fournis un PNG de 1 400 × 1 000 pixels et
 > un SVG, avec un titre, la source et une échelle de couleur du champ population en
 > habitants fictifs. Vise moins de 2 Mo par fichier et indique les tailles réelles.
+> Utilise le système de coordonnées UTM 31N (EPSG:32631) pour cette illustration.
 
 **Expected skill:** `map-illustration`.
 
 **Checks:**
-- [ ] Uses existing GeoPandas/Matplotlib and a justified display CRS, without installing QGIS.
+- [ ] Uses existing GeoPandas/Matplotlib and the requested EPSG:32631 display CRS, without forcing Lambert-93 or installing QGIS.
 - [ ] Preserves all three synthetic areas; source population range 10–30 is not a real-world claim.
 - [ ] Actual PNG/SVG reopened and visually inspected; title, units and source readable.
 - [ ] PNG dimensions checked, actual bytes reported, sources unchanged; no unrequested HTML or tiles.

@@ -26,10 +26,16 @@ skills remain independently useful for narrower requests.
 
 ## What they need
 
-| Skill | Local tools | Network |
-| --- | --- | --- |
-| `municipality-building-profile` | GeoPandas ≥ 1.0, Shapely ≥ 2, Pyogrio; GDAL and `curl` for online extraction; PyQGIS only for a QGIS project | Géoplateforme WFS, only when data is extracted online |
-| `terrain-elevation-screening` | GDAL ≥ 3.3 with matching Python bindings and NumPy (`gdaldem`, `gdal_calc.py`, `gdal_polygonize.py`); `curl` for online discovery | Géoplateforme services, only when the DEM is discovered online |
+Check only the workflow stages that will run; referenced skills are not a requirement to
+install their entire families. See the [dependency guide](../../docs/dependencies.md).
+
+| Skill | Base route | Conditional additions | Network |
+| --- | --- | --- | --- |
+| `municipality-building-profile` | GeoPandas ≥ 1.0 with Shapely/Pyogrio for the analytic bundle | GDAL + curl for online extraction; existing QGIS/PyQGIS only for a requested project | Géoplateforme WFS, only when data is extracted online |
+| `terrain-elevation-screening` | GDAL ≥ 3.3, matching Python bindings/utilities and NumPy | curl for online acquisition; existing QGIS/PyQGIS only for a requested map/project | Géoplateforme services, only when the DEM is discovered online |
+
+Local inputs avoid acquisition dependencies. Missing optional QGIS leaves the analytic
+bundle usable; report the requested cartographic delivery as outstanding if it cannot run.
 
 ## Further workflow candidates
 

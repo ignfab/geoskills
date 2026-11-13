@@ -57,14 +57,16 @@ the wrong CRS.
 ## Requirements
 
 GDAL 3.4 or later (`sudo apt install gdal-bin`, or
-`conda install -c conda-forge gdal libgdal-arrow-parquet`). `ogrinfo -json` needs
-GDAL ≥ 3.7, and the optional `gdal vector` commands GDAL ≥ 3.12. GeoParquet needs a GDAL
-built with Arrow/Parquet support. Check with `ogrinfo --version` and `ogrinfo --formats`.
-The user installs missing software; the agent does not.
+`conda install -c conda-forge libgdal-core` for native CLI tools). `ogrinfo -json` needs
+GDAL ≥ 3.7, and the optional `gdal vector` commands GDAL ≥ 3.12. Check existing versions
+and drivers before selecting a recipe.
 
-With GDAL 3.13.0 to 3.13.3, `-where` combined with `-select` on a GeoPackage source keeps
-every field: check the fields of the output. The skill works on local files and needs no
-network service or API key.
+Only GeoParquet needs Arrow/Parquet support: if the driver is absent in the selected
+Conda environment, the user can add `conda install -c conda-forge libgdal-arrow-parquet`.
+GeoPackage, GeoJSON and Shapefile workflows do not need that plugin, Python's PyArrow
+or GDAL Python bindings. The user installs missing software; the agent does not.
+
+Check with `ogrinfo --version` and `ogrinfo --formats`. With GDAL 3.13.0 to 3.13.3, `-where` combined with `-select` on a GeoPackage source keeps every field: check the fields of the output. Local processing needs no network service or API key.
 
 ## Installation
 

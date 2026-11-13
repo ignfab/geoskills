@@ -39,7 +39,7 @@ No inhabitants, dwellings, floor areas or volumes are inferred. No multi-municip
 allocation, automatic geometry repair or population redistribution is included.
 
 - `profile.gpkg` holds the `municipality` (one feature with its indicators), clipped
-  `buildings` and union `footprint` layers in the declared metric CRS. `qgis-project.json`
+  `buildings` and union `footprint` layers in the declared analysis CRS with m² attributes. `qgis-project.json`
   is a manifest for `qgis-project-builder`, not a QGIS project.
 - Indicators: municipality area, building count, union footprint area, observed footprint
   share, overlap excess, unweighted height summary (min, mean, median, quartiles, max) and
@@ -55,7 +55,11 @@ allocation, automatic geometry repair or population redistribution is included.
 
 ## Requirements
 
-- GeoPandas ≥ 1.0, Shapely ≥ 2 and Pyogrio. Check with
+The manifest selects the analysis CRS. Any suitable projected CRS with known compatible
+linear units is accepted; reported areas are converted to m². Lambert-93 is a conditional
+metropolitan-France default, not a required input/output CRS.
+
+- Python 3.10+, GeoPandas ≥ 1.0, Shapely ≥ 2 and Pyogrio. Check with
   `python3 -c "import geopandas, pandas, shapely, pyogrio; print(geopandas.__version__)"`.
   The user can prepare an environment with `python3 -m pip install 'geopandas>=1.0,<2' pyogrio`.
 - Online acquisition also needs GDAL/OGR (`ogrinfo`, `ogr2ogr`) and curl
@@ -114,7 +118,7 @@ Each remains independently installable.
 - [`geodata-intake`](../../3-prepare/geodata-intake/README.md) and
   [`vector-data-quality`](../../3-prepare/vector-data-quality/README.md) inspect inputs;
   [`crs-reprojection-france`](../../3-prepare/crs-reprojection-france/README.md) helps choose
-  the projected metre CRS.
+  a suitable projected analysis CRS and units.
 - [`bdtopo-schema-guide`](../../1-discover/bdtopo-schema-guide/README.md) explains supported
   versions and fields, including height special values.
 - [`geospatial-descriptive-statistics`](../../4-analyze/geospatial-descriptive-statistics/README.md)

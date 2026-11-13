@@ -51,14 +51,14 @@ operation, without changing the source.
 
 ## Requirements
 
-GDAL/OGR (`ogrinfo`, `gdalinfo`) and Python 3. Check them with `ogrinfo --version`,
-`gdalinfo --version` and `python3 --version`. The user installs missing software; the agent
-does not. User-run installation commands:
+GDAL/OGR CLI for vector/raster metadata and Python 3's standard library for CSV/JSON
+recipes. CSV-only inspection needs no GDAL. No GeoPandas, QGIS or GDAL Python bindings
+are required. Reuse existing tools. If absent, user-run Debian/Ubuntu commands are
+`sudo apt install gdal-bin` or `sudo apt install python3`, only for the selected inputs.
+For Conda, the corresponding packages are `libgdal-core` and `python`.
+The agent never installs software itself.
 
-```bash
-sudo apt install gdal-bin python3                # Debian/Ubuntu
-conda install -c conda-forge gdal python         # conda
-```
+Check only the relevant tools with `ogrinfo --version`, `gdalinfo --version` and `python3 --version`.
 
 The skill works on local files and needs no network service or API key. It does not fetch
 remote VRT sources or open database connections merely to inventory local files.

@@ -30,6 +30,9 @@ without actually opening it in QGIS/PyQGIS.
    order, groups, visibility, project CRS and optional extent **in that CRS**. Choose an
    unused project path. For a movable bundle, copy required inputs into its directory
    without changing originals and request `require_portable: true`.
+   Honour a suitable requested/existing project CRS, including custom WKT. EPSG:2154 is
+   only a metropolitan-France fallback; layers retain their own source CRSs. The helper
+   records full WKT so a missing authority ID cannot hide a changed custom CRS.
 3. Resolve the [helper](scripts/build_project.py) relative to this skill directory:
 
 ```bash

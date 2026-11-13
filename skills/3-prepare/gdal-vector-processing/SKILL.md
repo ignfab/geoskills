@@ -19,11 +19,19 @@ Process local vector files with the GDAL command-line tools:
 - Check that a driver is available before using it: `ogrinfo --formats`. GeoParquet needs a
   GDAL built with Arrow/Parquet support.
 - Install: `sudo apt install gdal-bin` (Debian/Ubuntu) or
-  `conda install -c conda-forge gdal libgdal-arrow-parquet`.
+  `conda install -c conda-forge libgdal-core` for the native CLI tools.
+- Only a requested GeoParquet operation with a missing driver needs the Conda plugin
+  `conda install -c conda-forge libgdal-arrow-parquet`. Python's `pyarrow` does not add
+  this driver to GDAL. Do not add it for GeoPackage, GeoJSON or Shapefile operations.
 - If GDAL is missing, give the user the install command and let them run it; **never
   install software yourself**.
 
 ## Inspect first
+
+Preserve the source CRS for conversion/filtering unless the user or output format needs
+another one. Use the requested target when suitable; EPSG:2154 is only a default for
+suitable metropolitan-France tasks, not an intermediate step. Accept full WKT when no
+EPSG code exists. Bounds and tolerances must use their declared CRS units.
 
 Read the layer names, geometry type, feature count, extent, CRS, geometry column and
 fields before choosing options. For a Shapefile, also read the encoding metadata:
@@ -115,9 +123,10 @@ ogrinfo -so -al projet.gpkg
 
 - The feature count equals the source count, or the count expected after the filter or
   clip; every layer that should remain in the GeoPackage is still listed.
-- The geometry type, `ID["EPSG",…]` and extent match the request. In Lambert-93, a
+- The geometry type, full CRS definition (authority code if present) and extent match the
+  request. Use ranges appropriate to that CRS and territory. For Lambert-93 only, a
   metropolitan extent lies roughly between X 100 000–1 250 000 m and Y 6 000 000–7 200 000 m;
-  an extent of a few units means degrees were written as metres.
+  small extent alone does not prove incorrect units: compare actual bounds and source evidence.
 - Field names and types are the expected ones: codes stay strings with their leading zeros,
   and no name was truncated without a reported mapping.
 - Conversion warnings were read: invalid UTF-8, laundered field names, or a geometry type

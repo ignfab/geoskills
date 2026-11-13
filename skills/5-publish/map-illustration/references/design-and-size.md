@@ -29,8 +29,10 @@ that large polygons' absolute counts represent density. State units and class bo
 missing values need a separate treatment from zero. The helper uses continuous Viridis,
 with missing values in grey. It does not invent categories or meaningful thresholds.
 
-Use a justified display CRS. A projected metre CRS supports a local scale bar; EPSG:3857
-is a web display projection, not a general measurement CRS. Do not add a decorative north
+Use a justified display CRS, preserving a suitable requested/input/project CRS. A projected
+CRS supports a grid-distance scale bar after converting its linear units; geographic maps
+need a geodesic scale or no bar. EPSG:3857 is a web display projection, not a general
+measurement CRS. Do not add a decorative north
 arrow that misrepresents grid versus true north. A title, readable legend and source/date
 usually matter more than ornamental frames, graticules or a detailed basemap.
 

@@ -109,7 +109,9 @@ In September 2026, the box returned 2,634 buildings, of which 1,744 intersect th
 - `-lco GEOMETRY_NAME=geom` gives a predictable column name for SQL. Without it, the
   column keeps the WFS name (`geometrie`).
 
-Check the boundary before using it (area in km², computed in Lambert-93):
+Check the boundary before using it. This Saint-Mandé example computes km² in Lambert-93;
+for another territory/request choose a suitable analysis CRS, verify its linear units and
+convert area accordingly. The delivery CRS does not have to match this calculation CRS:
 
 ```bash
 ogrinfo zone.gpkg -dialect SQLite -sql "SELECT sum(ST_Area(ST_Transform(geom, 2154)))/1e6 AS km2 FROM zone"

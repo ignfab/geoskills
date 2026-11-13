@@ -94,7 +94,7 @@ The linked skill guides define the full workflows and supported formats.
 
 | Output | Additional evidence |
 | --- | --- |
-| [Municipal building portrait](../skills/6-workflows/municipality-building-profile/README.md) | Declared metric CRS; selected, touch-only and outside objects reconciled with the input count; union area not above the summed clipped areas or the municipality area; coverage between 0 and 100 %; completeness status, field semantics, cross-boundary identifiers and input hashes. A partial extract stays partial after successful file validation. |
+| [Municipal building portrait](../skills/6-workflows/municipality-building-profile/README.md) | Declared projected analysis CRS and linear units, with areas converted to m²; selected, touch-only and outside objects reconciled with the input count; union area not above the summed clipped areas or the municipality area; coverage between 0 and 100 %; completeness status, field semantics, cross-boundary identifiers and input hashes. A partial extract stays partial after successful file validation. |
 | [Terrain screening](../skills/6-workflows/terrain-elevation-screening/README.md) | Projected CRS, identical raster grids, AOI extent, metre elevations, slope convention (degrees or percent) and mask values (`1` selected, `0` rejected, `255` unknown or outside); selected, rejected and unknown cells reconciled with the AOI cell count; polygons inside the AOI with holes kept; source, edition, vertical reference, thresholds and coverage. An empty selection with coverage is valid; an all-nodata AOI is insufficient data. Never a statement that a site is safe or suitable for landing. |
 
 A saved QGZ does not embed its source data. Relative paths alone do not establish that a

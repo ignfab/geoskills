@@ -36,8 +36,9 @@ mixes analysis steps; for one-shot conversions and downloads the CLI is often en
   fields. An empty result is investigated, not reported as a successful analysis.
 - For spatial joins: unmatched features and multiple matches per source feature are
   reported, and a source identifier is preserved before joining (a left join can add rows).
-- Areas, buffers and distances computed in a projected CRS (EPSG:2154 in mainland France,
-  the local projection overseas), with magnitudes compared with the source.
+- Areas, buffers and distances computed in a suitable projected CRS with explicit unit
+  conversions, with magnitudes compared with the source. Preserve a suitable requested or
+  existing CRS; EPSG:2154 is a fallback for applicable mainland-France tasks.
 - For zonal statistics: valid pixel counts and plausible values checked, results attached
   by position so repeated indices cannot multiply rows.
 - A report of source and edition/access date when known, output path and format, CRS and
@@ -49,13 +50,21 @@ mixes analysis steps; for one-shot conversions and downloads the CLI is often en
 
 ## Requirements
 
-- Python with `geopandas` ≥ 1.0 (`pyogrio` I/O engine included).
-- `pyarrow` for GeoParquet and `rasterstats` for zonal statistics.
-- Install command for the user to run: `pip install geopandas pyarrow rasterstats`, or
-  `conda install -c conda-forge geopandas pyarrow rasterstats`. The agent never installs
-  software itself; it gives you the command.
-- Network: the Géoplateforme WFS (`https://data.geopf.fr/wfs/ows`), only when reading WFS
-  data directly. Local files need no network.
+Reuse an existing Python environment with GeoPandas ≥ 1.0, Pyogrio and pyproj for vector
+I/O, reprojection, joins, overlay and buffers. If absent, the user can run
+`python3 -m pip install 'geopandas>=1.0,<2'`.
+
+Add `pyarrow` only for GeoParquet (`python3 -m pip install pyarrow`), or `rasterstats`
+only for raster zonal statistics (`python3 -m pip install rasterstats`). Neither is a
+prerequisite for ordinary vector processing; plotting libraries are also optional.
+
+For Conda users, `conda install -c conda-forge 'geopandas-base>=1.0,<2' pyogrio pyproj`
+provides the vector route without the plotting extras of the Conda `geopandas` package.
+Choose the command matching the existing environment; do not run both Pip and Conda
+recipes. The agent never installs software itself. See the
+[dependency guide](../../../docs/dependencies.md) for shared environments and package sources.
+
+Network: the Géoplateforme WFS (`https://data.geopf.fr/wfs/ows`) only when reading WFS data directly. Local files need no network.
 
 ## Installation
 
@@ -73,11 +82,15 @@ The whole family installs with `npx skills add https://github.com/ignfab/geoskil
 ```python
 import geopandas as gpd
 
-communes = gpd.read_file("communes.gpkg").to_crs(2154)
-points = gpd.read_file("adresses.gpkg").to_crs(2154)
+communes = gpd.read_file("communes.gpkg")  # inspect its declared CRS before joining
+points = gpd.read_file("adresses.gpkg").to_crs(communes.crs)
 joined = gpd.sjoin(points, communes[["code_insee", "geometry"]], predicate="within")
 joined.to_parquet("adresses_communes.parquet")
 ```
+
+The join preserves the zone CRS; it does not require Lambert-93. Measurements use a
+suitable analysis CRS with explicit unit conversions. Zonal statistics align vectors to
+the raster's actual CRS. See [CRS handling](../../../docs/crs-handling.md).
 
 ## Contents
 

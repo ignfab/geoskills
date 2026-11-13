@@ -45,13 +45,16 @@ FeatureCollection. Results describe modeled network travel, not live traffic.
 
 ## Requirements
 
-`curl` and Python 3; GDAL or GeoPandas to inspect and export the result. Check with
-`curl --version` and `python3 --version`. The user installs missing software; the agent
-does not. For Debian/Ubuntu, a user-run installation command is:
+curl for requests and Python 3's standard library for response/GeoJSON handling.
+Final spatial validation needs either existing GDAL or GeoPandas, not both; discovery
+and raw responses do not. Missing spatial checks must remain explicit.
 
-```bash
-sudo apt install curl python3 gdal-bin
-```
+Check the request tools with `curl --version` and `python3 --version`; check the selected GIS tool only for the spatial stage.
+
+If absent, the user can install only the needed tool: `sudo apt install curl`,
+`sudo apt install python3`, `sudo apt install gdal-bin` (Debian/Ubuntu), or
+`python3 -m pip install 'geopandas>=1.0,<2'` for the Python GIS route.
+The agent never installs software itself.
 
 Network: the Géoplateforme Navigation API (`https://data.geopf.fr/navigation/`); the
 documented requests use no API key. Requests run in the foreground, transient retries are

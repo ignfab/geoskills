@@ -15,19 +15,30 @@ Use GeoPandas when the workflow is scripted, iterative or mixes analysis steps.
 
 ## Prerequisites
 
-- **geopandas** ≥ 1.0 (`pyogrio` I/O engine included). For GeoParquet: **pyarrow**.
-  For zonal statistics: **rasterstats**.
+Check the existing Python environment and only the operation's dependencies:
 
-Install: `pip install geopandas pyarrow rasterstats` or
-`conda install -c conda-forge geopandas pyarrow rasterstats`.
-If a package is missing, give the user the install command and let them run it; do not
-install software or run interactive setup yourself.
+| Operation | Required packages | User-run command if missing |
+| --- | --- | --- |
+| Vector I/O, reprojection, joins, overlay, buffers | GeoPandas ≥ 1.0, with Pyogrio and pyproj | `python3 -m pip install 'geopandas>=1.0,<2'` |
+| GeoParquet I/O | Also PyArrow | `python3 -m pip install pyarrow` |
+| Raster zonal statistics | Also rasterstats | `python3 -m pip install rasterstats` |
+
+For an existing Conda environment, the vector base is
+`conda install -c conda-forge 'geopandas-base>=1.0,<2' pyogrio pyproj`;
+add `pyarrow` or `rasterstats` only for their operations. The Conda `geopandas` package
+also brings plotting extras. Use one environment and package-manager route, not both.
+Never install software or run interactive setup yourself; give the user only the missing
+packages. Do not require raster or plotting libraries for vector operations.
 
 ## Inspect first
 
 List layers with `gpd.list_layers(path)`, then read the intended layer explicitly. Inspect
 `gdf.columns`, `gdf.crs`, `gdf.geom_type` and `gdf.total_bounds` before choosing fields or a
 target CRS. Confirm a missing CRS from source metadata before using `set_crs`.
+Preserve a suitable existing/requested CRS; EPSG:2154 is only a fallback for suitable
+metropolitan-France calculations. Accept custom CRS definitions without an EPSG code.
+Use a common CRS for combined layers, the raster's actual CRS for zonal statistics, and
+an appropriate projected/geodesic method for measurements. Read units instead of assuming metres.
 Discover WFS layer names, fields and CRSs from GetCapabilities and DescribeFeatureType
 before adapting the service example below.
 
@@ -37,9 +48,9 @@ before adapting the service example below.
 import geopandas as gpd
 
 gdf = gpd.read_file("communes.gpkg")          # GPKG, Shapefile, GeoJSON, ...
-gdf = gdf.to_crs(2154)                        # reproject to Lambert-93
-gdf.to_file("communes_l93.gpkg")              # write GPKG
-gdf.to_parquet("communes_l93.parquet")        # write GeoParquet
+gdf.to_file("communes_copy.gpkg")             # preserve the declared source CRS
+# If requested: gdf = gdf.to_crs(target_crs), selected from metadata and task needs.
+# Optional GeoParquet output (requires pyarrow): gdf.to_parquet("communes.parquet")
 ```
 
 Read a Géoplateforme WFS layer directly (always bound the request with `COUNT` or a
@@ -61,9 +72,9 @@ joined = gpd.sjoin(pts, communes[["code_insee", "geometry"]],
                    predicate="within", how="left")
 ```
 
-**Always work in a single CRS**, and use a **projected** CRS (EPSG:2154 in mainland
-France) for buffers, areas and distances — in EPSG:4326 they come out in degrees and
-GeoPandas emits a `Geometry is in a geographic CRS` warning.
+For planar buffers, areas and distances, use a suitable **projected** analysis CRS and
+convert its linear/squared units as needed. Geographic degrees are not metric distances.
+Attribute operations and local topological joins do not require a Lambert-93 conversion.
 
 ## Validate the output
 

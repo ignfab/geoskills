@@ -98,18 +98,22 @@ own; related skills complement it but are not prerequisites.
 
 ### 2. Check the tools
 
-Installing a skill does not install GDAL, GeoPandas, QGIS or Mapshaper. Most skills rely
-on one of three toolsets; [Tools and services each skill needs](#tools-and-services-each-skill-needs)
-gives the detail per skill.
+Installing a skill does not install GDAL, GeoPandas, QGIS or Mapshaper. Check only the
+tools for the requested operation and reuse an existing compatible environment. The
+commands below are alternatives, not a bundle to install. See the
+[dependency guide](dependencies.md) and
+[Tools and services each skill needs](#tools-and-services-each-skill-needs).
 
 | Toolset | Check | Install (you run it) |
 | --- | --- | --- |
-| GDAL and PROJ command-line tools | `gdalinfo --version`, `ogrinfo --version`, `projinfo EPSG:2154` | `sudo apt install gdal-bin proj-bin` (Debian/Ubuntu) or `conda install -c conda-forge gdal` |
-| Python with GeoPandas | `python3 -c "import geopandas; print(geopandas.__version__)"` | `python3 -m pip install 'geopandas>=1.1' 'shapely>=2.1' pyarrow rasterstats` or `conda install -c conda-forge geopandas pyarrow rasterstats` |
+| GDAL and PROJ command-line tools | `gdalinfo --version`, `ogrinfo --version`, `projinfo EPSG:4326`, as needed | `sudo apt install gdal-bin` or `sudo apt install proj-bin` (Debian/Ubuntu); Conda alternatives: `conda install -c conda-forge libgdal-core` or `conda install -c conda-forge proj` |
+| Python with GeoPandas | `python3 -c "import geopandas; print(geopandas.__version__)"` | `python3 -m pip install 'geopandas>=1.0,<2'` or `conda install -c conda-forge 'geopandas-base>=1.0,<2' pyogrio pyproj` |
 | QGIS with its Python bindings (PyQGIS) | `python3 -c "from qgis.core import Qgis; print(Qgis.QGIS_VERSION)"` | `sudo apt install qgis python3-qgis` on configured Debian/Ubuntu repositories |
 
 The service skills also use `curl` and Python 3. `mapshaper-simplify` needs the Mapshaper
 CLI: `npm install --global mapshaper@0.7.83`, with Node.js 20.11 or later.
+Add format drivers, transformation grids, raster statistics or rendering packages only
+when the selected operation needs them. CSV summaries can use pandas without GeoPandas.
 
 ### 3. Ask for an outcome
 
@@ -261,27 +265,30 @@ which spatial predicate is used, which denominator a ratio relies on.
 
 ## Tools and services each skill needs
 
+The [family dependency tables](dependencies.md#by-family) distinguish base routes from
+conditional additions. Tools listed as alternatives are not all required together.
+
 | Skill | Local tools | Network |
 | --- | --- | --- |
 | `geopf-service-selection` | None; `curl` for optional discovery requests | Official guides and service metadata |
 | `bdtopo-schema-guide` | None; Python 3 (standard library) for the optional lookup | None; official sources can be checked online |
-| `geopf-file-download` | `curl`, Python 3, GDAL, an archive reader (`unzip`, `7z`) | Géoplateforme Download API |
-| `geopf-wfs-download` | GDAL with WFS support and the requested output driver, `curl`; Python 3 for the optional export check | Géoplateforme WFS |
+| `geopf-file-download` | `curl`, standard-library Python; an archive reader matching the format (Python can test ZIP); GDAL for spatial validation | Géoplateforme Download API |
+| `geopf-wfs-download` | GDAL with WFS support and the requested output driver, `curl`; standard-library Python for the GeoPackage audit | Géoplateforme WFS |
 | `geopf-raster-download` | GDAL with the WMTS and WMS drivers | Géoplateforme WMTS and WMS-R |
 | `geoserver-cql-filter` | None to write a filter; `curl` to send it | The GeoServer you query |
 | `apicarto-query` | `curl`, Python 3; GDAL to convert and check results | API Carto; a key only for the wine appellation module (`aoc`) |
 | `geopf-geocoding` | `curl`; Python 3 for the helpers; `jq` and GDAL optional | Géoplateforme geocoding API; none to review an existing result |
-| `geodata-intake` | GDAL, Python 3 | None |
-| `crs-reprojection-france` | GDAL and PROJ command-line tools, or pyproj | None; accurate NTF and vertical transformations need the IGN PROJ grids (`projsync --source-id fr_ign`) |
+| `geodata-intake` | Reader matching the input: GDAL for GIS files or standard-library Python for CSV/JSON; archive reader only for archives | None |
+| `crs-reprojection-france` | GDAL, PROJ command-line tools or pyproj, according to the operation | Only for online metadata or a required missing transformation grid; fetch its exact filename |
 | `gdal-vector-processing` | GDAL ≥ 3.4 (≥ 3.7 for `ogrinfo -json`; Arrow/Parquet support for GeoParquet) | None |
-| `gdal-raster-processing` | GDAL ≥ 3.1 (≥ 3.12 for `gdal raster zonal-stats`, ≥ 3.13 for COG validation) | None, except for remote rasters |
+| `gdal-raster-processing` | GDAL CLI ≥ 3.1 (≥ 3.12 for `gdal raster zonal-stats`, ≥ 3.13 for COG validation); matching Python bindings/utilities only for recipes using them | None, except for remote rasters |
 | `vector-data-quality` | GeoPandas ≥ 1.0 and Shapely ≥ 2.0 (≥ 1.1 and ≥ 2.1 for coverage checks); GDAL optional (≥ 3.12 for `gdal vector check-geometry`) | None |
 | `geopandas-vector-analysis` | GeoPandas ≥ 1.0; pyarrow for GeoParquet; rasterstats for zonal statistics | None, except to read WFS data |
 | `geopf-altimetry` | `curl`, Python 3 | Géoplateforme Elevation API |
-| `geopf-routing` | `curl`, Python 3; GDAL or GeoPandas to export | Géoplateforme Navigation API |
+| `geopf-routing` | `curl`, standard-library Python for JSON; GDAL or GeoPandas for spatial checks or format conversion | Géoplateforme Navigation API |
 | `geospatial-descriptive-statistics` | pandas; GeoPandas and Shapely for vector inputs | None |
 | `spatial-aggregation` | GeoPandas ≥ 1.0, pandas, Shapely | None |
-| `map-illustration` | Depends on the route: GeoPandas ≥ 1.0 and Matplotlib ≥ 3.7 (static image), Folium ≥ 0.16 (HTML), rasterio (raster) or PyQGIS 3.34–3.x (existing QGIS map) | None for the files; an HTML map may load browser resources or tiles |
+| `map-illustration` | GeoPandas ≥ 1.0 with Matplotlib ≥ 3.7 for static vectors, or with Folium ≥ 0.16 for HTML (Matplotlib also for numeric colours); Rasterio/Matplotlib for raster previews; existing PyQGIS 3.34–3.x for QGIS maps | None for local files; HTML loads external browser resources, and QGIS projects may use remote providers |
 | `mapshaper-simplify` | Mapshaper CLI (0.7.83 tested) and Node.js ≥ 20.11 | None; the [Mapshaper web application](https://mapshaper.org/) is a manual alternative |
 | `qgis-layer-styling` | PyQGIS from QGIS 3.34–3.x | None |
 | `qgis-project-builder` | PyQGIS from QGIS 3.34–3.x | Only for an optional public basemap |
@@ -325,10 +332,12 @@ Quick checks you can run yourself:
 | QGIS project | Open it in QGIS | Every layer present, no missing-source warning |
 | Map image or HTML map | Open it at its intended size, or in a browser | Readable title and legend, expected features, working zoom and tooltips |
 
-In Lambert-93 (EPSG:2154), coordinates are in metres, about 100,000 to 1,250,000 east and
-6,050,000 to 7,110,000 north over mainland France. Values between −180 and 180 mean the
-data is still in longitude and latitude; swapped coordinates usually mean an axis-order
-problem, which `crs-reprojection-france` diagnoses.
+Check coordinates against the declared CRS, units and area of use; coordinate ranges
+alone do not identify a CRS. For example, Lambert-93 (EPSG:2154) uses metres, roughly
+100,000 to 1,250,000 east and 6,050,000 to 7,110,000 north over mainland France.
+Small values can suggest longitude/latitude but require confirmation from metadata or
+control points. Preserve a suitable requested or existing CRS; Lambert-93 is a conditional
+default for applicable metropolitan-France tasks. See [CRS handling](crs-handling.md).
 
 ## Troubleshooting
 
@@ -338,7 +347,7 @@ problem, which `crs-reprojection-france` diagnoses.
 | The agent picks a neighboring skill | The request does not state the expected output clearly | State the output (file, format, indicator) or name the skill; see [Choose a skill](#choose-a-skill) |
 | The agent stops and prints an install command | A required tool is missing; skills never install software | Run the command yourself, or point the agent to an existing environment, then ask again |
 | `gdalinfo --version` fails, for example with an undefined `sqlite3_total_changes64` symbol | A broken GDAL/SQLite installation | Repair it or use a clean environment, such as a conda-forge GDAL |
-| A GDAL driver (GeoParquet, WFS, WMTS) is reported missing | Your GDAL build does not include it | See the requirements in the skill README; for GeoParquet with conda: `conda install -c conda-forge gdal libgdal-arrow-parquet` |
+| A GDAL driver (GeoParquet, WFS, WMTS) is reported missing | Your GDAL build does not include it | See the requirements in the skill README; for a missing GeoParquet driver in an existing Conda GDAL environment: `conda install -c conda-forge libgdal-arrow-parquet` |
 | A Géoplateforme request returns HTTP 5xx or times out | The service is temporarily unavailable, or a proxy blocks the request | Retry later and check the proxy variables; the skills are written to report the failure, not to present a partial result as complete |
 | Accents are garbled after reading a Shapefile | The `.cpg` file is missing and the text is in CP1252 | Ask for `gdal-vector-processing`, which detects and sets the encoding |
 | Points land in the wrong place | Latitude and longitude are swapped, or the source CRS is wrong or missing | Ask for `crs-reprojection-france`, which checks axis order and diagnoses missing projections |
@@ -385,6 +394,8 @@ tests/prompts/             Experimental prompts and the log of their runs
 | [Test guide](../tests/README.md) | The kinds of tests, which ones to run for a given change, what CI runs, how to read the skips, coverage by skill, fixtures and a glossary. |
 | [Fixture metadata](../tests/data/README.md) | Provenance, coordinate systems and intentional traps of the test inputs. |
 | [A/B protocol](../tests/ab-testing.md) | Compare agent behavior with and without the skills, and across models; a protocol is not a completed campaign. |
+| [Runtime dependencies](dependencies.md) | Minimal requirements by family, conditional packages and reuse of existing environments. |
+| [CRS handling](crs-handling.md) | Source, analysis and delivery CRSs; conditional Lambert-93 default, units and custom definitions. |
 | [Experimental prompts](../tests/prompts/README.md) | Catalog and append-only record of exploratory agent runs. |
 
 Before proposing a change, run the validator and the offline tests from the repository

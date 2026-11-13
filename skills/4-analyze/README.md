@@ -33,13 +33,16 @@ not a subset of an existing dataset.
 
 ## What they need
 
-| Skill | Local tools | Network |
-| --- | --- | --- |
-| `geopandas-vector-analysis` | GeoPandas ≥ 1.0; pyarrow for GeoParquet, rasterstats for zonal statistics | None, except to read WFS data |
-| `geopf-altimetry` | `curl`, Python 3 | Géoplateforme Elevation API |
-| `geopf-routing` | `curl`, Python 3; GDAL or GeoPandas to export | Géoplateforme Navigation API |
-| `geospatial-descriptive-statistics` | pandas; GeoPandas and Shapely for vector inputs | None |
-| `spatial-aggregation` | GeoPandas ≥ 1.0, pandas, Shapely | None |
+Choose the service, tabular or spatial route; these do not require a combined environment.
+Reuse installed packages; see the [dependency guide](../../docs/dependencies.md).
+
+| Skill | Base route | Conditional additions | Network |
+| --- | --- | --- | --- |
+| `geopandas-vector-analysis` | GeoPandas with Pyogrio and pyproj for vectors | PyArrow for GeoParquet; rasterstats for raster zonal statistics | None, except to read WFS data |
+| `geopf-altimetry` | curl and Python 3 standard library | Existing GDAL/PROJ or pyproj only for input reprojection | Géoplateforme Elevation API |
+| `geopf-routing` | curl and Python 3 standard library for API responses | Either GDAL or GeoPandas for final spatial validation and metric checks | Géoplateforme Navigation API |
+| `geospatial-descriptive-statistics` | Pandas for CSV summaries | GeoPandas/Shapely for vector inputs and geometry measurements | None |
+| `spatial-aggregation` | GeoPandas with its vector I/O and geometry dependencies | No plotting, raster or QGIS packages for the analytic outputs | None |
 
 ## Also relevant
 

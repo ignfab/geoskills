@@ -23,10 +23,13 @@ models and attribute meanings before choosing fields.
 
 ## What they need
 
-| Skill | Local tools | Network |
-| --- | --- | --- |
-| `geopf-service-selection` | None; `curl` for optional discovery requests | Official guides and service metadata |
-| `bdtopo-schema-guide` | None; Python 3 (standard library) for the optional lookup | None |
+Reuse existing tools and check only the selected operation. Installing this family does
+not install a GIS stack; see the [dependency guide](../../docs/dependencies.md).
+
+| Skill | Base route | Conditional additions | Network |
+| --- | --- | --- | --- |
+| `bdtopo-schema-guide` | Bundled Markdown/JSON; no runtime needed to read it | Python 3 standard library for the lookup helper; HTTP client for current online sources | None |
+| `geopf-service-selection` | Documentation and service metadata; no local GIS runtime | Existing browser/HTTP client for discovery; curl for CLI examples | Official guides and service metadata |
 
 ## Also relevant
 

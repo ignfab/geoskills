@@ -72,6 +72,18 @@ class AggregationTests(unittest.TestCase):
         self.assertEqual(result['count'].tolist(), [2, 1, 0])
         self.assertEqual(result.crs, self.zones.crs)
 
+    def test_overseas_zone_crs_is_preserved_with_geographic_objects(self):
+        from shapely.geometry import Point, box
+        zones = self.gpd.GeoDataFrame({'code': ['974']},
+            geometry=[box(330000, 7650000, 331000, 7651000)], crs=2975)
+        objects = self.gpd.GeoDataFrame({'id': ['inside', 'outside']},
+            geometry=[Point(330500, 7650500), Point(340000, 7650500)], crs=2975).to_crs(4326)
+        result, report = self.mod.aggregate(objects, zones, 'code', object_id='id')
+        self.assertEqual(result.crs.to_epsg(), 2975)
+        self.assertEqual(result['count'].tolist(), [1])
+        self.assertEqual(report['unmatched_ids'], ['outside'])
+        self.assertTrue(result.geometry.geom_equals(zones.geometry).all())
+
     def test_bad_ids_missing_crs_invalid_geometry_and_infinity(self):
         from shapely.geometry import Polygon
         original = self.zones.copy()

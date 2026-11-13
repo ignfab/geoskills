@@ -39,7 +39,8 @@ of scope.
 
 - `render_vector.py` writes to a new directory (an existing one is refused) `map.png` by
   default, plus `map.svg`, `map.pdf` or `map.html` on request. The default canvas is
-  1400 × 1000 pixels at 140 dpi with title, source note and a meter scale bar; `--column`
+  1400 × 1000 pixels at 140 dpi with title and source note, plus a metre scale bar when
+  projected linear units are known (omitted for geographic maps); `--column`
   adds a continuous Viridis scale, with missing values in gray, separate from zero. Its
   `report.json` records features, CRSs, field, units, range, null count, dimensions,
   library versions and file bytes. It does no simplification or statistics.
@@ -60,15 +61,22 @@ of scope.
 
 ## Requirements
 
+For static maps, the vector helper preserves the input CRS unless `--crs` is provided. Projected and
+geographic CRSs are supported: projected linear units are converted for the metre scale
+bar; geographic maps omit that bar. HTML uses longitude/latitude data and a Web Mercator
+view. See [CRS handling](../../../docs/crs-handling.md).
+
 Check only the chosen route. Agents never install software or run interactive setup; when
 a dependency is missing they give the user the command to run.
 
 | Route | Needs | Check | User-run installation |
 | --- | --- | --- | --- |
-| Static vector map | GeoPandas ≥ 1.0, Matplotlib ≥ 3.7, Pillow | `python3 -c "import geopandas, matplotlib, PIL"` | `python3 -m pip install geopandas matplotlib` |
-| Interactive HTML | GeoPandas ≥ 1.0, Folium ≥ 0.16; Matplotlib for numeric colors | `python3 -c "import geopandas, folium"` | `python3 -m pip install geopandas folium` |
+| Static vector map | GeoPandas ≥ 1.0, Matplotlib ≥ 3.7, Pillow | `python3 -c "import geopandas, matplotlib, PIL"` | `python3 -m pip install 'geopandas>=1.0,<2' 'matplotlib>=3.7,<4'` |
+| Interactive HTML | GeoPandas ≥ 1.0, Folium ≥ 0.16; Matplotlib for numeric colors | `python3 -c "import geopandas, folium"` | `python3 -m pip install 'geopandas>=1.0,<2' 'folium>=0.16,<1'` |
 | Existing QGIS map | QGIS/PyQGIS 3.34–3.x and Qt | `python3 -c "from qgis.core import Qgis; print(Qgis.QGIS_VERSION)"` | `sudo apt install qgis python3-qgis` (configured Debian/Ubuntu) |
-| Raster preview | Rasterio, Matplotlib | `python3 -c "import rasterio, matplotlib"` | `python3 -m pip install rasterio matplotlib` |
+| Raster preview | Rasterio, Matplotlib | `python3 -c "import rasterio, matplotlib"` | `python3 -m pip install rasterio 'matplotlib>=3.7,<4'` |
+
+Numeric HTML colours additionally need Matplotlib (`python3 -m pip install 'matplotlib>=3.7,<4'` if missing). Static images do not need Folium, and uniform HTML does not need Matplotlib. QGIS rendering reuses its own environment.
 
 QGIS runs use their own Python environment, with `QT_QPA_PLATFORM=offscreen` when headless.
 Creating the files needs no network service. Opening the HTML fetches Leaflet assets, and
@@ -91,15 +99,16 @@ The whole family installs with `npx skills add https://github.com/ignfab/geoskil
 
 Expected: all three synthetic areas kept, both files reopened and inspected, PNG dimensions
 checked and actual bytes reported, with no unrequested HTML or tiles. The helper call, with
-sample names and CRS replaced by the inspected values:
+sample names replaced by the inspected values:
 
 ```bash
 python3 scripts/render_vector.py input.gpkg output/illustration --layer zones \
-  --crs EPSG:2154 --title 'Study area' --source-note 'Source: supplied data; edition unknown'
+  --title 'Study area' --source-note 'Source: supplied data; edition unknown'
 ```
 
 Add `--column indicator --units 'documented unit'` for the color scale and
-`--formats png svg` for the SVG companion.
+`--formats png svg` for the SVG companion. This preserves the input CRS; add
+`--crs "$DISPLAY_CRS"` only when a different static display CRS has been selected.
 
 ## Contents
 

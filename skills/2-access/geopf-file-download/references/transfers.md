@@ -27,7 +27,8 @@ Keep total retries bounded (two retries), with backoff and `Retry-After` for 429
 
 Compare the final byte count with the whole object's advertised length, not the resumed
 response's remaining length. Check a published checksum using its advertised algorithm.
-Test ZIPs with `unzip -t`, 7z with `7zz t`, or the existing reader appropriate to the format.
+Test ZIPs with existing Python (`python3 -m zipfile -t package.zip.part`, inspect the
+reported result) or `unzip -t`; use `7zz t` for 7z, or the existing reader for the format.
 For a direct GeoTIFF/GeoPackage, inspect it with GDAL instead of treating it as an archive.
 
 List archive members and uncompressed sizes before extracting. Reject absolute paths,
