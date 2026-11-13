@@ -11,6 +11,23 @@ models and attribute meanings before choosing fields.
 | [geopf-service-selection](geopf-service-selection/README.md) | Choose a Géoplateforme API for dataset discovery, maps, vector features, downloads, geocoding and geographic calculations. |
 | [bdtopo-schema-guide](bdtopo-schema-guide/README.md) | Understand versioned BD TOPO building/road classes, field meanings and format mappings using sourced offline references. |
 
+## Choose between them
+
+- To decide which Géoplateforme service answers a need (dataset discovery, map display,
+  vector features, downloads, geocoding or calculations), use `geopf-service-selection`. It explains
+  and recommends; an access or calculation skill then does the work.
+- To understand what a BD TOPO class or field means for a given version, including its
+  special values, use `bdtopo-schema-guide`. It reads bundled, sourced references offline;
+  layer and field identifiers still come from the live service metadata.
+- Both answer before anything is downloaded; neither downloads data.
+
+## What they need
+
+| Skill | Local tools | Network |
+| --- | --- | --- |
+| `geopf-service-selection` | None; `curl` for optional discovery requests | Official guides and service metadata |
+| `bdtopo-schema-guide` | None; Python 3 (standard library) for the optional lookup | None |
+
 ## Also relevant
 
 - [municipality-building-profile](../6-workflows/municipality-building-profile/README.md)

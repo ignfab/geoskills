@@ -9,6 +9,20 @@ Current scenarios and helper paths use the [current skill names](../docs/skill-n
 Dated reviews and recorded runs retain the names actually tested. Scenario identifiers
 remain stable across renames so historical results can still be matched to the same task.
 
+## Contents
+
+1. [The five kinds of tests](#the-five-kinds-of-tests)
+2. [Which tests to run](#which-tests-to-run)
+3. [Quick start](#quick-start): commands, CI, environment variables and skips
+4. [Coverage by skill](#coverage-by-skill)
+5. [Offline tests](#offline-tests) and [QGIS integration](#qgis-integration)
+6. [Live tests](#live-tests)
+7. [Agent scenarios](#agent-scenarios)
+8. [Fixtures](#fixtures)
+9. [Add or change a test](#add-or-change-a-test)
+10. [Reviews and reports](#reviews-and-reports)
+11. [Glossary](#glossary)
+
 ## The five kinds of tests
 
 | Kind | Question it answers | Files | How it runs | Cost |
@@ -22,13 +36,30 @@ remain stable across renames so historical results can still be matched to the s
 The scenario prompts are in French on purpose: they check that a French request triggers
 a skill whose `description` is written in English.
 
+## Which tests to run
+
+Start from what you changed or want to know:
+
+| You changed, or want to check | Run | What it catches |
+| --- | --- | --- |
+| A `SKILL.md` description or body | `python3 .github/validate-skills.py`, then `test_skill_robustness.py` and `test_scenarios.py` | Broken metadata and links, a missing `Use when …` clause, vague skill names, a tested boundary that the skill does not state |
+| A command or code block in a skill | The offline test of that skill, from [Coverage by skill](#coverage-by-skill) | Many tests execute the documented block itself, so a broken recipe fails |
+| A helper script under `scripts/` | The offline test of that skill | Wrong values, unsafe overwrites, lost identifiers |
+| A scenario file or `ab-testing.md` | `test_scenarios.py` and `test_ab_runner.py` | Missing prompt, expected skill or checklist; numbering gaps; missing fixtures; A/B lists, matrix and run counts out of date |
+| A fixture in `data/` | The tests listed for it under [Fixtures](#fixtures) | Reference values that no longer match |
+| A QGIS skill | `test_qgis*.py`, with PyQGIS (see [QGIS integration](#qgis-integration)) | Styles, projects or renders that QGIS does not reopen as expected |
+| Whether the IGN services still behave as documented | The [live tests](#live-tests) | Changed endpoints, layers or responses |
+| Whether an agent picks and follows a skill | One [agent scenario](#agent-scenarios) by hand | Selection and conduct, which unit tests cannot show |
+| How much a skill adds, or whether it depends on the model | The A/B campaign or the model sweep of [ab-testing.md](ab-testing.md) | Paid; starting one is a separate decision |
+| Anything, before a pull request | The validator and the whole offline suite (below) | What CI runs on every push |
+
 ## Quick start
 
 From the repository root, with Python ≥ 3.9:
 
 ```bash
 python3 -m pip install -r tests/requirements.txt              # PyYAML, for the validator
-python3 -m pip install -r tests/requirements-geospatial.txt   # optional: GeoPandas tests
+python3 -m pip install -r tests/requirements-geospatial.txt   # optional: GeoPandas, Matplotlib, Folium tests
 python3 .github/validate-skills.py                            # layout, metadata, links
 python3 -m unittest discover -s tests -p 'test_*.py' -v       # every offline test
 ```
@@ -43,6 +74,20 @@ cd tests && python3 -m unittest test_geopandas.GeoPandasTests.test_spatial_join 
 The test modules import each other by name (`skill_examples`, `test_workflows`), so
 `python3 -m unittest tests.test_geopandas` from the root fails: use `discover -s tests`
 or run from `tests/`.
+
+A run ends with `OK (skipped=N)` when everything that could run passed. The skips are the
+tests whose optional tools are missing on your machine; [Reading the skips](#reading-the-skips)
+says which tool each one needs.
+
+### What CI runs
+
+| Workflow | When | What it runs |
+| --- | --- | --- |
+| [Validate skills](../.github/workflows/validate-skills.yml) | Every push and pull request | Installs Python 3.11, Node.js 22, GDAL and Mapshaper 0.7.83, then runs the validator and every offline test with `GEOSKILLS_REQUIRE_GDAL=1` and `GEOSKILLS_REQUIRE_MAPSHAPER=1`, so a missing tool fails instead of skipping |
+| Validate skills, started by hand | **Actions → Validate skills → Run workflow**, with *Also run bounded requests to public IGN services* ticked | The same, plus the live tests |
+| [QGIS integration](../.github/workflows/qgis.yml) | Every push and pull request | Installs `python3-qgis` on Ubuntu 24.04 and runs the `test_qgis*.py` modules with `GEOSKILLS_REQUIRE_QGIS=1` |
+
+Agent scenarios, A/B campaigns and model sweeps never run in CI.
 
 ### Environment variables
 
@@ -64,7 +109,10 @@ the tests deliberately do not hide a broken installation.
 | --- | --- | --- |
 | `Set GEOSKILLS_LIVE=1 …` | Nothing: live tests are opt-in | See [Live tests](#live-tests) |
 | `Missing GDAL/PROJ tools: …` | GDAL ≥ 3.1 and PROJ command-line tools | Install GDAL and PROJ |
+| `Missing GDAL Python utilities: …` | `gdal_calc.py` and `gdal_polygonize.py`, used by the terrain screening recipes | `sudo apt install gdal-bin python3-gdal python3-numpy` (Debian/Ubuntu) |
 | `Install tests/requirements-geospatial.txt …`, `Pandas is not installed`, `GeoPandas is not installed` | pandas, GeoPandas, `rasterstats`, `pyarrow` | `python3 -m pip install -r tests/requirements-geospatial.txt` |
+| `Map illustration tests need geopandas, matplotlib, folium and Pillow` | The map rendering libraries | `python3 -m pip install -r tests/requirements-geospatial.txt` |
+| `Raster preview needs rasterio` | rasterio, for the raster map preview | `python3 -m pip install rasterio` |
 | `Missing Mapshaper test dependencies: …` | Mapshaper CLI | With Node.js: `npm install --global mapshaper@0.7.83` (the version CI uses) |
 | `… need GDAL >= 3.12` | The `gdal vector …` and `gdal raster zonal-stats` commands | GDAL ≥ 3.12 |
 | `Full COG validation requires GDAL >= 3.13 …` | `gdal driver cog validate` and matching Python bindings | GDAL ≥ 3.13 |
@@ -79,51 +127,41 @@ fixtures in `data/`.
 ## Coverage by skill
 
 Each skill has a scenario file named after it. Scenario identifiers use the prefix of
-that file: `-01`, `-02`… for positive scenarios and `-N1`, `-N2`… for negative ones.
+that file: `-01`, `-02`… for positive scenarios and `-N1`, `-N2`… for negative ones. A
+prefix stays the same when a skill is renamed, which is why `gdal-vector-processing`
+scenarios start with `GVB` and `geopf-raster-download` scenarios with `WMS`.
 
-| Skill | Scenarios | Offline tests | Live tests |
-| --- | --- | --- | --- |
-| `geopf-service-selection` | [GSV](geopf-service-selection.md): 5 + 2 negative | — (advice only) | `test_live.py` (discovery commands) |
-| `geopf-geocoding` | [GEO](geopf-geocoding.md): 6 + 1 | `test_enrichment.py` (review policy), `test_split_csv.py` | `test_live.py` (address, CSV, reverse, parcel) |
-| `crs-reprojection-france` | [CRS](crs-reprojection-france.md): 5 + 1 | `test_workflows.py` | — |
-| `gdal-raster-processing` | [RAS](gdal-raster-processing.md): 6 + 1 | `test_workflows.py`, `test_raster_quality.py` | — |
-| `geopf-raster-download` | [WMS](geopf-raster-download.md): 5 + 1 | — | `test_live.py` (WMTS, WMS-R) |
-| `geopf-wfs-download` | [WFS](geopf-wfs-download.md): 7 + 1 | `test_enrichment.py` (export completeness) | `test_live.py`, `test_live_enrichment.py` (paging) |
-| `geoserver-cql-filter` | [CQL](geoserver-cql-filter.md): 4 + 2 | `test_cql_requests.py` | `test_live_enrichment.py` (real ECQL) |
-| `geopandas-vector-analysis` | [GPD](geopandas-vector-analysis.md): 4 + 1 | `test_geopandas.py` | — |
-| `vector-data-quality` | [VDQ](vector-data-quality.md): 3 + 2 | `test_vector_quality.py` | — |
-| `mapshaper-simplify` | [MS](mapshaper-simplify.md): 4 + 2 | `test_mapshaper.py` | — |
-| `geodata-intake` | [INT](geodata-intake.md): 2 + 1 | `test_raster_quality.py` (intake recipes) | — |
-| `geopf-file-download` | [DLF](geopf-file-download.md): 2 + 1 | `test_enrichment.py` (catalogue pages), `test_download_transfers.py` | `test_live.py`, `test_live_enrichment.py` |
-| `geopf-altimetry` | [ALT](geopf-altimetry.md): 2 + 2 | `test_enrichment.py` (joins, missing values) | `test_live_enrichment.py` |
-| `geopf-routing` | [RTE](geopf-routing.md): 2 + 1 | `test_enrichment.py` (GeoJSON export) | `test_live.py`, `test_live_enrichment.py` |
-| `gdal-vector-processing` | [GVB](gdal-vector-processing.md): 4 + 2 | `test_gdal_vector.py` | — |
-| `apicarto-query` | [APC](apicarto-query.md): 3 + 1 | `test_apicarto.py` | `test_live_apicarto.py` |
-| `geospatial-descriptive-statistics` | [GDS](geospatial-descriptive-statistics.md): 2 + 2 | `test_geospatial_descriptive_statistics.py` | — |
-| `qgis-layer-styling` | [QLS](qgis-layer-styling.md): 2 + 1 | `test_qgis_layer_styling.py` (needs PyQGIS) | — |
-| `spatial-aggregation` | [SPA](spatial-aggregation.md): 2 + 2 | `test_spatial_aggregation.py` | — |
-| `bdtopo-schema-guide` | [BTS](bdtopo-schema-guide.md): 2 + 2 | `test_bdtopo_schema_guide.py` | — |
-| `qgis-project-builder` | [QPB](qgis-project-builder.md): 2 + 1 | `test_qgis_project_builder.py` (needs PyQGIS) | — |
-| `municipality-building-profile` | [MBP](municipality-building-profile.md): 3 + 3 | `test_municipality_building_profile.py` (GeoPandas) | — |
-| `terrain-elevation-screening` | [TES](terrain-elevation-screening.md): 3 + 2 | `test_terrain_elevation_screening.py` (GDAL recipes) | — |
-| `map-illustration` | [MAP](map-illustration.md): 4 + 3 | `test_map_illustration.py`, `test_qgis_map_illustration.py` | — |
+| Family | Skill | Scenarios (positive + negative) | Offline tests | Live tests |
+| --- | --- | --- | --- | --- |
+| 1. Discover | `bdtopo-schema-guide` | [BTS](bdtopo-schema-guide.md): 2 + 2 | `test_bdtopo_schema_guide.py` | — |
+| 1. Discover | `geopf-service-selection` | [GSV](geopf-service-selection.md): 5 + 2 | — (advice only) | `test_live.py` (discovery commands) |
+| 2. Access | `apicarto-query` | [APC](apicarto-query.md): 3 + 1 | `test_apicarto.py` | `test_live_apicarto.py` |
+| 2. Access | `geopf-file-download` | [DLF](geopf-file-download.md): 2 + 1 | `test_enrichment.py` (catalogue pages), `test_download_transfers.py` | `test_live.py`, `test_live_enrichment.py` |
+| 2. Access | `geopf-geocoding` | [GEO](geopf-geocoding.md): 6 + 1 | `test_enrichment.py` (review policy), `test_split_csv.py` | `test_live.py` (address, CSV, reverse, parcel) |
+| 2. Access | `geopf-raster-download` | [WMS](geopf-raster-download.md): 5 + 1 | — | `test_live.py` (WMTS, WMS-R) |
+| 2. Access | `geopf-wfs-download` | [WFS](geopf-wfs-download.md): 7 + 1 | `test_enrichment.py` (export completeness) | `test_live.py`, `test_live_enrichment.py` (paging) |
+| 2. Access | `geoserver-cql-filter` | [CQL](geoserver-cql-filter.md): 4 + 2 | `test_cql_requests.py` | `test_live_enrichment.py` (real ECQL) |
+| 3. Prepare | `crs-reprojection-france` | [CRS](crs-reprojection-france.md): 5 + 1 | `test_workflows.py` | — |
+| 3. Prepare | `gdal-raster-processing` | [RAS](gdal-raster-processing.md): 6 + 1 | `test_workflows.py`, `test_raster_quality.py` | — |
+| 3. Prepare | `gdal-vector-processing` | [GVB](gdal-vector-processing.md): 4 + 2 | `test_gdal_vector.py` | — |
+| 3. Prepare | `geodata-intake` | [INT](geodata-intake.md): 2 + 1 | `test_raster_quality.py` (intake recipes) | — |
+| 3. Prepare | `vector-data-quality` | [VDQ](vector-data-quality.md): 3 + 2 | `test_vector_quality.py` | — |
+| 4. Analyze | `geopandas-vector-analysis` | [GPD](geopandas-vector-analysis.md): 4 + 1 | `test_geopandas.py` | — |
+| 4. Analyze | `geopf-altimetry` | [ALT](geopf-altimetry.md): 2 + 2 | `test_enrichment.py` (joins, missing values) | `test_live_enrichment.py` |
+| 4. Analyze | `geopf-routing` | [RTE](geopf-routing.md): 2 + 1 | `test_enrichment.py` (GeoJSON export) | `test_live.py`, `test_live_enrichment.py` |
+| 4. Analyze | `geospatial-descriptive-statistics` | [GDS](geospatial-descriptive-statistics.md): 2 + 2 | `test_geospatial_descriptive_statistics.py` | — |
+| 4. Analyze | `spatial-aggregation` | [SPA](spatial-aggregation.md): 2 + 2 | `test_spatial_aggregation.py` | — |
+| 5. Publish | `map-illustration` | [MAP](map-illustration.md): 4 + 3 | `test_map_illustration.py`, `test_qgis_map_illustration.py` (needs PyQGIS) | — |
+| 5. Publish | `mapshaper-simplify` | [MS](mapshaper-simplify.md): 4 + 2 | `test_mapshaper.py` | — |
+| 5. Publish | `qgis-layer-styling` | [QLS](qgis-layer-styling.md): 2 + 1 | `test_qgis_layer_styling.py` (needs PyQGIS) | — |
+| 5. Publish | `qgis-project-builder` | [QPB](qgis-project-builder.md): 2 + 1 | `test_qgis_project_builder.py` (needs PyQGIS) | — |
+| 6. Workflows | `municipality-building-profile` | [MBP](municipality-building-profile.md): 3 + 3 | `test_municipality_building_profile.py` (GeoPandas) | — |
+| 6. Workflows | `terrain-elevation-screening` | [TES](terrain-elevation-screening.md): 3 + 2 | `test_terrain_elevation_screening.py` (GDAL recipes) | — |
 
-`geopf-service-selection` and `geopf-raster-download` have no offline test: their value is advice and
-remote requests, so only the live tests and the agent scenarios exercise them.
+`geopf-service-selection` and `geopf-raster-download` have no offline test: their value is
+advice and remote requests, so only the live tests and the agent scenarios exercise them.
 
 ## Offline tests
-
-Map illustration tests reopen real PNG/SVG/PDF outputs, check dimensions, numeric/missing
-values, selected HTML attributes and external assets, exercise a bounded raster preview,
-and check QGIS visible-layer rendering. They use Matplotlib/Folium from
-`requirements-geospatial.txt`; QGIS rendering runs in the dedicated QGIS job. Browser and
-visual inspections are separate author/agent checks recorded in the experimental log.
-
-The terrain workflow's [recipe tests](test_terrain_elevation_screening.py) execute the
-documented commands on synthetic rasters: inclusive and negative altitudes, valid zero,
-nodata and slope borders, empty outputs, holes, connectivity, exact AOI clipping before
-area filtering and source preservation. The GDAL Python utilities must be available
-alongside the GDAL CLI. These numerical checks do not validate helicopter landing sites.
 
 Many offline tests do not copy commands: they **execute the code blocks of the skill
 files** through [skill_examples.py](skill_examples.py) (`read_example` for Bash,
@@ -145,11 +183,14 @@ representative workflows, not every documented command.
 | [test_cql_requests.py](test_cql_requests.py) | `geoserver-cql-filter` | The documented `curl` commands against a local recorder: parameter encoding, EWKT kept, WFS sampling, WMS layer order. Does not validate ECQL parsing on a real GeoServer. |
 | [test_apicarto.py](test_apicarto.py) | `apicarto-query` | The paging script and documented requests against a loopback server: `_start` paging, POSTed geometries, repeated IDs, changing or incomplete counts, errors with HTTP 200, 400 or 500, existing outputs kept. |
 | [test_geospatial_descriptive_statistics.py](test_geospatial_descriptive_statistics.py) | `geospatial-descriptive-statistics` | `summarize.py` on known values: missing, infinite and invalid numbers, empty and single-value columns, string categories with leading zeros, bad column selection, CLI round trip without overwrite, geometry areas in a metric CRS with a geographic CRS refused (GeoPandas). |
-| [test_qgis_layer_styling.py](test_qgis_layer_styling.py) | `qgis-layer-styling` | `style_layer.py` QML files reloaded on independent PyQGIS layers: red outline without fill and source unchanged, point and line units, categories with the null/other fallback, graduated ranges and shared breaks, unknown fields, bad breaks and existing outputs refused. Needs PyQGIS ([QGIS integration](#qgis-integration)). |
 | [test_spatial_aggregation.py](test_spatial_aggregation.py) | `spatial-aggregation` | `aggregate.py`: empty zones, null measures and reconciliation, border predicates and policies, overlapping zones, mixed known CRSs, bad IDs, missing CRS, invalid geometry, ratios with zero denominators, round trip without touching the sources; the SPA-01 and SPA-02 references on their fixtures (GeoPandas). |
 | [test_bdtopo_schema_guide.py](test_bdtopo_schema_guide.py) | `bdtopo-schema-guide` | `lookup.py` and the versioned snapshot: building height with its special zero, road field aliases and enum, unknown versions, revisions, fields or formats never inferred, no network or GIS needed, every entry traced to a source. |
+| [test_map_illustration.py](test_map_illustration.py) | `map-illustration` | Real PNG, SVG and PDF outputs reopened: dimensions, numeric and missing values kept apart, only the selected HTML tooltip attributes, external assets listed, and a bounded raster preview (needs rasterio). Uses Matplotlib and Folium from `requirements-geospatial.txt`. Browser and visual checks stay separate author or agent checks. |
+| [test_qgis_map_illustration.py](test_qgis_map_illustration.py) | `map-illustration` | Export of the visible layers of an existing QGIS project. Needs PyQGIS ([QGIS integration](#qgis-integration)). |
+| [test_qgis_layer_styling.py](test_qgis_layer_styling.py) | `qgis-layer-styling` | `style_layer.py` QML files reloaded on independent PyQGIS layers: red outline without fill and source unchanged, point and line units, categories with the null/other fallback, graduated ranges and shared breaks, unknown fields, bad breaks and existing outputs refused. Needs PyQGIS ([QGIS integration](#qgis-integration)). |
 | [test_qgis_project_builder.py](test_qgis_project_builder.py) | `qgis-project-builder` | `build_project.py` projects reopened in PyQGIS: vector and raster layers, CRS, extent (including aligned points), layer-tree order, groups and visibility, optional QML, relative paths after moving the whole bundle with the original removed, source bytes and directory inventory unchanged, WMTS provider URI and an omitted remote basemap on failure. Needs PyQGIS ([QGIS integration](#qgis-integration)). |
 | [test_municipality_building_profile.py](test_municipality_building_profile.py) | `municipality-building-profile` | `build_profile.py` checked against independent area and count oracles: overlapping buildings counted once in the union, border-crossing and border-touching buildings, height and usage semantics, missing or partial inputs, string codes, sources unchanged and GeoPackage/CSV/JSON report round trips (GeoPandas). |
+| [test_terrain_elevation_screening.py](test_terrain_elevation_screening.py) | `terrain-elevation-screening` | The documented GDAL commands on synthetic rasters: inclusive and negative altitudes, a valid zero, nodata and slope borders, empty outputs, holes, connectivity, exact AOI clipping before area filtering and unchanged sources. Needs the GDAL Python utilities next to the GDAL CLI. These numerical checks do not validate helicopter landing sites. |
 | [test_skill_robustness.py](test_skill_robustness.py) | every skill | The wording that keeps selection from depending on the model: each description says when to use the skill, stays within 1024 characters and names other skills exactly (not "the WFS skill"); each boundary tested by a negative scenario is written in the skill to exclude. See [Model sensitivity](#model-sensitivity). |
 | [test_validation.py](test_validation.py) | the validator | [validate-skills.py](../.github/validate-skills.py): YAML, required sections, family layout, unique names, complete indexes, links that stay inside a skill. |
 | [test_scenarios.py](test_scenarios.py) | every scenario | Each scenario has a French prompt, an `**Expected skill:**` line and a checklist; numbering has no gap; fixtures named in prompts exist; the lists, matrix, score table and run count of `ab-testing.md` follow the scenario files. |
@@ -158,7 +199,8 @@ representative workflows, not every documented command.
 
 ### QGIS integration
 
-The two QGIS modules skip when PyQGIS is absent. The dedicated
+The three QGIS modules (`test_qgis_layer_styling.py`, `test_qgis_project_builder.py` and
+`test_qgis_map_illustration.py`) skip when PyQGIS is absent. The dedicated
 [QGIS workflow](../.github/workflows/qgis.yml) provisions its own Ubuntu 24.04 worker and
 runs them with `GEOSKILLS_REQUIRE_QGIS=1`, so a missing runtime fails that job. Locally,
 with an existing QGIS/PyQGIS 3.34–3.x, use its Python interpreter and require the runtime
@@ -224,7 +266,7 @@ note on how the automated tests cover the same case.
 | Kind | Identifier | What it checks | A/B modes |
 | --- | --- | --- | --- |
 | Positive | `<PREFIX>-01`, `-02`… | The skill of the file is loaded and the result is right. | With and without the skills |
-| Negative | `<PREFIX>-N1`, `-N2`… | A neighbouring request does **not** load the skill of the file, which the **Expected skill** line names after "not": its description does not over-trigger. | With the skills only |
+| Negative | `<PREFIX>-N1`, `-N2`… | A neighboring request does **not** load the skill of the file, which the **Expected skill** line names after "not": its description does not over-trigger. | With the skills only |
 | Control | positive, marked *control* in the [matrix](ab-testing.md#scenario-matrix) | A task an agent should solve without the skill. If every scenario of a skill is a control, the skill adds nothing measurable. | Both |
 | Chained | WFS-03 | Starts from the output of WFS-01; the runner copies it. | Both |
 
@@ -276,11 +318,11 @@ npx skills add ./skills/2-access --list # the skills of one family only
 ```
 
 The scenarios need, depending on the case, GDAL/PROJ, `curl`, and optionally GeoPandas,
-`rasterstats`, `pyarrow` or PyQGIS; the [scenario matrix](ab-testing.md#scenario-matrix)
-lists the needs of each one, and each skill's README its supported environment. The BD
-TOPO lookup runs offline with the Python standard library. Agents must not install a
-missing dependency. `gdal raster zonal-stats` requires GDAL ≥ 3.12; older GDAL can
-use a masked single-zone crop or `rasterstats`.
+`rasterstats`, `pyarrow`, Matplotlib, Folium or PyQGIS; the
+[scenario matrix](ab-testing.md#scenario-matrix) lists the needs of each one, and each
+skill's README its supported environment. The BD TOPO lookup runs offline with the Python
+standard library. Agents must not install a missing dependency. `gdal raster zonal-stats`
+requires GDAL ≥ 3.12; older GDAL can use a masked single-zone crop or `rasterstats`.
 
 ### Measure what a skill adds
 
@@ -327,17 +369,18 @@ the synthetic files are invented.
 | `points_gps.csv` | 3 GPS points, **latitude before longitude**, one of them in Réunion | CRS-01, CRS-N1, INT-02, VDQ-N2 | `test_workflows.py` |
 | `points_lambert2e.csv` | 2 points in NTF extended Lambert II (EPSG:27572) | CRS-02 | `test_workflows.py` |
 | `monuments_sans_prj/` | Shapefile of 3 Paris monuments in Lambert-93, **without a `.prj`** | CRS-03, GPD-02, INT-01 | `test_workflows.py`, `test_geopandas.py`, `test_raster_quality.py` |
-| `saint_mande.geojson` | Boundary of Saint-Mandé (INSEE 94067), EPSG:4326, from ADMIN EXPRESS | CRS-05, RAS-02, RAS-05, WMS-02, GPD-01, GPD-03, GVB-N1, INT-N1, QLS-01, QPB-02 | `test_workflows.py`, `test_geopandas.py`, `test_qgis_layer_styling.py` |
-| `mnt_dalles/` | 10 m DEM of Saint-Mandé (RGE ALTI) in 2 ESRI ASCII tiles, **without a `.prj`** | RAS-01 to RAS-05, GPD-03, INT-01, ALT-N1 | `test_workflows.py`, `test_raster_quality.py`, `test_geopandas.py` |
-| `admin_units_synthetic.geojson` | Three invented EPSG:4326 polygons: two neighbours with a detailed shared border and a small island | MS-01, MS-02, MS-04 | `test_mapshaper.py` |
+| `saint_mande.geojson` | Boundary of Saint-Mandé (INSEE 94067), EPSG:4326, from ADMIN EXPRESS | CRS-05, RAS-02, RAS-05, WMS-02, GPD-01, GPD-03, GVB-N1, INT-N1, QLS-01, QPB-02, MAP-02, MAP-N1, TES-N2 | `test_workflows.py`, `test_geopandas.py`, `test_qgis_layer_styling.py` |
+| `mnt_dalles/` | 10 m DEM of Saint-Mandé (RGE ALTI) in 2 ESRI ASCII tiles, **without a `.prj`** | RAS-01 to RAS-05, GPD-03, INT-01, ALT-N1, TES-N2 | `test_workflows.py`, `test_raster_quality.py`, `test_geopandas.py` |
+| `admin_units_synthetic.geojson` | Three invented EPSG:4326 polygons: two neighbors with a detailed shared border and a small island | MS-01, MS-02, MS-04, MAP-01, MAP-03, MAP-N3 | `test_mapshaper.py`, `test_map_illustration.py` |
 | `coverage_synthetic.geojson` | Nine invented EPSG:2154 parcels, each valid, with an overlap, an enclosed gap, a narrow gap and a sliver | VDQ-03, GVB-02, GVB-03 | `test_vector_quality.py`, `test_gdal_vector.py` |
 | `communes_sans_cpg/` | Shapefile of 3 municipality points in Lambert-93, **CP1252 text without a `.cpg`** | GVB-01, GVB-02 | `test_gdal_vector.py` |
 | `communes_points.geojson` | The same 3 points in EPSG:4326, with field names longer than 10 characters | GVB-04 | `test_gdal_vector.py` |
 | `classes_synthetic.asc` | Invented 2 × 2 categorical grid, EPSG:2154, classes 0/1/5 and nodata 255 | RAS-06 | `test_raster_quality.py` |
 | `geocoded_synthetic.csv` | Seven invented geocoding results: accepted, to review and unmatched | GEO-06 | `test_enrichment.py` |
-| `elevation_points.csv`, `elevations_synthetic.json` | Two invented points with string IDs and their elevations, one missing | ALT-02 | `test_enrichment.py` |
-| `aggregation_objects.geojson`, `aggregation_zones.geojson` | Five invented EPSG:2154 points (one on a border, one outside, one height missing) and three zones (one empty) | SPA-01, SPA-02, QPB-01 | `test_spatial_aggregation.py` |
+| `elevation_points.csv`, `elevations_synthetic.json` | Two invented points with string IDs and their elevations, one missing | ALT-02, TES-N1 | `test_enrichment.py` |
+| `aggregation_objects.geojson`, `aggregation_zones.geojson` | Five invented EPSG:2154 points (one on a border, one outside, one height missing) and three zones (one empty) | SPA-01, SPA-02, QPB-01, MAP-N2 | `test_spatial_aggregation.py` |
 | `building_profile_municipalities.geojson`, `building_profile_buildings.geojson`, `building_profile_input.json` | Two invented 100 × 100 m EPSG:2154 municipalities and six buildings (an overlap, one crossing and one touching the border, one outside), with the manifest that points to them | MBP-01, MBP-02, MBP-03, MBP-N2, MBP-N3 | `test_municipality_building_profile.py` |
+| `terrain_screening.asc`, `terrain_screening_aoi.geojson` | Invented 7 × 7 terrain grid with 10 m cells (EPSG:2154, no `.prj`, a valid zero and a nodata cell) and its 70 × 70 m area of interest | TES-01, TES-02, TES-03, ALT-N2, MAP-04 | `test_terrain_elevation_screening.py` |
 
 The original references were supplied for GDAL 3.13; the stored fixture values were
 also checked with GDAL 3.10.3 / PROJ 9.6.2 on 2026-09-30. Local checks use explicit
@@ -353,6 +396,9 @@ reference. In short:
   then add its identifiers to `POSITIVE`/`NEGATIVE`, the matrix, the score table and the
   run count of [ab-testing.md](ab-testing.md). `test_scenarios.py` and `test_ab_runner.py`
   say what is missing.
+- **Renamed skill:** rename its scenario file and update the `**Expected skill:**` lines,
+  this guide and [ab-testing.md](ab-testing.md); keep the scenario identifiers and the
+  French prompts, and record the old name in the [naming guide](../docs/skill-naming.md).
 - **Offline test:** test the documented example itself with `read_example` or
   `run_example`, so that the skill text and the test cannot drift apart. Read inputs from
   `data/` rather than copying them inline, write only to a temporary directory and assert
@@ -365,8 +411,9 @@ reference. In short:
 
 ## Reviews and reports
 
-The dated reviews record the checks and limits observed at the time. Use the commands
-above for a new run: a past pass is not a current guarantee for live services.
+The dated reviews record the checks and limits observed at the time, with the skill names
+of that date. Use the commands above for a new run: a past pass is not a current guarantee
+for live services.
 
 | File | Content |
 | --- | --- |
@@ -377,3 +424,17 @@ above for a new run: a past pass is not a current guarantee for live services.
 | [review-2026-11-12.md](review-2026-11-12.md) | Audit of the scenarios and tests: standard scenario format, fixtures now tested, structure checks, model-sensitivity checks and sweep |
 | [review-municipality-building-profile-2026-11-12.md](review-municipality-building-profile-2026-11-12.md) | First workflow: municipal indicator regressions and an independent portable-QGIS forward pilot |
 | [reports/](reports/) | Machine-readable summaries of agent runs: the 2026-10-28 pilot, the 2026-11-11 five-skill pilots and the 2026-11-12 municipal building profile pilot, with environments and discovery checks |
+
+## Glossary
+
+| Term | Meaning |
+| --- | --- |
+| Scenario | A French prompt with its expected skill, expected result and checklist, in `tests/<skill-name>.md` |
+| Positive / negative scenario | A request that must load the skill of its file / a neighboring request that must not |
+| Mode A / mode B | A run with the skills of this repository installed / the same run without them |
+| Control | A positive scenario an agent should pass even without the skill |
+| Fixture | A small input file in `data/`, read by scenarios and tests |
+| Skip | A test that did not run because an optional tool is missing; it is reported, not counted as a pass |
+| Live test | A test that sends bounded requests to public IGN services, only with `GEOSKILLS_LIVE=1` |
+| Model sweep | The same scenarios run with several models to find skills whose effect depends on the model |
+| Experimental prompt | An exploratory request (`XP-NN`) logged in [prompts/](prompts/README.md) before it becomes a scenario |

@@ -16,6 +16,35 @@ areas) are in [4. Analyze and derive](../4-analyze/README.md).
 | [apicarto-query](apicarto-query/README.md) | Query API Carto for parcels, urban-planning zones and easements, protected areas and RPG parcels at a point, in an area or by code, with complete pagination. |
 | [geopf-geocoding](geopf-geocoding/README.md) | Geocode addresses, POIs and parcels, and review CSV matches, ambiguity and unmatched rows. |
 
+## Choose between them
+
+- Whole products by territory and edition (archives or tiles): `geopf-file-download`.
+- Vector features filtered by area or attribute, converted to the format you need:
+  `geopf-wfs-download`. To write or debug a GeoServer `cql_filter` for such a request, use
+  `geoserver-cql-filter`.
+- Raster images and grids over an extent (orthophotos, Plan IGN, elevation): `geopf-raster-download`.
+- What lies at a point or in an area (cadastral parcels, urban-planning zones, easements,
+  protected areas, RPG crops), or every parcel of a municipality: `apicarto-query`.
+- Coordinates for addresses, places or parcels, reverse geocoding, or a review of results
+  that are already geocoded: `geopf-geocoding`.
+
+## What they need
+
+| Skill | Local tools | Network |
+| --- | --- | --- |
+| `geopf-file-download` | `curl`, Python 3, GDAL, an archive reader (`unzip`, `7z`) | Géoplateforme Download API |
+| `geopf-wfs-download` | GDAL with WFS support and the requested output driver, `curl` | Géoplateforme WFS |
+| `geopf-raster-download` | GDAL with the WMTS and WMS drivers | Géoplateforme WMTS and WMS-R |
+| `geoserver-cql-filter` | None to write a filter; `curl` to send it | The GeoServer you query |
+| `apicarto-query` | `curl`, Python 3; GDAL to convert and check results | API Carto; a key only for the wine appellation module (`aoc`) |
+| `geopf-geocoding` | `curl`; Python 3 for the helpers | Géoplateforme geocoding API; none to review existing results |
+
+The requests documented by these skills use public endpoints without credentials; only the
+API Carto `aoc` module needs a key. Some other Géoplateforme APIs (extraction, standards
+validation, usage statistics) require authentication: `geopf-service-selection` describes them, and
+the agent leaves any login to you. It never installs a missing tool either: it gives you
+the command to run.
+
 ## Also relevant
 
 - [bdtopo-schema-guide](../1-discover/bdtopo-schema-guide/README.md) clarifies model meanings
