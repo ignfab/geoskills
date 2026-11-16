@@ -44,6 +44,12 @@ one level deep, whereas `skills/` is a known container walked up to three levels
 - `npx skills add https://github.com/ignfab/geoskills/tree/main/skills/<family>` installs one
   family.
 
+The website in `site/` is generated from this Markdown by `site/generate.py` (see
+[site/README.md](site/README.md)): a new skill, reference or guide needs no change there.
+Write ordinary relative links between Markdown files; the generator turns links between
+published pages into checked Hugo refs and points the others to GitHub. Never commit the
+generated content, and never write `{{<` or `{{%` in the Markdown, which Hugo would execute.
+
 ## Families
 
 Each family answers one question. A skill lives in the family whose question its main
@@ -133,7 +139,9 @@ French.
 - `description` contains no French trigger words: agents match a French request to an
   English description. The French prompts in `tests/` check that this matching works.
 - French text is limited to the `Résumé (FR)` section of the root `README.md` and to the
-  test prompts, each written entirely in French.
+  test prompts, each written entirely in French. The French home page of the website is
+  generated from that section; the only other French strings are the site's interface
+  labels in `site/config/_default/*.fr.toml` and `site/i18n/fr.yaml`.
 
 ## Agent conduct
 
@@ -222,6 +230,9 @@ above (optional, fallback, closing rule, no setup step, read-only database, QGIS
 changed only when asked, Geocontext version or tool list), when a skill mentions an MCP
 server outside that section, or when the skill READMEs and `docs/mcp-servers.md` do not
 list the same skills.
+`tests/test_site_generator.py` checks the website generator, and the
+[Site workflow](.github/workflows/pages.yml) builds the website on every pull request: a
+broken link between published pages fails it.
 Install the Python validation dependency with `python3 -m pip install -r tests/requirements.txt`.
 
 Discovery by the Skills CLI and agent skill selection remain separate checks; see

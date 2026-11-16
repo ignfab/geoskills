@@ -1,0 +1,13 @@
+disabled = false
+locale = "en"
+label = "English"
+weight = 1
+title = "geoskills"
+
+[params]
+  displayName = "EN"
+  isoCode = "en"
+  rtl = false
+  # Shown in the cartouche of the home page; keep it in line with the first paragraph of README.md.
+  description = "Agent skills for discovering, retrieving, preparing, analyzing and publishing geospatial data, with a focus on the IGN Géoplateforme, French coordinate systems and open-source GIS."
+  copyright = "© IGN — [MIT license](https://github.com/ignfab/geoskills/blob/main/LICENSE)"

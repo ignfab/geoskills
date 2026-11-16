@@ -1,0 +1,59 @@
+# Blowfish parameters; see https://blowfish.page/docs/configuration/
+
+# Green and white scheme of site/assets/css/schemes/geoskills.css; map details in
+# site/assets/css/custom.css.
+colorScheme = "geoskills"
+logo = "img/logo.svg"
+defaultAppearance = "light"
+autoSwitchAppearance = true
+enableSearch = true
+enableCodeCopy = true
+smartTOC = true
+smartTOCHideUnfocusedChildren = false
+mainSections = ["skills", "docs"]
+
+[header]
+  # site/layouts/partials/header/geoskills.html: State and IGN logos, then the basic header.
+  layout = "geoskills"
+
+[footer]
+  showMenu = true
+  showCopyright = true
+  showThemeAttribution = true
+  showAppearanceSwitcher = true
+  showScrollToTop = true
+
+[homepage]
+  # site/layouts/partials/home/custom.html: map sheet, legend of the families, README.
+  layout = "custom"
+  showRecent = false
+  cardView = true
+
+[article]
+  showDate = false
+  showDateUpdated = false
+  showAuthor = false
+  showHero = false
+  showBreadcrumbs = true
+  showDraftLabel = false
+  # Each generated page sets editURL to its source file on GitHub.
+  showEdit = true
+  editAppendPath = false
+  showHeadingAnchors = true
+  showPagination = false
+  showReadingTime = false
+  showWordCount = false
+  showTableOfContents = true
+  showTaxonomies = false
+  showZenMode = false
+
+[list]
+  showBreadcrumbs = true
+  showSummary = true
+  showTableOfContents = true
+  orderByWeight = true
+  groupByYear = false
+  cardView = true
+
+[sitemap]
+  excludedKinds = ["taxonomy", "term"]

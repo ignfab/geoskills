@@ -1,0 +1,18 @@
+{{- /* Band of the State brand block (left) and the IGN logo (right), above the Blowfish
+       header. The logos are used unchanged, on a white background in both modes, as the
+       State brand charter requires. The State block links to the home page. */ -}}
+<div class="gs-brand not-prose">
+  {{- with resources.Get "img/logo-mteattvl.png" }}
+  <a class="gs-brand-state" href="{{ "" | relLangURL }}" title="{{ i18n "geoskills.home" }}">
+    <img class="nozoom" src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}"
+      alt="Ministères Transition écologique, Aménagement du territoire, Transports, Ville et Logement. Liberté, Égalité, Fraternité">
+  </a>
+  {{- end }}
+  {{- with resources.Get "img/logo-ign.png" }}
+  <a class="gs-brand-ign" href="https://www.ign.fr/" title="ign.fr" target="_blank" rel="noopener noreferrer">
+    <img class="nozoom" src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}"
+      alt="IGN, Institut national de l'information géographique et forestière">
+  </a>
+  {{- end }}
+</div>
+{{ partial "header/basic.html" . }}

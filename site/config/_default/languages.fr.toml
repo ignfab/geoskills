@@ -1,0 +1,14 @@
+# The French site shares the English skill and documentation pages; only its home page
+# (generated from the "Résumé (FR)" section of the root README) and the interface are French.
+disabled = false
+locale = "fr"
+label = "Français"
+weight = 2
+title = "geoskills"
+
+[params]
+  displayName = "FR"
+  isoCode = "fr"
+  rtl = false
+  description = "geoskills est un ensemble expérimental de compétences pour agents de code, destinées à travailler la donnée géographique."
+  copyright = "© IGN — [licence MIT](https://github.com/ignfab/geoskills/blob/main/LICENSE)"
