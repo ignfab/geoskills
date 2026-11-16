@@ -1,0 +1,9 @@
+# French interface strings of the geoskills home page, added to the Blowfish translations.
+geoskills:
+  home: "Accueil — geoskills"
+  kicker: "Compétences d'agents pour la géomatique · IGN"
+  browse: "Parcourir les compétences"
+  guide: "Lire le guide"
+  install: "Installer toutes les compétences"
+  legend: "Légende"
+  skills: "compétences"

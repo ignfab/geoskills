@@ -1,0 +1,9 @@
+# Interface strings of the geoskills home page, added to the Blowfish translations.
+geoskills:
+  home: "Home — geoskills"
+  kicker: "Agent skills for geomatics · IGN"
+  browse: "Browse the skills"
+  guide: "Read the guide"
+  install: "Install every skill"
+  legend: "Legend"
+  skills: "skills"

@@ -1,0 +1,61 @@
+{{- /* Home page: a map sheet (contours, graduated border, cartouche, north arrow, scale
+       bar) and a legend of the skill families, followed by the root README content. */ -}}
+{{- $skills := site.GetPage "/skills" -}}
+{{- $docs := site.GetPage "/docs" -}}
+{{- $icons := dict
+    "1-discover" "gs-discover" "2-access" "gs-access" "3-prepare" "gs-prepare"
+    "4-analyze" "gs-analyze" "5-publish" "gs-publish" "6-workflows" "gs-workflow" -}}
+<section class="gs-hero not-prose">
+  <div class="gs-frame">
+    <div class="gs-map">
+      <div class="gs-contours">
+        {{- with resources.Get "img/contours.svg" }}{{ .Content | safeHTML }}{{ end -}}
+      </div>
+      <span class="gs-tick" style="left: 24%">2°20′ E</span>
+      <span class="gs-tick" style="left: 50%">2°25′ E</span>
+      <span class="gs-tick" style="left: 76%">2°30′ E</span>
+      <div class="gs-north" aria-hidden="true">
+        <svg viewBox="0 0 40 56"><path d="M20 4 30 40 20 33 10 40z" fill="currentColor"/><path d="M20 4 10 40 20 33z" fill="rgb(var(--gs-paper))" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><text x="20" y="54" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">N</text></svg>
+      </div>
+      <div class="gs-cartouche">
+        <p class="gs-kicker">{{ i18n "geoskills.kicker" }}</p>
+        <h1 class="gs-title">{{ site.Title }}</h1>
+        <p class="gs-tagline">{{ site.Params.description }}</p>
+        <div class="gs-actions">
+          {{ with $skills }}<a class="gs-btn gs-btn-primary" href="{{ .RelPermalink }}">{{ i18n "geoskills.browse" }}</a>{{ end }}
+          {{ with $docs }}<a class="gs-btn" href="{{ .RelPermalink }}">{{ i18n "geoskills.guide" }}</a>{{ end }}
+        </div>
+        <p class="gs-install"><span class="gs-install-label">{{ i18n "geoskills.install" }}</span><code>npx skills add ignfab/geoskills</code></p>
+      </div>
+      <div class="gs-scale" aria-hidden="true">
+        <span class="gs-scale-bar"></span>
+        <span class="gs-scale-labels"><span>0</span><span>1</span><span>2 km</span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+{{ with $skills }}
+<section class="gs-legend not-prose" aria-labelledby="gs-legend-title">
+  <h2 id="gs-legend-title" class="gs-legend-title">{{ i18n "geoskills.legend" }}</h2>
+  <ul class="gs-legend-grid">
+    {{- range .Sections.ByWeight }}
+    {{- $question := .Summary | plainify | strings.TrimPrefix "Question: " }}
+    <li>
+      <a class="gs-legend-item" href="{{ .RelPermalink }}">
+        <span class="gs-symbol">{{ partial "icon.html" (index $icons .File.ContentBaseName | default "gs-publish") }}</span>
+        <span class="gs-legend-text">
+          <span class="gs-legend-name">{{ .Title }}</span>
+          <span class="gs-legend-question">{{ $question | strings.FirstUpper }}</span>
+          <span class="gs-legend-count">{{ len .Sections }} {{ i18n "geoskills.skills" }}</span>
+        </span>
+      </a>
+    </li>
+    {{- end }}
+  </ul>
+</section>
+{{ end }}
+
+<article class="max-w-full prose dark:prose-invert gs-home-content">
+  {{ .Content }}
+</article>

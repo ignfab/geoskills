@@ -91,6 +91,7 @@ says which tool each one needs.
 | [Validate skills](../.github/workflows/validate-skills.yml) | Every push and pull request | Installs Python 3.11, Node.js 22, GDAL and Mapshaper 0.7.83, then runs the validator and every offline test with `GEOSKILLS_REQUIRE_GDAL=1` and `GEOSKILLS_REQUIRE_MAPSHAPER=1`, so a missing tool fails instead of skipping |
 | Validate skills, started by hand | **Actions → Validate skills → Run workflow**, with *Also run bounded requests to public IGN services* ticked | The same, plus the live tests |
 | [QGIS integration](../.github/workflows/qgis.yml) | Every push and pull request | Installs `python3-qgis` on Ubuntu 24.04 and runs the `test_qgis*.py` modules with `GEOSKILLS_REQUIRE_QGIS=1` |
+| [Site](../.github/workflows/pages.yml) | Pull requests (build only) and pushes to `main` (build and deploy) | Generates the site content with [site/generate.py](../site/generate.py), builds it with Hugo 0.169.0 and the Blowfish theme (a broken link between pages fails the build), checks the entry points and, from `main`, deploys to GitHub Pages |
 
 Agent scenarios, A/B campaigns and model sweeps never run in CI.
 
@@ -202,6 +203,7 @@ representative workflows, not every documented command.
 | [test_scenarios.py](test_scenarios.py) | every scenario | Each scenario has a French prompt, an `**Expected skill:**` line and a checklist; numbering has no gap; fixtures named in prompts exist; the lists, matrix, score table and run count of `ab-testing.md` follow the scenario files. |
 | [test_ab_runner.py](test_ab_runner.py) | the A/B runner | The runner of `ab-testing.md` with a fake `claude`: every scenario prepared in isolation, prerequisite outputs copied, reruns refused, failures and contamination reported; the model sweep calls each model in its own campaign and `ab_sensitivity` scores selection, hand results and the spread threshold. No paid call. |
 | [test_prompt_log.py](test_prompt_log.py) | `prompts/` | Experimental prompt identifiers, families, expected skills, statuses and run-log rows. |
+| [test_site_generator.py](test_site_generator.py) | the site generator | [site/generate.py](../site/generate.py) without Hugo: links between published pages become checked Hugo refs, other files link to GitHub, code is left alone, every skill, reference and guide gets a page, no generated file is named `SKILL.md`, `llms.txt` lists every skill, and the discovery index matches its reproducible archives. |
 
 ### QGIS integration
 

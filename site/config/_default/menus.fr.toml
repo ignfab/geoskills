@@ -1,0 +1,15 @@
+[[main]]
+  name = "Compétences"
+  pageRef = "/skills"
+  weight = 10
+
+[[main]]
+  name = "Guide"
+  pageRef = "/docs"
+  weight = 20
+
+[[main]]
+  name = "GitHub"
+  url = "https://github.com/ignfab/geoskills"
+  pre = "github"
+  weight = 30

@@ -77,6 +77,7 @@ which runs with Node.js (`npx`) and reads them directly from GitHub.
 | Install every skill | `npx skills add ignfab/geoskills` |
 | Install one skill | `npx skills add ignfab/geoskills --skill geopf-wfs-download` |
 | Install one family | `npx skills add https://github.com/ignfab/geoskills/tree/main/skills/2-access` |
+| Install from the website | `npx skills add https://ignfab.github.io/geoskills` (reads the site's `.well-known/agent-skills/index.json`) |
 | Install for one agent | `npx skills add ignfab/geoskills -a claude-code` |
 | Install for your whole user account | Add `-g` to any of the commands above |
 | List installed skills | `npx skills list` |
@@ -399,6 +400,7 @@ skills/<family>/<skill>/   One skill: SKILL.md, README.md, references/, scripts/
 tests/                     Automated tests, scenario files, fixtures, A/B protocol, reviews
 tests/prompts/             Experimental prompts and the log of their runs
 .github/                   Validator, CI workflows and pull request template
+site/                      Hugo site (Blowfish theme) generated from this Markdown, deployed to GitHub Pages
 ```
 
 ## Contribute and validate
@@ -415,6 +417,7 @@ tests/prompts/             Experimental prompts and the log of their runs
 | [Runtime dependencies](dependencies.md) | Minimal requirements by family, conditional packages and reuse of existing environments. |
 | [CRS handling](crs-handling.md) | Source, analysis and delivery CRSs; conditional Lambert-93 default, units and custom definitions. |
 | [Experimental prompts](../tests/prompts/README.md) | Catalog and append-only record of exploratory agent runs. |
+| [Website](../site/README.md) | How the GitHub Pages site is generated from the repository Markdown, previewed and deployed. |
 
 Before proposing a change, run the validator and the offline tests from the repository
 root:

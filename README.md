@@ -27,6 +27,10 @@ Géoplateforme data, a PostGIS server, a QGIS server), the skills use it first a
 their documented commands as the fallback. No server is required, and the agent never
 installs or configures one: see [MCP servers](docs/mcp-servers.md).
 
+Read the skills on the website, <https://ignfab.github.io/geoskills/>, generated from this
+repository: one page per family and per skill, with its agent instructions and references,
+and a search. Agents can read its [llms.txt](https://ignfab.github.io/geoskills/llms.txt).
+
 Start with the [documentation guide](docs/README.md): how the skills work, installation,
 choosing a skill, the tools each one needs, checking results, troubleshooting and
 validation evidence. The [landscape study](docs/landscape.md) preserves the dated
@@ -81,6 +85,12 @@ npx skills add https://github.com/ignfab/geoskills/tree/main/skills/2-access
 
 Family folders only organize this repository: every skill is installed in its own folder,
 `<agent>/skills/<skill-name>/`.
+
+The website also serves the skills, through its agent skills discovery index:
+
+```bash
+npx skills add https://ignfab.github.io/geoskills --list
+```
 
 To select from the entire collection:
 
@@ -191,6 +201,8 @@ travailler la donnée géographique. Elles sont regroupées en six familles, une
 - portrait du bâti d’une commune : nombre d’objets, surface bâtie sans doubles comptes,
   hauteurs et usages documentés, avec livraison QGIS facultative ;
 - d’autres cas d’usage (accessibilité, exposition, suivi d’évolution) restent à explorer.
+
+Les compétences se consultent sur le site <https://ignfab.github.io/geoskills/fr/>.
 
 Installation de toutes les compétences : `npx skills add ignfab/geoskills`
 

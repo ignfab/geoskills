@@ -1,0 +1,59 @@
+# Hugo configuration of the geoskills site. The content is generated from the repository
+# Markdown by site/generate.py into site/generated/ (not committed); see site/README.md.
+
+theme = "blowfish"
+baseURL = "https://ignfab.github.io/geoskills/"
+defaultContentLanguage = "en"
+defaultContentLanguageInSubdir = false
+
+enableRobotsTXT = true
+enableEmoji = false
+summaryLength = 0
+buildDrafts = false
+buildFuture = false
+# No tags or categories: the site is organized by family.
+disableKinds = ["taxonomy", "term"]
+
+# The generator writes Hugo ref shortcodes for every link between published pages: a
+# broken one fails the build instead of producing a dead link.
+refLinksErrorLevel = "ERROR"
+
+[pagination]
+  pagerSize = 100
+
+[caches.images]
+  dir = ":cacheDir/images"
+
+[outputs]
+  # JSON feeds the Blowfish search.
+  home = ["HTML", "RSS", "JSON"]
+
+[sitemap]
+  changefreq = "weekly"
+  filename = "sitemap.xml"
+  priority = 0.5
+
+# Generated content: pages shared by both languages (skills, docs) and one home page per
+# language. Defining a content or static mount removes Hugo's default one: add a mount
+# for site/static/ if hand-written static files are ever needed.
+[[module.mounts]]
+  source = "generated/content/shared"
+  target = "content"
+  [module.mounts.sites.matrix]
+    languages = ["en", "fr"]
+
+[[module.mounts]]
+  source = "generated/content/en"
+  target = "content"
+  [module.mounts.sites.matrix]
+    languages = ["en"]
+
+[[module.mounts]]
+  source = "generated/content/fr"
+  target = "content"
+  [module.mounts.sites.matrix]
+    languages = ["fr"]
+
+[[module.mounts]]
+  source = "generated/static"
+  target = "static"

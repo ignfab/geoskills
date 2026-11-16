@@ -1,0 +1,35 @@
+/* geoskills colour scheme: forest greens on white, with slightly green neutrals.
+   Values are RGB triplets, as Blowfish expects. */
+:root {
+  --color-neutral: 255, 255, 255;
+  --color-neutral-50: 249, 251, 249;
+  --color-neutral-100: 241, 245, 242;
+  --color-neutral-200: 226, 233, 228;
+  --color-neutral-300: 200, 211, 203;
+  --color-neutral-400: 152, 168, 157;
+  --color-neutral-500: 104, 121, 110;
+  --color-neutral-600: 78, 94, 84;
+  --color-neutral-700: 56, 70, 62;
+  --color-neutral-800: 30, 41, 35;
+  --color-neutral-900: 17, 25, 21;
+  --color-primary-50: 240, 247, 241;
+  --color-primary-100: 220, 237, 223;
+  --color-primary-200: 187, 219, 194;
+  --color-primary-300: 142, 196, 156;
+  --color-primary-400: 90, 166, 113;
+  --color-primary-500: 52, 140, 80;
+  --color-primary-600: 34, 117, 63;
+  --color-primary-700: 25, 94, 51;
+  --color-primary-800: 20, 74, 41;
+  --color-primary-900: 13, 51, 29;
+  --color-secondary-50: 246, 250, 236;
+  --color-secondary-100: 234, 244, 207;
+  --color-secondary-200: 213, 233, 160;
+  --color-secondary-300: 186, 218, 106;
+  --color-secondary-400: 160, 199, 64;
+  --color-secondary-500: 134, 174, 41;
+  --color-secondary-600: 104, 138, 30;
+  --color-secondary-700: 80, 106, 26;
+  --color-secondary-800: 63, 84, 24;
+  --color-secondary-900: 50, 66, 22;
+}
