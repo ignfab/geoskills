@@ -64,7 +64,19 @@ git submodule update --init --depth 1 site/themes/blowfish
 python3 site/generate.py
 ```
 
-Previewing needs Hugo 0.166 to 0.169, the range Blowfish v3.10.0 supports. The extended
+Without Hugo, take the site built by CI: every run of the Site workflow keeps it for 14
+days as the `site-preview` artifact. The pages link under `/geoskills/`, so serve the
+folder that contains `geoskills/`:
+
+```bash
+gh run list --repo ignfab/geoskills --workflow pages.yml --limit 5
+gh run download <run-id> --repo ignfab/geoskills --name site-preview --dir /tmp/geoskills-preview/geoskills
+python3 -m http.server 8000 --bind 127.0.0.1 --directory /tmp/geoskills-preview
+```
+
+Then open <http://localhost:8000/geoskills/>.
+
+Previewing with live reload needs Hugo 0.166 to 0.169, the range Blowfish v3.10.0 supports. The extended
 edition used in CI is
 [`hugo_extended_0.169.0`](https://github.com/gohugoio/hugo/releases/tag/v0.169.0). Install
 it yourself if you want a preview, then run:
@@ -76,9 +88,11 @@ hugo server --source site
 ## Deployment
 
 The [Site workflow](../.github/workflows/pages.yml) builds the site on every pull request
-and deploys it from `main`. GitHub Pages must be enabled once, in **Settings → Pages →
-Source: GitHub Actions**. The workflow keeps the hidden `.well-known/` folder in the
-uploaded artifact.
+and push to `main`, keeps it as the `site-preview` artifact and deploys it from `main`.
+A repository administrator must enable GitHub Pages once, in **Settings → Pages → Source:
+GitHub Actions**; until then the workflow skips the deployment with a warning. Rerun it
+afterwards with `gh workflow run pages.yml --repo ignfab/geoskills --ref main`. The
+artifacts keep the hidden `.well-known/` folder.
 
 To change the theme version, check out another tag in `site/themes/blowfish`, commit the
 submodule and set `HUGO_VERSION` in the workflow to a Hugo version that tag supports.

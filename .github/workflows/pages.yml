@@ -1,7 +1,9 @@
 name: Site
-# Builds the Hugo site from the repository Markdown on every pull request, and deploys it to
-# GitHub Pages from main. Repository setting required once: Settings > Pages > Source =
-# "GitHub Actions".
+# Builds the Hugo site from the repository Markdown on every pull request and push to main,
+# and keeps it as the `site-preview` artifact, which site/README.md explains how to serve
+# locally. From main it also deploys to GitHub Pages, once an administrator has set
+# Settings > Pages > Source = "GitHub Actions"; until then the deployment is skipped with a
+# warning.
 on:
   push:
     branches: [main]
@@ -22,6 +24,8 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      pages: ${{ steps.pages.outcome == 'success' }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -34,7 +38,14 @@ jobs:
       - name: Configure Pages
         id: pages
         if: github.event_name != 'pull_request'
+        continue-on-error: true
         uses: actions/configure-pages@v6
+      - name: Report that Pages is not enabled
+        if: steps.pages.outcome == 'failure'
+        run: >-
+          echo "::warning title=GitHub Pages is not enabled::A repository administrator must set
+          Settings > Pages > Source to GitHub Actions. The site was built and kept as the
+          site-preview artifact, but not deployed."
       - name: Generate the site content
         run: python site/generate.py --base-url "${BASE_URL:-https://ignfab.github.io/geoskills}/"
         env:
@@ -63,15 +74,22 @@ jobs:
             test -s "site/public/$f" || { echo "missing: $f"; exit 1; }
           done
           python -c "import json; print(len(json.load(open('site/public/.well-known/agent-skills/index.json'))['skills']), 'skills in the discovery index')"
+      - name: Keep the built site as an artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: site-preview
+          path: site/public
+          include-hidden-files: true
+          retention-days: 14
       - uses: actions/upload-pages-artifact@v5
-        if: github.event_name != 'pull_request'
+        if: steps.pages.outcome == 'success'
         with:
           path: site/public
           # Keep .well-known/ (agent skills discovery index).
           include-hidden-files: true
 
   deploy:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && needs.build.outputs.pages == 'true'
     needs: build
     runs-on: ubuntu-latest
     permissions:

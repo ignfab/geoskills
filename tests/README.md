@@ -91,7 +91,7 @@ says which tool each one needs.
 | [Validate skills](../.github/workflows/validate-skills.yml) | Every push and pull request | Installs Python 3.11, Node.js 22, GDAL and Mapshaper 0.7.83, then runs the validator and every offline test with `GEOSKILLS_REQUIRE_GDAL=1` and `GEOSKILLS_REQUIRE_MAPSHAPER=1`, so a missing tool fails instead of skipping |
 | Validate skills, started by hand | **Actions → Validate skills → Run workflow**, with *Also run bounded requests to public IGN services* ticked | The same, plus the live tests |
 | [QGIS integration](../.github/workflows/qgis.yml) | Every push and pull request | Installs `python3-qgis` on Ubuntu 24.04 and runs the `test_qgis*.py` modules with `GEOSKILLS_REQUIRE_QGIS=1` |
-| [Site](../.github/workflows/pages.yml) | Pull requests (build only) and pushes to `main` (build and deploy) | Generates the site content with [site/generate.py](../site/generate.py), builds it with Hugo 0.169.0 and the Blowfish theme (a broken link between pages fails the build), checks the entry points and, from `main`, deploys to GitHub Pages |
+| [Site](../.github/workflows/pages.yml) | Pull requests (build only) and pushes to `main` (build and deploy) | Generates the site content with [site/generate.py](../site/generate.py), builds it with Hugo 0.169.0 and the Blowfish theme (a broken link between pages fails the build), checks the entry points, keeps the built site as the `site-preview` artifact and, from `main`, deploys to GitHub Pages once an administrator has enabled it |
 
 Agent scenarios, A/B campaigns and model sweeps never run in CI.
 
