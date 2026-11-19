@@ -45,6 +45,7 @@ Start from what you changed or want to know:
 | A `SKILL.md` description or body | `python3 .github/validate-skills.py`, then `test_skill_robustness.py`, `test_mcp_sections.py` and `test_scenarios.py` | Broken metadata and links, a missing `Use when …` clause, vague skill names, a tested boundary that the skill does not state, an MCP section that makes a server mandatory |
 | A command or code block in a skill | The offline test of that skill, from [Coverage by skill](#coverage-by-skill) | Many tests execute the documented block itself, so a broken recipe fails |
 | A helper script under `scripts/` | The offline test of that skill | Wrong values, unsafe overwrites, lost identifiers |
+| Optional Python dependencies or renderer selection | `test_minimal_dependencies.py` | CSV without GIS, static images without Folium, uniform HTML without Matplotlib; required renderer dependencies fail before creating outputs |
 | A scenario file or `ab-testing.md` | `test_scenarios.py` and `test_ab_runner.py` | Missing prompt, expected skill or checklist; numbering gaps; missing fixtures; A/B lists, matrix and run counts out of date |
 | A fixture in `data/` | The tests listed for it under [Fixtures](#fixtures) | Reference values that no longer match |
 | A QGIS skill | `test_qgis*.py`, with PyQGIS (see [QGIS integration](#qgis-integration)) | Styles, projects or renders that QGIS does not reopen as expected |
@@ -88,7 +89,7 @@ says which tool each one needs.
 
 | Workflow | When | What it runs |
 | --- | --- | --- |
-| [Validate skills](../.github/workflows/validate-skills.yml) | Every push and pull request | Installs Python 3.11, Node.js 22, GDAL and Mapshaper 0.7.83, then runs the validator and every offline test with `GEOSKILLS_REQUIRE_GDAL=1` and `GEOSKILLS_REQUIRE_MAPSHAPER=1`, so a missing tool fails instead of skipping |
+| [Validate skills](../.github/workflows/validate-skills.yml) | Every push and pull request | Installs Python 3.11, Node.js 22, GDAL and Mapshaper 0.7.83, checks that all Python test dependencies import, then runs the validator and every offline test with `GEOSKILLS_REQUIRE_GDAL=1` and `GEOSKILLS_REQUIRE_MAPSHAPER=1`, so a missing tool fails instead of skipping |
 | Validate skills, started by hand | **Actions → Validate skills → Run workflow**, with *Also run bounded requests to public IGN services* ticked | The same, plus the live tests |
 | [QGIS integration](../.github/workflows/qgis.yml) | Every push and pull request | Installs `python3-qgis` on Ubuntu 24.04 and runs the `test_qgis*.py` modules with `GEOSKILLS_REQUIRE_QGIS=1` |
 | [Site](../.github/workflows/pages.yml) | Pull requests (build only) and pushes to `main` (build and deploy) | Generates the site content with [site/generate.py](../site/generate.py), builds it with Hugo 0.169.0 and the Blowfish theme (a broken link between pages fails the build), checks the entry points and, from `main`, deploys to GitHub Pages |
@@ -116,9 +117,8 @@ the tests deliberately do not hide a broken installation.
 | `Set GEOSKILLS_LIVE=1 …` | Nothing: live tests are opt-in | See [Live tests](#live-tests) |
 | `Missing GDAL/PROJ tools: …` | GDAL ≥ 3.1 and PROJ command-line tools | Install GDAL and PROJ |
 | `Missing GDAL Python utilities: …` | `gdal_calc.py` and `gdal_polygonize.py`, used by the terrain screening recipes | `sudo apt install gdal-bin python3-gdal python3-numpy` (Debian/Ubuntu) |
-| `Install tests/requirements-geospatial.txt …`, `Pandas is not installed`, `GeoPandas is not installed` | pandas, GeoPandas, `rasterstats`, `pyarrow` | `python3 -m pip install -r tests/requirements-geospatial.txt` |
-| `Map illustration tests need geopandas, matplotlib, folium and Pillow` | The map rendering libraries | `python3 -m pip install -r tests/requirements-geospatial.txt` |
-| `Raster preview needs rasterio` | rasterio, for the raster map preview | `python3 -m pip install rasterio` |
+| `Pandas is not installed`, `GeoPandas is not installed` | The named package | Reuse an environment with that package, or install only it |
+| `Missing Python packages for this test: …` | Only the packages listed for that test route | Reuse a compatible environment; add only the missing packages. The `PIL` import comes from Pillow. |
 | `Missing Mapshaper test dependencies: …` | Mapshaper CLI | With Node.js: `npm install --global mapshaper@0.7.83` (the version CI uses) |
 | `… need GDAL >= 3.12` | The `gdal vector …` and `gdal raster zonal-stats` commands | GDAL ≥ 3.12 |
 | `Full COG validation requires GDAL >= 3.13 …` | `gdal driver cog validate` and matching Python bindings | GDAL ≥ 3.13 |
@@ -129,6 +129,14 @@ the tests deliberately do not hide a broken installation.
 
 The tests use temporary directories, turn PROJ networking off and never modify the
 fixtures in `data/`.
+
+GeoPandas vector tests do not require native GDAL commands, PyArrow or rasterstats.
+GeoParquet checks require PyArrow; zonal statistics require rasterstats/Rasterio; only
+the two raster-mosaic integration tests require GDAL CLI tools. Likewise, static-map
+tests run without Folium, and uniform HTML tests run without Matplotlib. Missing
+optional packages skip only the affected tests; installed but broken packages fail.
+The broader CI environment checks its imports first so these skips cannot hide a missing
+Python test dependency there.
 
 ## Coverage by skill
 
@@ -155,9 +163,9 @@ scenarios start with `GVB` and `geopf-raster-download` scenarios with `WMS`.
 | 4. Analyze | `geopandas-vector-analysis` | [GPD](geopandas-vector-analysis.md): 4 + 1 | `test_geopandas.py` | — |
 | 4. Analyze | `geopf-altimetry` | [ALT](geopf-altimetry.md): 2 + 2 | `test_enrichment.py` (joins, missing values) | `test_live_enrichment.py` |
 | 4. Analyze | `geopf-routing` | [RTE](geopf-routing.md): 2 + 1 | `test_enrichment.py` (GeoJSON export) | `test_live.py`, `test_live_enrichment.py` |
-| 4. Analyze | `geospatial-descriptive-statistics` | [GDS](geospatial-descriptive-statistics.md): 2 + 2 | `test_geospatial_descriptive_statistics.py` | — |
+| 4. Analyze | `geospatial-descriptive-statistics` | [GDS](geospatial-descriptive-statistics.md): 2 + 2 | `test_geospatial_descriptive_statistics.py`, `test_minimal_dependencies.py` | — |
 | 4. Analyze | `spatial-aggregation` | [SPA](spatial-aggregation.md): 2 + 2 | `test_spatial_aggregation.py` | — |
-| 5. Publish | `map-illustration` | [MAP](map-illustration.md): 4 + 3 | `test_map_illustration.py`, `test_qgis_map_illustration.py` (needs PyQGIS) | — |
+| 5. Publish | `map-illustration` | [MAP](map-illustration.md): 4 + 3 | `test_map_illustration.py`, `test_minimal_dependencies.py`, `test_qgis_map_illustration.py` (needs PyQGIS) | — |
 | 5. Publish | `mapshaper-simplify` | [MS](mapshaper-simplify.md): 4 + 2 | `test_mapshaper.py` | — |
 | 5. Publish | `qgis-layer-styling` | [QLS](qgis-layer-styling.md): 2 + 1 | `test_qgis_layer_styling.py` (needs PyQGIS) | — |
 | 5. Publish | `qgis-project-builder` | [QPB](qgis-project-builder.md): 2 + 1 | `test_qgis_project_builder.py` (needs PyQGIS) | — |
@@ -180,7 +188,7 @@ representative workflows, not every documented command.
 | [test_workflows.py](test_workflows.py) | `crs-reprojection-france`, `gdal-raster-processing` | GDAL/PROJ recipes on the fixtures: axis order, overseas CRS, missing `.prj`, area, mosaic, clip and COG, weighted averaging, hillshade, zonal statistics (GDAL ≥ 3.12), nodata conversion that keeps valid zeros, NTF and vertical transformations (IGN grids). |
 | [test_raster_quality.py](test_raster_quality.py) | `gdal-raster-processing`, `geodata-intake` | Categorical resampling on the RAS-06 fixture (values, grid, nodata, 75 % coverage), full COG validation (GDAL ≥ 3.13), read-only intake that keeps a missing CRS unknown and writes no sidecar. |
 | [test_gdal_vector.py](test_gdal_vector.py) | `gdal-vector-processing` | `ogr2ogr` recipes on a CP1252 Shapefile without `.cpg` (encoding detection, suspicious characters), GeoPackage layer addition and silent replacement, field selection, clipping in a stated CRS, CSV points, RFC 7946, Shapefile field laundering, SQL, dissolve, merge and split; `gdal vector` examples on GDAL ≥ 3.12. With GDAL 3.13.0 to 3.13.3, `-where` with `-select` on a GeoPackage keeps every field. |
-| [test_geopandas.py](test_geopandas.py) | `geopandas-vector-analysis` | Spatial joins (boundaries, unmatched and multiple matches), metric nearest joins and buffers, overlay areas, CRS and format round trips with nullable fields and string IDs, zonal statistics attached by position with filtered or repeated indices. |
+| [test_geopandas.py](test_geopandas.py) | `geopandas-vector-analysis` | Spatial joins (boundaries, unmatched and multiple matches), metric nearest joins and buffers, overlay areas, CRS and format round trips with nullable fields and string IDs, zonal statistics attached by position with filtered or repeated indices. Actual raster CRS discovery across UTM, Réunion and custom feet; zero/nodata/outside distinction and refusal of either missing source CRS. Dependencies are checked per route. |
 | [test_vector_quality.py](test_vector_quality.py) | `vector-data-quality` | Null, empty and invalid geometries kept apart, repair methods, quarantine, duplicates, suspicious valid geometries, severity report, coverage overlaps and gaps on the VDQ-03 fixture; `gdal vector check-geometry`/`check-coverage` on GDAL ≥ 3.12. |
 | [test_mapshaper.py](test_mapshaper.py) | `mapshaper-simplify` | Percentage and metric simplification, small-feature retention, shared borders across layers, TopoJSON arcs, CRS and attributes kept. |
 | [test_enrichment.py](test_enrichment.py) | `geopf-wfs-download`, `geopf-geocoding`, `geopf-file-download`, `geopf-altimetry`, `geopf-routing` | The bundled scripts and recipes: WFS export completeness (missing or repeated pages, duplicate IDs), geocoding review policy (including the GEO-06 fixture), Atom catalogue pages, elevation joins (including the ALT-02 fixtures), route and isochrone export. |
@@ -191,11 +199,12 @@ representative workflows, not every documented command.
 | [test_geospatial_descriptive_statistics.py](test_geospatial_descriptive_statistics.py) | `geospatial-descriptive-statistics` | `summarize.py` on known values: missing, infinite and invalid numbers, empty and single-value columns, string categories with leading zeros, bad column selection, CLI round trip without overwrite, geometry areas in a metric CRS with a geographic CRS refused (GeoPandas). |
 | [test_spatial_aggregation.py](test_spatial_aggregation.py) | `spatial-aggregation` | `aggregate.py`: empty zones, null measures and reconciliation, border predicates and policies, overlapping zones, mixed known CRSs, bad IDs, missing CRS, invalid geometry, ratios with zero denominators, round trip without touching the sources; the SPA-01 and SPA-02 references on their fixtures (GeoPandas). |
 | [test_bdtopo_schema_guide.py](test_bdtopo_schema_guide.py) | `bdtopo-schema-guide` | `lookup.py` and the versioned snapshot: building height with its special zero, road field aliases and enum, unknown versions, revisions, fields or formats never inferred, no network or GIS needed, every entry traced to a source. |
-| [test_map_illustration.py](test_map_illustration.py) | `map-illustration` | Real PNG, SVG and PDF outputs reopened: dimensions, numeric and missing values kept apart, only the selected HTML tooltip attributes, external assets listed, and a bounded raster preview (needs rasterio). Uses Matplotlib and Folium from `requirements-geospatial.txt`. Browser and visual checks stay separate author or agent checks. |
+| [test_map_illustration.py](test_map_illustration.py) | `map-illustration` | Real PNG, SVG and PDF outputs reopened: dimensions, numeric and missing values kept apart, only the selected HTML tooltip attributes, external assets listed, and a bounded raster preview (needs rasterio). Checks Matplotlib or Folium only for the selected renderer. Browser and visual checks stay separate author or agent checks. |
+| [test_minimal_dependencies.py](test_minimal_dependencies.py) | `geospatial-descriptive-statistics`, `map-illustration` | Real CLIs in fresh interpreters with unrelated imports blocked: CSV without GIS/rendering/Arrow, PNG/SVG without Folium/raster/Arrow/QGIS, uniform HTML without Matplotlib/raster/Arrow/QGIS. Reopens files, reconciles reports and preserves source bytes. Missing required renderer dependencies fail before creating output. |
 | [test_qgis_map_illustration.py](test_qgis_map_illustration.py) | `map-illustration` | Export of the visible layers of an existing QGIS project. Needs PyQGIS ([QGIS integration](#qgis-integration)). |
 | [test_qgis_layer_styling.py](test_qgis_layer_styling.py) | `qgis-layer-styling` | `style_layer.py` QML files reloaded on independent PyQGIS layers: red outline without fill and source unchanged, point and line units, categories with the null/other fallback, graduated ranges and shared breaks, unknown fields, bad breaks and existing outputs refused. Needs PyQGIS ([QGIS integration](#qgis-integration)). |
 | [test_qgis_project_builder.py](test_qgis_project_builder.py) | `qgis-project-builder` | `build_project.py` projects reopened in PyQGIS: vector and raster layers, CRS, extent (including aligned points), layer-tree order, groups and visibility, optional QML, relative paths after moving the whole bundle with the original removed, source bytes and directory inventory unchanged, WMTS provider URI and an omitted remote basemap on failure. Needs PyQGIS ([QGIS integration](#qgis-integration)). |
-| [test_municipality_building_profile.py](test_municipality_building_profile.py) | `municipality-building-profile` | `build_profile.py` checked against independent area and count oracles: overlapping buildings counted once in the union, border-crossing and border-touching buildings, height and usage semantics, missing or partial inputs, string codes, sources unchanged and GeoPackage/CSV/JSON report round trips (GeoPandas). |
+| [test_municipality_building_profile.py](test_municipality_building_profile.py) | `municipality-building-profile` | `build_profile.py` checked against independent area and count oracles: overlapping buildings counted once in the union, border-crossing and border-touching buildings, height and usage semantics, missing or partial inputs, string codes, sources unchanged and GeoPackage/CSV/JSON report round trips (GeoPandas). A CLI case combines WGS84 and UTM inputs, custom foot-unit output, holes and overlaps, with independently calculated m² values checked across the exports. |
 | [test_terrain_elevation_screening.py](test_terrain_elevation_screening.py) | `terrain-elevation-screening` | The documented GDAL commands on synthetic rasters: inclusive and negative altitudes, a valid zero, nodata and slope borders, empty outputs, holes, connectivity, exact AOI clipping before area filtering and unchanged sources. Needs the GDAL Python utilities next to the GDAL CLI. These numerical checks do not validate helicopter landing sites. |
 | [test_skill_robustness.py](test_skill_robustness.py) | every skill | The wording that keeps selection from depending on the model: each description says when to use the skill, stays within 1024 characters and names other skills exactly (not "the WFS skill"); each boundary tested by a negative scenario is written in the skill to exclude. See [Model sensitivity](#model-sensitivity). |
 | [test_mcp_sections.py](test_mcp_sections.py) | skills with an MCP route | Each `## MCP servers` section keeps the server optional: it starts with `Optional.`, says what to do without the server or when a call fails, ends with the rule against installing or configuring one and has no setup step, comes before `## Prerequisites`, names the Geocontext version or the tool list when it names Geocontext tools, keeps a database read-only and the user's QGIS project unchanged unless asked. No skill mentions an MCP server outside that section, and the skill READMEs and [docs/mcp-servers.md](../docs/mcp-servers.md) list the same skills. It reads files only: see [MCP servers](#mcp-servers). |
@@ -204,6 +213,12 @@ representative workflows, not every documented command.
 | [test_ab_runner.py](test_ab_runner.py) | the A/B runner | The runner of `ab-testing.md` with a fake `claude`: every scenario prepared in isolation, prerequisite outputs copied, reruns refused, failures and contamination reported; the model sweep calls each model in its own campaign and `ab_sensitivity` scores selection, hand results and the spread threshold. No paid call. |
 | [test_prompt_log.py](test_prompt_log.py) | `prompts/` | Experimental prompt identifiers, families, expected skills, statuses and run-log rows. |
 | [test_site_generator.py](test_site_generator.py) | the site generator | [site/generate.py](../site/generate.py) without Hugo: links between published pages become checked Hugo refs, other files link to GitHub, code is left alone, every skill, reference and guide gets a page, no generated file is named `SKILL.md`, `llms.txt` lists every skill, and the discovery index matches its reproducible archives. |
+
+The minimal-dependency tests install nothing. An import guard runs before third-party
+packages load, avoiding false passes from imports cached by earlier tests. These tests
+verify runtime import isolation; they do not measure download sizes or replace checks
+of package-manager dependency resolution. [python_test_support.py](python_test_support.py)
+provides the per-route package checks used by the Python tests.
 
 ### QGIS integration
 

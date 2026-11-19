@@ -7,9 +7,9 @@ import subprocess
 import sys
 import tempfile
 import unittest
-from unittest.mock import patch
 
 from skill_examples import skill_dir, run_example
+from python_test_support import require_packages, requires_packages
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = skill_dir('map-illustration')
@@ -18,9 +18,7 @@ SKILL = skill_dir('map-illustration')
 class IllustrationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        for name in ['geopandas', 'matplotlib', 'folium', 'PIL']:
-            if importlib.util.find_spec(name) is None:
-                raise unittest.SkipTest('Map illustration tests need geopandas, matplotlib, folium and Pillow')
+        require_packages('geopandas')
         import geopandas as gpd
         cls.gpd = gpd
         spec = importlib.util.spec_from_file_location('render_vector', SKILL/'scripts/render_vector.py')
@@ -36,6 +34,7 @@ class IllustrationTests(unittest.TestCase):
         self.frame['secret'] = 'DO_NOT_EXPORT_THIS'
         self.kwargs = dict(crs=2154, title='Synthetic study areas', source_note='Source: synthetic fixture; not real data')
 
+    @requires_packages('matplotlib', 'PIL')
     def test_static_png_svg_pdf_keep_values_geometry_and_dimensions(self):
         from PIL import Image
         import numpy as np
@@ -56,6 +55,7 @@ class IllustrationTests(unittest.TestCase):
         self.assertEqual(json.loads((self.root/'static/report.json').read_text()), report)
         assert_geodataframe_equal(self.frame, original)
 
+    @requires_packages('folium')
     def test_html_selects_properties_escapes_text_and_declares_assets(self):
         self.frame.loc[0, 'label'] = '<script>alert(1)</script>'
         report = self.helper.illustrate(self.frame, self.root/'web', formats=('html',),
@@ -74,11 +74,7 @@ class IllustrationTests(unittest.TestCase):
         self.assertEqual(report['html']['display_crs'], 'EPSG:3857')
         self.assertEqual(report['display_crs'], 'EPSG:3857')
 
-    def test_uniform_html_does_not_require_matplotlib(self):
-        with patch.dict(sys.modules, {'matplotlib': None}):
-            report = self.helper.illustrate(self.frame, self.root/'web', formats=('html',), **self.kwargs)
-        self.assertNotIn('matplotlib', report['versions'])
-
+    @requires_packages('matplotlib', 'PIL')
     def test_small_island_is_not_hidden_by_the_scale_bar(self):
         from PIL import Image
         import numpy as np
@@ -89,6 +85,7 @@ class IllustrationTests(unittest.TestCase):
         yellow = (pixels[:,:,0] > 220) & (pixels[:,:,1] > 200) & (pixels[:,:,2] < 80)
         self.assertGreaterEqual(int(yellow.sum()), 10)
 
+    @requires_packages('matplotlib', 'PIL')
     def test_static_preserves_geographic_or_utm_crs(self):
         from geopandas.testing import assert_geodataframe_equal
         from PIL import Image
@@ -109,6 +106,7 @@ class IllustrationTests(unittest.TestCase):
                     self.assertGreater(report['scale_bar']['length_m'], 0)
                 assert_geodataframe_equal(frame, original)
 
+    @requires_packages('matplotlib')
     def test_custom_foot_crs_scale_is_converted_to_metres(self):
         from pyproj import CRS
         target = CRS.from_proj4('+proj=tmerc +lat_0=48.85 +lon_0=2.35 +k=1 +x_0=0 +y_0=0 +ellps=GRS80 +units=us-ft +type=crs')
@@ -140,6 +138,7 @@ class IllustrationTests(unittest.TestCase):
             self.helper.illustrate(self.frame, target, **self.kwargs)
         self.assertEqual(sentinel.read_text(), 'keep')
 
+    @requires_packages('matplotlib')
     def test_cli_preserves_input_bytes_and_emits_only_requested_format(self):
         source = ROOT/'tests/data/admin_units_synthetic.geojson'
         before = source.read_bytes()
@@ -150,9 +149,8 @@ class IllustrationTests(unittest.TestCase):
         self.assertEqual(set(p.name for p in (self.root/'cli').iterdir()), {'map.png', 'report.json'})
         self.assertEqual(source.read_bytes(), before)
 
+    @requires_packages('rasterio', 'matplotlib')
     def test_raster_recipe_bounds_resolution_and_preserves_nodata(self):
-        if importlib.util.find_spec('rasterio') is None:
-            self.skipTest('Raster preview needs rasterio')
         import rasterio
         from rasterio.transform import from_origin
         import numpy as np
