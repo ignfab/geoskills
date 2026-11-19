@@ -29,7 +29,10 @@ jobs:
       - name: Validate metadata and local references
         run: python .github/validate-skills.py
       - name: Test helpers and local geospatial workflows
-        run: python -m unittest discover -s tests -p 'test_*.py' -v
+        run: |
+          # The broad CI environment must exercise every Python route, not silently skip it.
+          python -c "import geopandas, pandas, pyarrow, rasterstats, rasterio, matplotlib, folium, PIL"
+          python -m unittest discover -s tests -p 'test_*.py' -v
         env:
           GEOSKILLS_REQUIRE_GDAL: '1'
           GEOSKILLS_REQUIRE_MAPSHAPER: '1'

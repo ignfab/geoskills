@@ -146,6 +146,67 @@ class BuildingProfileTests(unittest.TestCase):
                     self.assertEqual(restored.crs, target)
                     self.assertAlmostEqual(restored.clipped_area_m2.iloc[0], 100)
 
+    def test_cli_mixed_sources_custom_feet_clips_and_exports_square_metres(self):
+        from pyproj import CRS
+        from shapely.geometry import Polygon, box
+
+        target = CRS.from_proj4('+proj=tmerc +lat_0=48.85 +lon_0=2.35 +k=1 +ellps=GRS80 +units=us-ft +type=crs')
+        self.assertIsNone(target.to_epsg())
+        feet_per_metre = 3937 / 1200  # US survey foot, independent of the helper's conversion.
+
+        def rectangle(x1, y1, x2, y2):
+            return box(*(value * feet_per_metre for value in (x1, y1, x2, y2)))
+
+        hole = rectangle(12, 12, 18, 18)
+        boundary = Polygon(rectangle(0, 0, 100, 100).exterior.coords, [hole.exterior.coords])
+        towns = self.gpd.GeoDataFrame({'id': ['00001']}, geometry=[boundary], crs=target).to_crs(4326)
+        buildings = self.gpd.GeoDataFrame({'id': ['a', 'b', 'cross', 'outside']}, geometry=[
+            rectangle(10, 10, 30, 30), rectangle(20, 20, 40, 40),
+            rectangle(-5, 60, 5, 70), rectangle(110, 10, 120, 20)], crs=target).to_crs(32631)
+        self.manifest['analysis_crs'] = target.to_wkt()
+        self.manifest['municipality'].update(path='towns.gpkg', layer='towns', id_field='id', id='00001')
+        self.manifest['buildings'].update(path='buildings.gpkg', layer='buildings', id_field='id')
+        self.manifest.pop('height')
+        self.manifest.pop('usage')
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            towns.to_file(root / 'towns.gpkg', layer='towns')
+            buildings.to_file(root / 'buildings.gpkg', layer='buildings')
+            manifest = root / 'input.json'
+            manifest.write_text(json.dumps(self.manifest), encoding='utf-8')
+            before = {p: p.read_bytes() for p in root.iterdir()}
+            output = root / 'profile'
+            result = subprocess.run([sys.executable, str(SCRIPT), str(manifest), str(output)],
+                                    capture_output=True, text=True, timeout=60)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            audit = json.loads((output / 'audit.json').read_text())
+            # 400 - 36 (hole) + 400 - 100 (overlap) + 50 (clipped crossing) = 714 m².
+            expected = {'municipality_area_m2': 9964, 'footprint_area_m2': 714,
+                        'overlap_excess_m2': 100, 'observed_footprint_share_pct': 714 / 9964 * 100}
+            for field, value in expected.items():
+                self.assertAlmostEqual(audit['metrics'][field], value, delta=.001, msg=field)
+            self.assertEqual(audit['metrics']['building_count'], 3)
+            self.assertEqual(audit['reconciliation']['cross_boundary_ids'], ['a', 'cross'])
+            self.assertEqual(audit['reconciliation']['outside_ids'], ['outside'])
+            self.assertAlmostEqual(audit['metres_per_unit'], 1200 / 3937)
+            for name in ('municipality', 'buildings', 'footprint'):
+                restored = self.gpd.read_file(output / 'profile.gpkg', layer=name)
+                self.assertEqual(restored.crs, target)
+                self.assertTrue(restored.geometry.is_valid.all())
+                if name == 'buildings':
+                    self.assertEqual(restored.building_id.tolist(), ['a', 'b', 'cross'])
+                    for area, expected_area in zip(restored.clipped_area_m2, [364, 400, 50]):
+                        self.assertAlmostEqual(area, expected_area, delta=.001)
+                if name == 'footprint':
+                    self.assertAlmostEqual(restored.area_m2.sum(), 714, delta=.001)
+            with (output / 'indicators.csv').open(newline='') as stream:
+                csv_metrics = {row['indicator']: json.loads(row['value_json'])
+                               for row in csv.DictReader(stream) if row['section'] == 'metrics'}
+            self.assertEqual(csv_metrics, audit['metrics'])
+            project = json.loads((output / 'qgis-project.json').read_text())
+            self.assertEqual(CRS.from_user_input(project['crs']), target)
+            self.assertEqual(before, {p: p.read_bytes() for p in before})
+
     def test_missing_crs_invalid_geometry_and_unsuitable_projection_fail(self):
         from shapely.geometry import Polygon
         for crs in ('EPSG:4326', 'EPSG:3857', 'EPSG:2263', 'EPSG:32755'):

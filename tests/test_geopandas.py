@@ -1,18 +1,22 @@
 """Optional Python geospatial workflows and index-alignment regression tests."""
-import importlib.util
 import unittest
+from pathlib import Path
+import tempfile
 
 from test_workflows import DATA, GDALCase
 from skill_examples import run_example
+from python_test_support import require_packages, requires_packages
 
 
-class GeoPandasTests(GDALCase):
+class GeoPandasTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        for module in ("geopandas", "rasterstats", "pyarrow"):
-            if importlib.util.find_spec(module) is None:
-                raise unittest.SkipTest("Install tests/requirements-geospatial.txt for GeoPandas tests")
-        super().setUpClass()
+        require_packages('geopandas')
+
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory(prefix='geoskills-geopandas-')
+        self.addCleanup(temporary.cleanup)
+        self.output = Path(temporary.name)
 
     def test_spatial_join(self):
         import geopandas as gpd
@@ -103,6 +107,7 @@ class GeoPandasTests(GDALCase):
         self.assertEqual(source.crs.to_epsg(), 4326)
         self.assertEqual(source.geom_type.tolist(), ["Point"])
 
+    @requires_packages('pyarrow')
     def test_crs_and_format_roundtrip(self):
         import geopandas as gpd
         points = gpd.read_file(DATA / "monuments_sans_prj/monuments.shp")
@@ -124,6 +129,7 @@ class GeoPandasTests(GDALCase):
         for layer in ("original", "copy"):
             assert_geodataframe_equal(gpd.read_file(gpkg, layer=layer), points)
 
+    @requires_packages('pyarrow')
     def test_geoparquet_preserves_string_ids_nulls_and_repeated_index(self):
         import geopandas as gpd
         import pandas as pd
@@ -138,6 +144,7 @@ class GeoPandasTests(GDALCase):
         source.to_parquet(path)
         assert_geodataframe_equal(gpd.read_parquet(path), source)
 
+    @requires_packages('rasterstats', 'rasterio')
     def test_zonal_stats_distinguishes_zero_nodata_and_outside(self):
         import geopandas as gpd
         import numpy as np
@@ -176,26 +183,87 @@ class GeoPandasTests(GDALCase):
                             {"communes": zones, "stats": stats}, example=1)
             assert_geodataframe_equal(zones, original)
 
-    def test_documented_zonal_stats_discovers_non_lambert_raster_crs(self):
+    @requires_packages('rasterstats', 'rasterio')
+    def test_documented_zonal_stats_discovers_raster_crs_and_keeps_nodata(self):
+        import geopandas as gpd
+        import numpy as np
+        import rasterio
+        from rasterio.transform import from_origin
+        from pyproj import CRS
+        from shapely.geometry import box
+
+        custom = CRS.from_proj4('+proj=tmerc +lat_0=48.85 +lon_0=2.35 +k=1 +ellps=GRS80 +units=us-ft +type=crs')
+        self.assertIsNone(custom.to_epsg())
+        for target, x, y in [(CRS.from_epsg(32631), 500000, 5400000),
+                             (CRS.from_epsg(2975), 338500, 7690400), (custom, 0, 0)]:
+            with self.subTest(crs=target.to_string()):
+                raster_path = self.output/'terrain.tif'
+                with rasterio.open(raster_path, 'w', driver='GTiff', width=2, height=2, count=1,
+                                   dtype='float32', crs=target.to_wkt(),
+                                   transform=from_origin(x, y+20, 10, 10), nodata=-9999) as raster:
+                    raster.write(np.array([[0, -9999], [10, 20]], dtype='float32'), 1)
+                zones = gpd.GeoDataFrame({'id': ['all', 'nodata', 'outside']}, geometry=[
+                    box(x-1, y-1, x+21, y+21), box(x+11, y+11, x+19, y+19),
+                    box(x+31, y+1, x+39, y+9)], crs=target)
+                zones_path = self.output/'zones.geojson'
+                zones.to_crs(4326).to_file(zones_path)
+                before = {p: p.read_bytes() for p in (raster_path, zones_path)}
+                result = run_example('geopandas-vector-analysis/references/zonal-stats.md', '## Basic usage',
+                                     {'zones_path': zones_path, 'raster_path': raster_path})
+                result = run_example('geopandas-vector-analysis/references/zonal-stats.md', '## Basic usage',
+                                     result, example=1)['communes']
+                self.assertEqual(result.crs, target)
+                self.assertEqual(result['id'].tolist(), ['all', 'nodata', 'outside'])
+                self.assertEqual(result['count'].tolist(), [3, 0, 0])
+                self.assertEqual(result.loc[0, ['min', 'max', 'mean']].tolist(), [0, 20, 10])
+                self.assertTrue(result.loc[1:, ['min', 'max', 'mean']].isna().all().all())
+                self.assertEqual(before, {p: p.read_bytes() for p in before})
+
+    @requires_packages('rasterstats', 'rasterio')
+    def test_documented_zonal_stats_refuses_each_missing_source_crs(self):
         import geopandas as gpd
         import numpy as np
         import rasterio
         from rasterio.transform import from_origin
         from shapely.geometry import box
+        import warnings
 
-        raster_path = self.output/'utm.tif'
-        with rasterio.open(raster_path, 'w', driver='GTiff', width=2, height=2, count=1,
-                           dtype='float32', crs=32631, transform=from_origin(500000, 5400020, 10, 10),
-                           nodata=-9999) as raster:
-            raster.write(np.array([[1, 2], [3, 4]], dtype='float32'), 1)
-        zones = gpd.GeoDataFrame({'id': ['zone']}, geometry=[box(499999, 5399999, 500021, 5400021)], crs=32631)
-        zones_path = self.output/'zones.geojson'
-        zones.to_crs(4326).to_file(zones_path)
-        result = run_example('geopandas-vector-analysis/references/zonal-stats.md', '## Basic usage',
-                             {'zones_path': zones_path, 'raster_path': raster_path})
-        self.assertEqual(result['communes'].crs.to_epsg(), 32631)
-        self.assertEqual(result['stats'], [{'min': 1., 'max': 4., 'mean': 2.5, 'count': 4}])
-        self.assertEqual(gpd.read_file(zones_path).crs.to_epsg(), 4326)
+        for missing in ('raster', 'vector'):
+            with self.subTest(missing=missing):
+                raster_path = self.output / f'{missing}.tif'
+                with rasterio.open(raster_path, 'w', driver='GTiff', width=1, height=1, count=1,
+                                   dtype='float32', crs=None if missing == 'raster' else 32631,
+                                   transform=from_origin(500000, 5400010, 10, 10), nodata=-9999) as raster:
+                    raster.write(np.array([[10]], dtype='float32'), 1)
+                zones_path = self.output / f'{missing}.gpkg'
+                zones = gpd.GeoDataFrame({'id': ['001']}, geometry=[box(500000, 5400000, 500010, 5400010)],
+                                        crs=None if missing == 'vector' else 32631)
+                with warnings.catch_warnings():
+                    warnings.filterwarnings('ignore', message=".*crs.*was not provided.*", category=UserWarning)
+                    zones.to_file(zones_path)
+                before = {p: p.read_bytes() for p in (raster_path, zones_path)}
+                with self.assertRaisesRegex(ValueError, 'Confirm both source CRSs'):
+                    run_example('geopandas-vector-analysis/references/zonal-stats.md', '## Basic usage',
+                                {'zones_path': zones_path, 'raster_path': raster_path})
+                self.assertEqual(before, {p: p.read_bytes() for p in before})
+
+    def test_zonal_stats_does_not_overwrite_source_attributes(self):
+        import geopandas as gpd
+
+        zones = gpd.read_file(DATA / "saint_mande.geojson")
+        zones["mean"] = "source attribute"
+        with self.assertRaises(AssertionError):
+            run_example("geopandas-vector-analysis/references/zonal-stats.md", "## Basic usage",
+                        {"communes": zones, "stats": [{"mean": 50}]}, example=1)
+        self.assertEqual(zones["mean"].tolist(), ["source attribute"])
+
+
+class GeoPandasRasterCLITests(GDALCase):
+    """Only the raster-fixture integration tests need native GDAL executables."""
+    @classmethod
+    def setUpClass(cls):
+        require_packages('geopandas', 'rasterstats')
+        super().setUpClass()
 
     def test_zonal_stats_with_filtered_index(self):
         import geopandas as gpd
@@ -232,16 +300,6 @@ class GeoPandasTests(GDALCase):
         self.assertEqual(result["id"].tolist(), ["west", "east"])
         self.assertEqual(result["mean"].tolist(), [row["mean"] for row in stats])
         self.assertEqual(result["count"].tolist(), [1, 1])
-
-    def test_zonal_stats_does_not_overwrite_source_attributes(self):
-        import geopandas as gpd
-
-        zones = gpd.read_file(DATA / "saint_mande.geojson")
-        zones["mean"] = "source attribute"
-        with self.assertRaises(AssertionError):
-            run_example("geopandas-vector-analysis/references/zonal-stats.md", "## Basic usage",
-                        {"communes": zones, "stats": [{"mean": 50}]}, example=1)
-        self.assertEqual(zones["mean"].tolist(), ["source attribute"])
 
 
 if __name__ == "__main__":
